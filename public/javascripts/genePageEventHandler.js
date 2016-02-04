@@ -6,6 +6,7 @@ var relativeEnd;
 var actualStart;
 var actualEnd;
 $(".selected-info").val("Chromosome " + $(".chromosome").attr("id") + " : ");
+$("[name='my-checkbox']").bootstrapSwitch();
 
 //event handler
 //event handler for chromosome
@@ -21,9 +22,28 @@ $(".position-locator").mouseup(function(e)
     relativeLength();
     drawPosition(relativeStart, relativeEnd);
     drawTable(actualStart, actualEnd);
-    getGeneInfo();
+    getGenes();
 
 });
+var geneClickEvent = function() {
+    $(".gene-position").click(function (e) {
+        actualStart = $(this).data('start');
+        actualEnd = $(this).data('end');
+        var length = $(".chromosome").data('length');
+        var width = $(".position-locator").width();
+        relativeStart = actualStart / length * width;
+        relativeEnd = actualEnd / length * width;
+        drawTable(actualStart, actualEnd);
+        drawPosition(relativeStart, relativeEnd);
+        getGenes();
+    });
+
+    $(".gene-name").click(function(e)
+    {
+        var selectedGeneID = $(this).parent().attr('id');
+        getGeneInfo(selectedGeneID);
+    });
+}
 
 
 //function call
@@ -72,8 +92,10 @@ var drawTable = function(start, end)
 
 }
 
+
+
 //ajax call server to get gene info
-var getGeneInfo = function()
+var getGenes = function()
 {
     var data = {};
     data.start = actualStart;
@@ -86,7 +108,11 @@ var getGeneInfo = function()
         contentType: 'application/json',
         success: function(data)
         {
+            $(".gene").remove();
             $("#gene-navigator").append(data);
+            hideAndShowGene("overlap");
+            hideAndShowGene("short");
+            geneClickEvent();
         },
         error: function(xhr, status, error)
         {
@@ -95,3 +121,52 @@ var getGeneInfo = function()
         }
     });
 }
+
+var getGeneInfo = function(id)
+{
+    var data = {};
+    data.id = id;
+    $.ajax({
+        url:'./api/gene_info',
+        data: data,
+        type:'GET',
+        contentType: 'application/json',
+        success: function(data)
+        {
+            $("body").append(data);
+            //$("#"+id).modal({show: 'true'});
+            $("#dia-"+id).modal('toggle');
+            //$("#"+id).modal('show');
+        },
+        error: function(xhr, status, error)
+        {
+            console.log('Error',error.message);
+            alert("Get Gene Information Error");
+        }
+
+    })
+
+}
+var hideAndShowGene = function(type)
+{
+    if($("#"+type+"-switch").bootstrapSwitch('state'))
+    {
+        $(".gene."+type).show();
+    }
+    else
+    {
+        $(".gene."+type).hide();
+    }
+}
+
+$("#overlap-switch").on('switchChange.bootstrapSwitch',function(e,state)
+{
+   hideAndShowGene("overlap");
+});
+
+$("#short-switch").on('switchChange.bootstrapSwitch', function(e,state)
+{
+    hideAndShowGene("short")
+})
+
+

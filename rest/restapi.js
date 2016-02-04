@@ -12,5 +12,6 @@
  });
 
  require('./getGene').rest(router);
+ require('./GeneInfo').rest(router);
 
  module.exports = router;

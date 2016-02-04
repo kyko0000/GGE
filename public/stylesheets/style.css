@@ -1,5 +1,5 @@
 body{
-    background-color: #FFF1D9;
+    background-color: #FFFFFF;
 }
 table{
     width: 100%;
@@ -91,14 +91,14 @@ td
 }
 .chromosome-area
 {
-    background-color: #FFF1D9;
+    background-color: #FFFFFF;
     padding-top: 15px;
     border-radius: 15px;
 }
 
 .info-area input
 {
-    background-color: #FFF1D9;
+    background-color: #FFFFFF;
     border: hidden;
     font-size: large;
 }
@@ -107,14 +107,23 @@ td
     display: inline-block;
     height: 30px;
     border: 1px;
-    background-color: #e1be81;
+    background-color: #00ff00;
 }
 .gene-position:hover
 {
-    background-color: #FFE6BA;
+    background-color: rgba(0,255,0,0.3);
 }
 .gene-padding
 {
     display: inline-block;
     height: 30px;
+}
+.gene-controller>div>h6
+{
+    display:inline-block;
+}
+.gene-controller>div
+{
+    display:inline-block;
+    padding-right:20%;
 }

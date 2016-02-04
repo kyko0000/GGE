@@ -1,7 +1,7 @@
 extends layout
 
 block content
-    nav.navbar.navbar-inverse
+    nav.navbar.navbar-default
         .container-fluid
             .navabr-header
                 a.navbar-brand(href="#") GGE
@@ -38,6 +38,13 @@ block content
 
     .container.gene-area
         h3 Region Detail
+        div.gene-controller
+            div
+                h6 Overlap Gene&nbsp;
+                input.gene-switch#overlap-switch(type='checkbox' name='my-checkbox' data-size='mini')
+            div
+                h6 Short Genes&nbsp
+                input.gene-switch#short-switch(type='checkbox' name='my-checkbox' data-size='mini')
         table#gene-navigator.table
             tr#region-display.info
                 td.title Scale
