@@ -24,9 +24,9 @@ function rest(router, data) {
         var getData = function(data)
         {
             console.log("Data: " + data);
-            var jsonObj = JSON.parse(data);
-            var htmlResponse = drawGene(jsonObj, length, start, end);
-            res.send(htmlResponse);
+            //var jsonObj = JSON.parse(data);
+            //var htmlResponse = drawGene(jsonObj, length, start, end);
+            res.send(data);
         }
         option.path = "/overlap/region/human/"+ chromosome +':' + start + "-" + end +"?feature=gene;";
         console.log(option.path);
@@ -36,7 +36,7 @@ function rest(router, data) {
 
 }
 
-var drawGene = function(jsonObj, length, start, end)
+/*var drawGene = function(jsonObj, length, start, end)
 {
     var html = "";
     for(i=0; i<jsonObj.length;i++)
@@ -68,12 +68,12 @@ var drawGene = function(jsonObj, length, start, end)
         }
         else if(start > jsonObj[i].start && jsonObj[i].end <= end) //overlap from the begining
         {
-            html += "<div class='gene-position left' style='width:" + ((jsonObj[i].end - start) / length) * 100 + "%'></div>";
+            html += "<div class='gene-position left' style='width:" + ((jsonObj[i].end - start) / length) * 100 + "% data-start='" + jsonObj[i].start + "' data-end='" + jsonObj[i].end +"'></div>";
             html += "<div class='gene-padding' style='width:" + ((end - jsonObj[i].end) / length) * 100 + "%'></div>";
         }
         else if(end < jsonObj[i].end && start <= jsonObj[i].start) //overlap at the end
         {
-            html += "<div class='gene-padding right' style='width:" + ((jsonObj[i].start - start) / length) * 100 + "%'></div>";
+            html += "<div class='gene-padding right' style='width:" + ((jsonObj[i].start - start) / length) * 100 + "%' data-start='" + jsonObj[i].start + "' data-end='" + jsonObj[i].end +"></div>";
             html += "<div class='gene-position' style='width:" + ((end - jsonObj[i].start) / length) * 100 + "%'></div>";
         }
         else
@@ -83,6 +83,6 @@ var drawGene = function(jsonObj, length, start, end)
         html += "</td></tr>";
     }
     return html;
-}
+}*/
 
 module.exports.rest = rest;

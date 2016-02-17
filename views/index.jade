@@ -1,63 +1,7 @@
+//
+   Created by yuechungng on 15/2/2016.
+
 extends layout
 
 block content
-    nav.navbar.navbar-default
-        .container-fluid
-            .navabr-header
-                a.navbar-brand(href="#") GGE
-                ul.nav.navbar-nav
-                    li: a(href="#") HOME
-                    li: a(href="#") Genome Browser
-                    li: a(href="#") Basic Information
-                .col-sm-3.col-md-3.pull-right
-                    form.navbar-form(role="search" method="get" action="/users/")
-                        .input-group
-                            input.form-control(type="text" placeholder="Search")
-                            .input-group-btn
-                                button.btn.btn-default(type="submit") Search
 
-    .container
-        .chromosome-area.table-scroll
-            .position-locator
-                table.round-table#chromosome-navigator
-                    script.
-                        var json = '#{data}';
-                        json = json.replace(/&quot;/g,'"');
-                        var jsonObj = JSON.parse(json);
-                        var chromosome = new Chromosome(jsonObj.karyotype_band[0].seq_region_name, jsonObj.length);
-                        for(i = 0; i < jsonObj.karyotype_band.length; i++) {
-                            chromosome.addBands(jsonObj.karyotype_band[i].start, jsonObj.karyotype_band[i].end, jsonObj.karyotype_band[i].id);
-                        }
-                        chromosome.createChromosome();
-
-                canvas#indicator(width= "720" height= "5")
-
-    .container.info-area
-        input.selected-info(readonly)
-        input.selected-length(readonly)
-
-    .container.gene-area
-        h3 Region Detail
-        div.gene-controller
-            div
-                h6 Overlap Gene&nbsp;
-                input.gene-switch#overlap-switch(type='checkbox' name='my-checkbox' data-size='mini')
-            div
-                h6 Short Genes&nbsp
-                input.gene-switch#short-switch(type='checkbox' name='my-checkbox' data-size='mini')
-        table#gene-navigator.table
-            tr#region-display.info
-                td.title Scale
-                td.data
-                    .partition#1
-                    .partition#2
-                    .partition#3
-                    .partition#4
-
-
-
-
-
-
-
-    script(type='text/javascript' src='javascripts/genePageEventHandler.js')

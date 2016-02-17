@@ -11,4 +11,19 @@ html
     script(type='text/javascript', src='/bootstrap/js/bootstrap.min.js')
     script(type='text/javascript', src='/javascripts/chromosome.js')
   body
+    nav.navbar.navbar-default
+      .container-fluid
+        .navabr-header
+          a.navbar-brand(href="#") GGE
+        ul.nav.navbar-nav
+          li.active: a(href="#") HOME
+          li: a(href="#") Genome Browser
+          li: a(href="#") Basic Information
+        .col-sm-3.col-md-3.pull-right
+          form.navbar-form#gene-search(role="search" method="get" action="javascript:search();")
+            .input-group
+              input.form-control#query-string(type="text" placeholder="Search" name="srch-term" onClick="this.select();")
+              .input-group-btn
+                button.btn.btn-default(type="submit") Search
+    script(type='text/javascript', src='javascripts/search.js')
     block content

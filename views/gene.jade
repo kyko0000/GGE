@@ -1,0 +1,72 @@
+.container
+    .chromosome-area.table-scroll
+        .position-locator
+            table.round-table#chromosome-navigator
+                script.
+                    var json = '#{data}';
+                    json = json.replace(/&quot;/g,'"');
+                    var jsonObj = JSON.parse(json);
+                    var chromosome = new Chromosome(jsonObj.karyotype_band[0].seq_region_name, jsonObj.length);
+                    for(i = 0; i < jsonObj.karyotype_band.length; i++) {
+                        chromosome.addBands(jsonObj.karyotype_band[i].start, jsonObj.karyotype_band[i].end, jsonObj.karyotype_band[i].id);
+                    }
+                    chromosome.createChromosome();
+
+            canvas#indicator(width= "720" height= "5")
+.container.info-area
+    input.selected-info(readonly)
+    input.selected-length(readonly)
+
+.container.gene-area
+    h3 Region Detail
+    div.gene-controller
+        div
+            h6 Overlap Gene&nbsp;
+            input.gene-switch#overlap-switch(type='checkbox' name='my-checkbox' data-size='mini')
+        div
+            h6 Short Genes&nbsp
+            input.gene-switch#short-switch(type='checkbox' name='my-checkbox' data-size='mini')
+    table#gene-navigator.table
+        tr#region-display.info
+            td.title Scale
+            td.data
+                .partition#1
+                .partition#2
+                .partition#3
+                .partition#4
+
+
+
+
+
+
+
+    script(type='text/javascript' src='javascripts/genePageEventHandler.js')
+    script.
+        var region = '#{region}';
+        var genesData = '#{genesData}';
+        if(region) {
+            region = region.replace(/&quot;/g, '"');
+            var regionObj = JSON.parse(region);
+            actualStart = parseInt(regionObj.start);
+            actualEnd = parseInt(regionObj.end);
+            showGene();
+        }
+        if(genesData)
+        {
+            var geneRegion = '#{geneRegion}';
+            genesData = genesData.replace(/&quot;/g, '"');
+            geneRegion = geneRegion.replace(/&quot;/g, '"');
+            var jsonObj = JSON.parse(genesData);
+            var regionObj = JSON.parse(geneRegion);
+            actualStart = parseInt(regionObj.start);
+            actualEnd = parseInt(regionObj.end);
+            var html = drawGene(jsonObj,actualEnd-actualStart, actualStart, actualEnd);
+            $("#gene-navigator").append(html);
+            $(".gene").remove();
+            $("#gene-navigator").append(html);
+            drawStrand();
+            hideAndShowGene("overlap");
+            hideAndShowGene("short");
+            geneEventHandler();
+        }
