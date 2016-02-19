@@ -7,6 +7,7 @@ var actualStart;
 var actualEnd;
 $(".selected-info").val("Chromosome " + $(".chromosome").attr("id") + " : ");
 $("[name='my-checkbox']").bootstrapSwitch();
+//$(".spinning-div").hide();
 
 //event handler
 //event handler for chromosome
@@ -104,6 +105,7 @@ var drawPosition = function(start, end)
     ctx.fillRect(start, 0, end - start, 5);
 }
 
+//show the start, end and length information to the textbox under the chromosome.
 var drawTable = function(start, end)
 {
     var length = end - start;
@@ -142,6 +144,7 @@ var getGenes = function()
             hideAndShowGene("overlap");
             hideAndShowGene("short");
             geneEventHandler();
+            $(".spinner-div").hide();
         },
         error: function(xhr, status, error)
         {
@@ -324,15 +327,39 @@ var drawStrand = function()
     {
         if($(genePositionSVGs[i]).parent().parent().attr("class") == "gene") {
             if ($(genePositionSVGs[i]).data("strand") == 1) {
-                var topPoint = parseInt($(genePositionSVGs[i]).width());
-                var turningPoint = parseInt(topPoint * 0.85);
-                //var svg = "<polygon points='0,15 "+turningPoint+",15 "+turningPoint+",20 "+topPoint+",10 "+turningPoint+",0 "+turningPoint+",5 0,5 0,15' style='fill:red;stroke:purple;stroke-width:1' />"
-                var svg = makeSVG('polygon', {
-                    class: 'strand-display',
-                    points: '0,25 ' + turningPoint + ',25 ' + turningPoint + ',20 ' + topPoint + ',30 ' + turningPoint + ',40 ' + turningPoint + ',35 0,35 0,25',
-                    style: 'fill:red;stroke:purple;stroke-width:1'
+                var topPoint = parseInt($(genePositionSVGs[i]).width()/3);
+                var turningPoint = parseInt((topPoint * 0.85)/3);
+                var def = makeSVG('defs', {class:'display'});
+                var pattern = makeSVG('pattern',{
+                    class:"arrow",
+                    id:"arrow-"+i,
+                    x:'0',
+                    y:'0',
+                    width: '16.667%',
+                    height:'100%'
                 })
-                $(genePositionSVGs[i]).append(svg);
+
+
+                //var svg = "<polygon points='0,15 "+turningPoint+",15 "+turningPoint+",20 "+topPoint+",10 "+turningPoint+",0 "+turningPoint+",5 0,5 0,15' style='fill:red;stroke:purple;stroke-width:1' />"
+                var patternSVG = makeSVG('polygon', {
+                    class: 'strand-display',
+                    points: '0,25 '+turningPoint+',25 '+turningPoint+',20 '+topPoint+',30 '+turningPoint+',40 '+turningPoint+',35 0,35 0,25',
+                    style: 'fill:red;stroke:purple;stroke-width:1'
+                });
+                $(pattern).append(patternSVG);
+                $(def).append(pattern);
+                $(genePositionSVGs[i]).append(def);
+               // $('#arrow-'+i).append(patternSVG);
+                var containerSVG = makeSVG('rect',{
+                    class:'strand-display',
+                    x:'0',
+                    y:'0',
+                    width:$(genePositionSVGs[i]).width()*2,
+                    height: '100%',
+                    fill:'url(#arrow-'+i+')'
+                });
+                $(genePositionSVGs[i]).append(containerSVG);
+
             }
             else {
                 //var turningPoint = parseInt($(genePositionSVGs[i]).width()*0.15);

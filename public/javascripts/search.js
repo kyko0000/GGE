@@ -3,10 +3,11 @@
  */
 var search = function()
 {
+    $(".spinner-div").show();
     var searchString = $("#query-string").val();
     var query={};
     // query chromosome or with region
-    if((searchString.substring(0,3) == "chr" || searchString.substring(0,3) == "CHR")&&searchString.search(":")!= -1)
+    if(searchString.substring(0,3).toLowerCase() == "chr"&&searchString.search(":")!= -1)
     {
         query.type="chromosome";
         query.chromosomeName = searchString.substring(3,searchString.search(":"));
@@ -30,11 +31,16 @@ var search = function()
 
         }
     }
-    else if((searchString.substring(0,4) == "ENSG" || searchString.substring(0,4) == "ensg")&&searchString.search(":") == -1)//search by gene ID
+    else if(searchString.substring(0,4).toLowerCase() == "ensg"&&searchString.search(":") == -1)//search by gene ID
     {
         //alert("ok");
         query.type="gene-id";
         query.id = searchString;
+    }
+    else //search by symbol
+    {
+        query.type = "symbol";
+        query.symbol = searchString;
     }
     $.ajax(
     {

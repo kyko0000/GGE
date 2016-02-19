@@ -9,6 +9,7 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var gene = require('./routes/gene');
+var explanation = require('./routes/explanation');
 var rests = require('./rest/restapi');
 
 var app = express();
@@ -29,6 +30,7 @@ app.use('/', routes);
 app.use('/users', users);
 app.use('/gene', gene);
 app.use('/api', rests);
+app.use('/explanation', explanation);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

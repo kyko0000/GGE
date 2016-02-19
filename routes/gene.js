@@ -13,12 +13,14 @@ var option = {
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    console.log(req.query.chromosomeName);
-    if(req.query.type == "chromosome" || req.query.type == "chromosome-region") {
+    console.log("Search by chromosome: "+ req.query.chromosomeName);
+    if(req.query.type == "chromosome" || req.query.type == "chromosome-region") { //chromosome search
         option.path = "/info/assembly/human/" + req.query.chromosomeName + "?feature=gene;bands=1";
 
         var regionJSON;
-        if (req.query.type == "chromosome-region") {
+        if (req.query.type == "chromosome-region") //region
+        {
+            console.log("Search by region: "+req.query.regionStart+" - "+req.query.regionEnd);
             var region = {};
             region.start = req.query.regionStart;
             region.end = req.query.regionEnd;
@@ -28,13 +30,16 @@ router.get('/', function(req, res, next) {
         {
             res.render('gene', {title: 'Genetic General Education System', data: data, region: regionJSON});
         }
+
         callEnsembl(option, sendData);
     }
-    else if(req.query.type="gene-id")
+    else if(req.query.type=="gene-id") //gene id search
     {
+        console.log("Search by Gene ID= " + req.query.id);
         option.path = "/overlap/id/"+req.query.id+"?feature=gene";
         var genesData;
         var regionJSON;
+
         var getChromosomeAndRegion = function(data)
         {
             genesData = data;
@@ -49,34 +54,44 @@ router.get('/', function(req, res, next) {
                     region.end = jsonObj[i].end;
                     regionJSON = JSON.stringify(region);
                     found = true;
-                    console.log("get")
+                    console.log("Get the target gene..")
                 }
             }
-
-            //option.path = "/info/assembly/human/" + jsonObj.seq_region_name + "?feature=gene;bands=1"
             regionJSON = JSON.stringify(region);
             callEnsembl(option, sendDataWithGene);
         }
+        //call back for output data
         var sendDataWithGene = function(data)
         {
             res.render('gene',{data: data, genesData: genesData, geneRegion: regionJSON});
         }
+
         callEnsembl(option, getChromosomeAndRegion);
 
     }
-    //console.log(option.path);
-   /* http.get(option, function (resj) {
-        resj.setEncoding('utf8');
-        //console.log(res.body);
-        resj.on('data', function (data) {
-            responseString += data;
-            //console.log(responseString);
-        });
-        resj.on('end', function(){
-            console.log(responseString);
-            res.render('gene', { title: 'Genetic General Education System', data: responseString, region: regionJSON});
-        });
-    });*/
+    else if(req.query.type == "symbol") //gene symbol search
+    {
+        var geneRegion={};
+        option.path = "lookup/symbol/human/"+ req.query.symbol;
+        console.log("Passed a symbol:" + req.query.symbol);
+        var getChromosome = function(data)
+        {
+            var gene = JSON.parse(data);
+            geneRegion.start = gene.start;
+            geneRegion.end = gene.end;
+            regionJSON = JSON.stringify(geneRegion)
+            option.path = "/info/assembly/human/" + gene.seq_region_name + "?feature=gene;bands=1";
+            callEnsembl(option, sendData)
+
+        }
+        var sendData = function(data)
+        {
+            res.render('gene', {title: 'Genetic General Education System', data: data, region: regionJSON});
+        }
+        callEnsembl(option, getChromosome);
+
+
+    }
 });
 
 var callEnsembl = function(option, callback)
