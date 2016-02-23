@@ -4,5 +4,15 @@
     .explanation-area-title
         h1.title-text Gene Structure and Information
     .svg-container
-        svg.explanation-area
+        svg.explanation-area#svg-container
+    .svg-btn
+        .btn-container
+            button.introduction.btn-info.btn.btn-lg#exon-intro Exon
+        .btn-container
+            button.introduction.btn-info.btn.btn-lg#transcription-intro Transcription
+script(type='text/javascript' src='javascripts/Transcript.js')
+script(type='text/javascript' src='javascripts/Exon.js')
+script(type='text/javascript' src='javascripts/explanationEvent.js')
+script.
+    explanation('#{transcripts}', '#{exons}', '#{cds}','#{id}', selectedGeneCanonicalTranscript);
 
