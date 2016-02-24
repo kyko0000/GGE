@@ -27,7 +27,7 @@ Exon.prototype.drawExon = function(svgContainer, transcriptStart, transcriptEnd)
             y: '125',
             width: parseInt(((this.end - this.start)/transcriptLength) * svgLength),
             height: '50',
-            style:'fill:blue;fill-opacity:0.4'
+            style:'fill:blue;fill-opacity:0.6'
         }
     )
     $(svgContainer).append(this.exonSVG);

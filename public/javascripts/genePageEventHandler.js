@@ -5,7 +5,7 @@ var relativeStart;
 var relativeEnd;
 var actualStart;
 var actualEnd;
-var selectedGeneCanonicalTranscript;
+var selectedGeneCanonicalTranscript = {canonicalTranscript:''};
 $(".selected-info").val("Chromosome " + $(".chromosome").attr("id") + " : ");
 $("[name='my-checkbox']").bootstrapSwitch();
 //$(".spinning-div").hide();
@@ -240,17 +240,18 @@ var showGeneInfo = function(jsonObj)
                             "<div class='transcript-td transcrpt-name transcript-title'>Name</div>"+
                             "<div class='transcript-td transcrpt-biotype transcript-title'>Biotype</div>"+
                         "</div>"+
-                        createTranscriptTable(transcripts, canonical_Transcript_ID)+
+                        createTranscriptTable(transcripts, selectedGeneCanonicalTranscript)+
                     "</div>"+
                 "</div>"+
                 "<div class='modal-footer'>"+
-                    "<button type='button' class='btn btn-default' data-dismiss='modal' data-canonical='"+canonical_Transcript_ID+"' data-id='"+jsonObj.id+"' onclick='callExplaination(this)'> More Information </button>"+
+                    "<button type='button' class='btn btn-default' data-dismiss='modal' data-canonical='"+selectedGeneCanonicalTranscript.canonicalTranscript+"' data-id='"+jsonObj.id+"' onclick='callExplaination(this)'> More Information </button>"+
                     "<button type='button' class='btn btn-default' data-dismiss='modal'>Close</button>"+
                 "</div>"+
             "</div>"+
         "</div>"+
     "</div>";
     $(".selected-info").val("Chromosome " + $(".chromosome").attr("id") + " : " + actualStart + " - " + actualEnd);
+    console.log(selectedGeneCanonicalTranscript.canonicalTranscript);
     return html;
 }
 
@@ -267,8 +268,8 @@ var callExplaination = function(btn)
             success: function(data)
             {
                 $(".spinner-div").hide();
+                //selectedGeneCanonicalTranscript = $(btn).data('canonical');
                 $('body').append(data);
-                selectedGeneCanonicalTranscript = $(btn).data('canonical');
             },
             error: function()
             {
@@ -285,7 +286,8 @@ var createTranscriptTable = function(transcripts, canonical_Transcript_ID)
         if(transcripts[i].is_canonical == 1)
         {
             html += "<div class='transcript-tr canonical'>";
-            canonical_Transcript_ID = transcripts[i].id;
+            canonical_Transcript_ID.canonicalTranscript = transcripts[i].id;
+            console.log('have');
         }
         else
         {
@@ -408,12 +410,10 @@ var drawStrand = function()
             }
         }
     }
-    function makeSVG(tag, attrs) {
-        var el= document.createElementNS('http://www.w3.org/2000/svg', tag);
-        for (var k in attrs)
-            el.setAttribute(k, attrs[k]);
-        return el;
-    }
+    //function makeSVG(tag, attrs) {
+    //    var el= document.createElementNS('http://www.w3.org/2000/svg', tag);
+    //    for (var k in attrs)
+    //        el.setAttribute(k, attrs[k]);
+    //    return el;
+    //}
 }
-
-

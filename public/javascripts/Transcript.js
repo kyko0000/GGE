@@ -1,13 +1,14 @@
 /**
  * Created by yuechungng on 19/2/2016.
  */
-function Transcript(start, end, id, strand) {
+function Transcript(start, end, id, strand, name) {
     this.start = start;
     this.end = end;
     this.id = id;
     this.strand = strand;
     this.name = name;
     this.isCanonical;
+    this.transcriptButton;
     this.exons = [];
 
 }
@@ -52,8 +53,10 @@ Transcript.prototype.addExon = function(exon)
 
 Transcript.prototype.canonicalCheck = function(id)
 {
+    console.log("canonicalCheck: "+ this.id + " with canonical ID: "+ id);
     if (this.id == id) {
         this.isCanonical = true;
+        console.log("canonical");
     }
     else {
         this.isCanonical = false
@@ -62,6 +65,56 @@ Transcript.prototype.canonicalCheck = function(id)
 
 Transcript.prototype.drawTranscript = function(svgContainer)
 {
+    var svgWidth = $(svgContainer).width();
+    var svgStart = parseInt(svgWidth * 0.05);
+    var svgEnd = parseInt(svgWidth * 0.95);
+    var groupSVG = makeSVG('g', { //group svg tag for the ruler
+        stroke: 'black',
+        'stroke-width': '1',
+        id: 'scale-ruler'
+    });
+    $(svgContainer).append(groupSVG);
+    var rulerleftStraightLine = makeSVG('line',
+        {
+            x1: svgStart,
+            y1: '50',
+            x2: svgStart,
+            y2: '60'
+        });
+    var rulerhorizontalLine = makeSVG('line',
+        {
+            x1:svgStart,
+            y1: '55',
+            x2: svgEnd,
+            y2: '55'
+        });
+    var rulerRightStraightLine = makeSVG('line',
+        {
+            x1: svgEnd,
+            y1: '50',
+            x2: svgEnd,
+            y2: '60'
+        });
+
+    var startTextSVG = makeTextSVG('text',
+        {
+            x: '0',
+            y: '40'
+        },
+    this.start);
+    var endTextSVG = makeTextSVG('text',
+        {
+            x: parseInt(svgWidth*0.9),
+            y: '40'
+        },this.end)
+
+    $("#scale-ruler").append(rulerleftStraightLine);
+    $("#scale-ruler").append(rulerhorizontalLine);
+    $("#scale-ruler").append(rulerRightStraightLine);
+    $("#scale-ruler").append(startTextSVG);
+    $("#scale-ruler").append(endTextSVG);
+
+
     for(i=0;i<this.exons.length;i++)
     {
         this.exons[i].drawExon(svgContainer, this.start, this.end);
@@ -75,6 +128,26 @@ Transcript.prototype.testingMessage = function()
     {
         this.exons[i].testingMessage();
     }
+}
+
+Transcript.prototype.createTranscript = function(dropdownList)
+{
+    this.transcriptButton = $(document.createElement('a'));
+    if(this.isCanonical) {
+        $(this.transcriptButton).attr('class', 'selected');
+    }
+    $(this.transcriptButton).attr('href', '#');
+    $(this.transcriptButton).text(this.name);
+    $(dropdownList).append(this.transcriptButton);
+    $(this.transcriptButton).click(function(e)
+    {
+       this.sayHello();
+    }.bind(this));
+    $(dropdownList).append()
+}
+Transcript.prototype.sayHello = function()
+{
+    alert(this.name+"    YO!!!");
 }
 
 

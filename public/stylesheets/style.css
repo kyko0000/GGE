@@ -242,6 +242,10 @@ td
     margin-right: 10px;
     display: inline-block;
 }
+.selected
+{
+    background-color: lightyellow;
+}
 /* Animation CSS */
 /* translation direction animation CSS*/
 

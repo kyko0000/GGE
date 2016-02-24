@@ -4,6 +4,11 @@
     .explanation-area-title
         h1.title-text Gene Structure and Information
     .svg-container
+        .dropdown#svg-menu
+            button.btn.btn-xs.btn-default.dropdown-toggle#svg-dropbown(type='button', data-toggle='dropdown',aria-haspopup='true',aria-expanded='false') Transcripts
+                span.caret
+            ul.dropdown-menu#transcript-menu(aria-labelledby='svg-dropdown')
+                li
         svg.explanation-area#svg-container
     .svg-btn
         .btn-container
@@ -14,5 +19,13 @@ script(type='text/javascript' src='javascripts/Transcript.js')
 script(type='text/javascript' src='javascripts/Exon.js')
 script(type='text/javascript' src='javascripts/explanationEvent.js')
 script.
-    explanation('#{transcripts}', '#{exons}', '#{cds}','#{id}', selectedGeneCanonicalTranscript);
-
+    //console.log(getCanonicalTranscript());
+    var explanation = new explanationCreater('#{transcripts}', '#{exons}', '#{cds}','#{id}',selectedGeneCanonicalTranscript.canonicalTranscript);
+    explanation.drawSVG();
+    svgPanZoom('#svg-container',
+            {
+                zoomEnable: true,
+                controlIconsEnable: true,
+                fit: 1,
+                center: 1
+            });
