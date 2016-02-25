@@ -13,5 +13,6 @@
 
  require('./getGene').rest(router);
  require('./GeneInfo').rest(router);
+ require('./getSequence').rest(router);
 
  module.exports = router;

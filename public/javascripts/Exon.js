@@ -7,6 +7,33 @@ function Exon(start, end, id, parent) {
     this.id = id;
     this.parent = parent
     this.exonSVG;
+    this.getExonSequence = function()
+    {
+        //conosle.log('clicked');
+        var data = {};
+        data.id = this.id;
+        $.ajax(
+            {
+                url: './api/getSequence',
+                data: data,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function(data)
+                {
+                    var sequence = makeTextSVG('text',
+                        {
+                            'font-size': '10',
+                            class: 'exon-sequence'
+                        }, data);
+                    $(this.exonSVG).append(sequence);
+                },
+                error: function(xhr, status, err)
+                {
+                    console.log("Get Sequence Ajax Error");
+                }
+            }
+        )
+    }
 }
 Exon.prototype.isChildOf = function(transcriptID)
 {
@@ -19,7 +46,11 @@ Exon.prototype.drawExon = function(svgContainer, transcriptStart, transcriptEnd)
     var svgEndPoint = parseInt(svgWidth*0.95);
     var svgLength = svgEndPoint - svgStartPoint;
     var transcriptLength = transcriptEnd - transcriptStart;
-    this.exonSVG = this.makeSVG('rect',
+    this.exonSVG = makeSVG('g',
+        {
+            id:this.id
+        });
+    var exonRect = this.makeSVG('rect',
         {
             id: this.id,
             class: 'exon',
@@ -30,7 +61,12 @@ Exon.prototype.drawExon = function(svgContainer, transcriptStart, transcriptEnd)
             style:'fill:blue;fill-opacity:0.6'
         }
     )
+    $(this.exonSVG).append(exonRect);
     $(svgContainer).append(this.exonSVG);
+    $(this.exonSVG).dblclick(function(e)
+    {
+        this.getExonSequence();
+    }.bind(this));
 }
 Exon.prototype.makeSVG = function(tag, attrs)
 {

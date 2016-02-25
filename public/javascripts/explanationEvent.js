@@ -1,24 +1,6 @@
 /**
  * Created by yuechungng on 19/2/2016.
  */
-$("#testbtn").click(function()
-{
-    $.ajax(
-    {
-        url: './explanation',
-        type: 'GET',
-        success: function(data)
-        {
-            $("body").append(data);
-        },
-        error: function(xhr, status, error)
-        {
-            alert("ERROR!!"+error.message);
-        }
-    });
-
-});
-
 function explanationCreater(transcripts,exons,cds,id,canonicalTranscript)
 {
     transcripts = transcripts.replace(/&quot;/g, '"');
@@ -31,10 +13,11 @@ function explanationCreater(transcripts,exons,cds,id,canonicalTranscript)
     this.transcriptIDList = [];
     this.exonList = [];
     this.cdsList = [];
+    var svgContainer = $('#svg-container');
 
     //alert(transcripts);
     for (i = 0; i < this.transcriptObjs.length; i++) {
-        var transcript = new Transcript(this.transcriptObjs[i].start, this.transcriptObjs[i].end, this.transcriptObjs[i].transcript_id, this.transcriptObjs[i].strand, this.transcriptObjs[i].external_name);
+        var transcript = new Transcript(this.transcriptObjs[i].start, this.transcriptObjs[i].end, this.transcriptObjs[i].transcript_id, this.transcriptObjs[i].strand, this.transcriptObjs[i].external_name, svgContainer);
         transcript.canonicalCheck(canonicalTranscript);
         this.transcriptList.push(transcript);
         this.transcriptIDList.push(this.transcriptObjs[i].transcript_id);
@@ -54,12 +37,12 @@ function explanationCreater(transcripts,exons,cds,id,canonicalTranscript)
 }
 explanationCreater.prototype.drawSVG = function()
 {
-    var svgContainer = $('#svg-container');
-    this.transcriptList[0].drawTranscript(svgContainer);
-    var transcriptMenu = $("#transcript-menu").children();
+    //this.transcriptList[0].drawTranscript(svgContainer);
+    var transcriptMenu = $("#transcript-menu > .menu");
     for(i=0; i<this.transcriptList.length;i++)
     {
         this.transcriptList[i].createTranscript(transcriptMenu);
+        this.transcriptList[i].drawCanonicalTranscript();
     }
 }
 

@@ -1,7 +1,7 @@
 /**
  * Created by yuechungng on 19/2/2016.
  */
-function Transcript(start, end, id, strand, name) {
+function Transcript(start, end, id, strand, name, svgContainer) {
     this.start = start;
     this.end = end;
     this.id = id;
@@ -10,8 +10,10 @@ function Transcript(start, end, id, strand, name) {
     this.isCanonical;
     this.transcriptButton;
     this.exons = [];
+    this.svgContainer = svgContainer;
 
 }
+Transcript.panZoomInstance; //static object variable for all transcript object
 Transcript.prototype.addExon = function(exon)
 {
     if(!exon.isChildOf(this.id))
@@ -63,9 +65,18 @@ Transcript.prototype.canonicalCheck = function(id)
     }
 }
 
-Transcript.prototype.drawTranscript = function(svgContainer)
+Transcript.prototype.drawCanonicalTranscript = function()
 {
-    var svgWidth = $(svgContainer).width();
+    if(this.isCanonical)
+    {
+        $(this.transcriptButton).attr('class', 'selected');
+        this.drawTranscript();
+    }
+}
+
+Transcript.prototype.drawTranscript = function()
+{
+    var svgWidth = $(this.svgContainer).width();
     var svgStart = parseInt(svgWidth * 0.05);
     var svgEnd = parseInt(svgWidth * 0.95);
     var groupSVG = makeSVG('g', { //group svg tag for the ruler
@@ -73,7 +84,7 @@ Transcript.prototype.drawTranscript = function(svgContainer)
         'stroke-width': '1',
         id: 'scale-ruler'
     });
-    $(svgContainer).append(groupSVG);
+    $(this.svgContainer).append(groupSVG);
     var rulerleftStraightLine = makeSVG('line',
         {
             x1: svgStart,
@@ -115,10 +126,29 @@ Transcript.prototype.drawTranscript = function(svgContainer)
     $("#scale-ruler").append(endTextSVG);
 
 
-    for(i=0;i<this.exons.length;i++)
+    for(var i=0;i<this.exons.length;i++)
     {
-        this.exons[i].drawExon(svgContainer, this.start, this.end);
+        this.exons[i].drawExon(this.svgContainer, this.start, this.end);
     }
+    var container = document.querySelector("#svg-container");
+    panZoomInstance = svgPanZoom(container,
+        {
+            zoomEnable: true,
+            controlIconsEnabled: true,
+            minZoom: 0.5,
+            maxZoom:10,
+            fit: 1,
+            center: 1,
+            onZoom: function(zoomScale)
+            {
+                if(zoomScale > 5)
+                {
+                    console.log(this.getPan());
+                }
+
+                //console.log(zoomScale);
+            }
+        });
 }
 
 Transcript.prototype.testingMessage = function()
@@ -133,21 +163,14 @@ Transcript.prototype.testingMessage = function()
 Transcript.prototype.createTranscript = function(dropdownList)
 {
     this.transcriptButton = $(document.createElement('a'));
-    if(this.isCanonical) {
-        $(this.transcriptButton).attr('class', 'selected');
-    }
-    $(this.transcriptButton).attr('href', '#');
     $(this.transcriptButton).text(this.name);
     $(dropdownList).append(this.transcriptButton);
     $(this.transcriptButton).click(function(e)
     {
-       this.sayHello();
+        panZoomInstance.destroy();
+        $(this.svgContainer).children().remove();
+        this.drawTranscript();
     }.bind(this));
-    $(dropdownList).append()
-}
-Transcript.prototype.sayHello = function()
-{
-    alert(this.name+"    YO!!!");
 }
 
 

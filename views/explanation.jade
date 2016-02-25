@@ -8,7 +8,10 @@
             button.btn.btn-xs.btn-default.dropdown-toggle#svg-dropbown(type='button', data-toggle='dropdown',aria-haspopup='true',aria-expanded='false') Transcripts
                 span.caret
             ul.dropdown-menu#transcript-menu(aria-labelledby='svg-dropdown')
-                li
+                li.menu
+                li.divider
+                li.disabled
+                    a(style="background-color:lightyellow") Canonical Transcript
         svg.explanation-area#svg-container
     .svg-btn
         .btn-container
@@ -22,10 +25,3 @@ script.
     //console.log(getCanonicalTranscript());
     var explanation = new explanationCreater('#{transcripts}', '#{exons}', '#{cds}','#{id}',selectedGeneCanonicalTranscript.canonicalTranscript);
     explanation.drawSVG();
-    svgPanZoom('#svg-container',
-            {
-                zoomEnable: true,
-                controlIconsEnable: true,
-                fit: 1,
-                center: 1
-            });

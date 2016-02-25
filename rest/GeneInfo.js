@@ -11,7 +11,7 @@ var option = {
 
 function rest(router, data)
 {
-    router.get(/gene_info/, function(req, res){
+    router.get('/gene_info/', function(req, res){
         var geneID = req.query.id;
         //res.send(showInfo(geneID));
         var getData = function(data)
@@ -23,7 +23,7 @@ function rest(router, data)
             res.send(data);
         }
         option.path = "/lookup/id/" + geneID +"?expand=1";
-        console.log()
+        //console.log()
         ensemblRestApi.callRestGet(option, getData);
     });
 

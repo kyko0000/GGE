@@ -246,6 +246,11 @@ td
 {
     background-color: lightyellow;
 }
+#svg-container .exon:hover
+{
+    opacity: 0.1
+}
+
 /* Animation CSS */
 /* translation direction animation CSS*/
 
