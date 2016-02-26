@@ -268,6 +268,7 @@ var callExplaination = function(btn)
             success: function(data)
             {
                 $(".explanation-area").remove();
+                //
                 //selectedGeneCanonicalTranscript = $(btn).data('canonical');
                 $('body').append(data);
                 $(".spinner-div").hide();
