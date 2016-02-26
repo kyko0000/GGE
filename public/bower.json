@@ -1,0 +1,23 @@
+{
+  "name": "GGE",
+  "homepage": "https://github.com/kyko0000/GGE",
+  "authors": [
+    "kyko0000 <kyko0000@gmail.com>"
+  ],
+  "description": "final year project",
+  "main": "index.html",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-switch": "^3.3.2",
+    "svg-pan-zoom": "^3.2.6"
+  }
+}
