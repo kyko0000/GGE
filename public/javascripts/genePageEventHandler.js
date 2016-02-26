@@ -267,9 +267,10 @@ var callExplaination = function(btn)
             type: 'GET',
             success: function(data)
             {
-                $(".spinner-div").hide();
+                $(".explanation-area").remove();
                 //selectedGeneCanonicalTranscript = $(btn).data('canonical');
                 $('body').append(data);
+                $(".spinner-div").hide();
             },
             error: function()
             {

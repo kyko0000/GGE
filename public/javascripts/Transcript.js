@@ -129,8 +129,18 @@ Transcript.prototype.drawTranscript = function()
     for(var i=0;i<this.exons.length;i++)
     {
         this.exons[i].drawExon(this.svgContainer, this.start, this.end);
+        if(this.strand = -1) {
+          this.exons[i].drawExonDescription(this.exons.length - i, this.exons.length);
+        }
+        else
+        {
+            this.exons[i].drawExonDescription(i, this.exons.length);
+        }
+        //$("#g-"+ this.exons[i].id).append(exonDescription, this.exons.length);
     }
+    this.drawIntron();
     var container = document.querySelector("#svg-container");
+    var exonDescriptionShowned = false;
     panZoomInstance = svgPanZoom(container,
         {
             zoomEnable: true,
@@ -141,9 +151,15 @@ Transcript.prototype.drawTranscript = function()
             center: 1,
             onZoom: function(zoomScale)
             {
-                if(zoomScale > 5)
+                if(zoomScale > 5 && !exonDescriptionShowned)
                 {
-                    console.log(this.getPan());
+                    $(".exonDescription").attr("class", "exonDescription show");
+                    exonDescriptionShowned = true;
+                }
+                else if(zoomScale < 5)
+                {
+                    $(".exonDescription").attr("class", "exonDescription hidden");
+                    exonDescriptionShowned = false;
                 }
 
                 //console.log(zoomScale);
@@ -171,6 +187,26 @@ Transcript.prototype.createTranscript = function(dropdownList)
         $(this.svgContainer).children().remove();
         this.drawTranscript();
     }.bind(this));
+}
+
+Transcript.prototype.drawIntron = function()
+{
+    for(var i = 0; i<this.exons.length-1; i++)
+    {
+        var startX = this.exons[i].svgEndPointX;
+        var endX = this.exons[i+1].svgStartPointX;
+        var xRadius = (endX - startX) * 4;
+        var intronSVG = makeSVG('path',
+            {
+                d: 'M '+ startX + ' 150 A ' + xRadius + " " + xRadius + " 0 0 1 " + endX + " 150",
+                stroke: '#e0e0e0',
+                'stroke-width': '2',
+                fill: 'none'
+            });
+        console.log(intronSVG);
+        $('#g-'+this.exons[i].id).append(intronSVG);
+
+    }
 }
 
 

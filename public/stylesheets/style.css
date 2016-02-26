@@ -251,6 +251,19 @@ td
     opacity: 0.1
 }
 
+.exonDescription.hidden
+{
+    opacity: 0;
+}
+.exonDescription.show
+{
+    opacity:0.3;
+}
+.exonDescription.show:hover
+{
+    opacity: 1;
+}
+
 /* Animation CSS */
 /* translation direction animation CSS*/
 
