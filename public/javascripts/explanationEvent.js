@@ -25,15 +25,15 @@ function explanationCreater(transcripts,exons,cds,id,canonicalTranscript)
     //console.log(exonObjs.length);
 
     for (i = 0; i < this.exonObjs.length; i++) {
-        var exon = new Exon(this.exonObjs[i].start, this.exonObjs[i].end, this.exonObjs[i].id, this.exonObjs[i].Parent);
+        var exon = new Exon(this.exonObjs[i].start, this.exonObjs[i].end, this.exonObjs[i].id, this.exonObjs[i].Parent, this.exonObjs[i].rank);
         var parent = this.exonObjs[i].Parent;
         var index = this.transcriptIDList.indexOf(this.exonObjs[i].Parent);
         if (index != -1) {
             //console.log("Adding Exon with Parent is " + exon.parent + " to transcript " + transcriptList[index].id);
             this.transcriptList[index].addExon(exon);
         }
-        //console.log(index);
     }
+    console.log(this.transcriptList[0].testingMessage());
 }
 explanationCreater.prototype.drawSVG = function()
 {

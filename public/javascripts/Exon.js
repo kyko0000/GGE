@@ -1,7 +1,7 @@
 /**
  * Created by yuechungng on 19/2/2016.
  */
-function Exon(start, end, id, parent) {
+function Exon(start, end, id, parent, rank) {
     this.start = start;
     this.end = end;
     this.id = id;
@@ -11,6 +11,7 @@ function Exon(start, end, id, parent) {
     this.svgStartPointY = 125;
     this.svgWidth;
     this.svgEndPointX;
+    this.rank = rank;
     this.getExonSequence = function()
     {
         //conosle.log('clicked');
@@ -83,22 +84,22 @@ Exon.prototype.drawExon = function(svgContainer, transcriptStart, transcriptEnd)
 }
 Exon.prototype.isBehind = function(exon)
 {
-    return (this.start > exon.end);
+    return (this.rank > exon.rank);
 }
 Exon.prototype.isFrontOf = function(exon)
 {
-    return (this.end < exon.start);
+    return (this.rank < exon.rank);
 }
 Exon.prototype.testingMessage = function()
 {
-    console.log("Exon: Parent: "+this.parent+" Start: "+this.start+" End: "+ this.end);
+    console.log("Exon: Parent: "+this.parent+" Start: "+this.start+" End: "+ this.end + "Rank:" + this.rank);
 }
 Exon.prototype.updateSVG = function(svg)
 {
     $("#g-"+this.id).append(svg);
 
 }
-Exon.prototype.drawExonDescription = function(index, length)
+Exon.prototype.drawExonDescription = function(length)
 {
     var exonDescriptionSVG = makeTextSVG('text',
         {
@@ -107,7 +108,7 @@ Exon.prototype.drawExonDescription = function(index, length)
             x: this.svgStartPointX,
             y: 180,
             'font-size': 1,
-        }, "Exon " + index + " / " + length);
+        }, "Exon " + this.rank + " / " + length);
     $("#g-"+this.id).append(exonDescriptionSVG);
     $(this.exonSVG).hover(function(e)
     {

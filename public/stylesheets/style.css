@@ -263,6 +263,15 @@ td
 {
     opacity: 1;
 }
+#focusing-transcript-info
+{
+    display: inline-block;
+    height: 100%;
+    width: 40%;
+    margin-left:1%;
+    border:none;
+    overflow: scroll;
+}
 
 /* Animation CSS */
 /* translation direction animation CSS*/

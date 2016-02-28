@@ -29,26 +29,43 @@ Transcript.prototype.addExon = function(exon)
         var inserted = false
         for (j = 0; j < this.exons.length && !inserted; j++) //check from first exon to last exon
         {
-            if(j == 0 || exon.isFrontOf(this.exons[0])) //if exon is in front of all exons in list --> put it at the front
+            //    if(j == 0 || exon.isFrontOf(this.exons[0])) //if exon is in front of all exons in list --> put it at the front
+            //    {
+            //        this.exons.splice(0,0,exon);
+            //        inserted = true;
+            //    }
+            //    if (exon.isBehind(this.exons[j])&&exon.isFrontOf(this.exons[j+1])) //if exon is Behind i th exon and in front of i+1 th exon --> put it between of them
+            //    {
+            //        this.exons.splice(j+1, 0, exon);
+            //        inserted = true;
+            //    }
+            //    if(j = this.exons.length-1&&exon.isBehind(this.exons[j])) //if exon is behind all exons in list --> put it to the last
+            //    {
+            //        this.exons.push(exon);
+            //        inserted = true;
+            //    }
+            //}
+            //if(inserted)
+            //{
+            //    console.log("Inserted");
+            //}
+            if(exon.rank == 1)
             {
                 this.exons.splice(0,0,exon);
                 inserted = true;
             }
-            if (exon.isBehind(this.exons[j])&&exon.isFrontOf(this.exons[j+1])) //if exon is Behind i th exon and in front of i+1 th exon --> put it between of them
+            if(this.exons[j].isBehind(exon))
             {
-                this.exons.splice(j+1, 0, exon);
-                inserted = true;
-            }
-            if(j = this.exons.length-1&&exon.isBehind(this.exons[j])) //if exon is behind all exons in list --> put it to the last
-            {
-                this.exons.push(exon);
+                this.exons.splice(j, 0, exon);
                 inserted = true;
             }
         }
-        if(inserted)
+        if(!inserted)
         {
-            console.log("Inserted");
+            this.exons.push(exon);
+            inserted = true;
         }
+
         //return inserted;
     }
 }
@@ -129,12 +146,12 @@ Transcript.prototype.drawTranscript = function()
     for(var i=0;i<this.exons.length;i++)
     {
         this.exons[i].drawExon(this.svgContainer, this.start, this.end);
-        if(this.strand = -1) {
-          this.exons[i].drawExonDescription(this.exons.length - i, this.exons.length);
+        if(this.strand == -1) {
+          this.exons[i].drawExonDescription(this.exons.length);
         }
-        else
+        else (this.strand == 1)
         {
-            this.exons[i].drawExonDescription(i, this.exons.length);
+            this.exons[i].drawExonDescription(this.exons.length);
         }
         //$("#g-"+ this.exons[i].id).append(exonDescription, this.exons.length);
     }
@@ -151,12 +168,12 @@ Transcript.prototype.drawTranscript = function()
             center: 1,
             onZoom: function(zoomScale)
             {
-                if(zoomScale > 5 && !exonDescriptionShowned)
+                if(zoomScale > 2 && !exonDescriptionShowned)
                 {
                     $(".exonDescription").attr("class", "exonDescription show");
                     exonDescriptionShowned = true;
                 }
-                else if(zoomScale < 5)
+                else if(zoomScale < 2)
                 {
                     $(".exonDescription").attr("class", "exonDescription hidden");
                     exonDescriptionShowned = false;
@@ -165,11 +182,20 @@ Transcript.prototype.drawTranscript = function()
                 //console.log(zoomScale);
             }
         });
+    //textbox show info
+    $("#focusing-transcript-info").val('');
+    var infoMsg = this.name;
+    if(this.strand == 1)
+        infoMsg += " Forward Strand";
+    else if(this.strand == -1)
+        infoMsg += " Reverse Strand";
+    $("#focusing-transcript-info").val(infoMsg);
+    //$("#focusing-transcript-info").width($("#focusing-transcript-info").val().length);
 }
 
-Transcript.prototype.testingMessage = function()
+Transcript.prototype.testingMessage = function() //for testing only
 {
-    console.log("Transcript ID: " + this.id);
+    console.log("Transcript ID: " + this.id + "Strand: " + this.strand);
     for(i=0; i<this.exons.length;i++)
     {
         this.exons[i].testingMessage();
@@ -189,24 +215,35 @@ Transcript.prototype.createTranscript = function(dropdownList)
     }.bind(this));
 }
 
+
 Transcript.prototype.drawIntron = function()
 {
-    for(var i = 0; i<this.exons.length-1; i++)
-    {
-        var startX = this.exons[i].svgEndPointX;
-        var endX = this.exons[i+1].svgStartPointX;
+    for (var i = 0; i < this.exons.length - 1; i++) {
+        console.log(this.strand);
+        if(this.strand == '1') { //forward stard
+            console.log("Forward");
+            var startX = this.exons[i].svgEndPointX;
+            var endX = this.exons[i + 1].svgStartPointX;
+        }
+        else if(this.strand == '-1')//reverse strand
+        {
+            console.log("reverse");
+            var startX = this.exons[i].svgStartPointX;
+            var endX = this.exons[i+1].svgEndPointX;
+        }
         var xRadius = (endX - startX) * 4;
         var intronSVG = makeSVG('path',
             {
-                d: 'M '+ startX + ' 150 A ' + xRadius + " " + xRadius + " 0 0 1 " + endX + " 150",
+                d: 'M ' + startX + ' 150 A ' + xRadius + " " + xRadius + " 0 0 1 " + endX + " 150",
                 stroke: '#e0e0e0',
                 'stroke-width': '2',
                 fill: 'none'
             });
         console.log(intronSVG);
-        $('#g-'+this.exons[i].id).append(intronSVG);
+        $('#g-' + this.exons[i].id).append(intronSVG);
 
     }
+
 }
 
 
