@@ -21,3 +21,19 @@ var makeTextSVG = function(tag, attrs, val)
     el.textContent = val;
     return el;
 }
+
+var setSVGAttr = function(svg, attrs)
+{
+    for(var k in attrs)
+    {
+        svg.setAttribute(k, attrs[k]);
+
+    }
+    return svg;
+}
+
+var setSVGText = function(svg, text)
+{
+    svg.textContent = text;
+    return svg;
+}

@@ -60,11 +60,11 @@ Exon.prototype.drawExon = function(svgContainer, transcriptStart, transcriptEnd)
     this.svgStartPointX = ((this.start - transcriptStart)/transcriptLength) * svgLength + svgStartPoint;
     this.svgWidth = ((this.end - this.start)/transcriptLength) * svgLength;
     this.svgEndPointX = this.svgWidth + this.svgStartPointX;
-    this.exonSVG = makeSVG('g',
+    var exonGroup = makeSVG('g',
         {
             id:'g-'+this.id
         });
-    var exonRect = makeSVG('rect',
+    this.exonSVG = makeSVG('rect',
         {
             id: this.id,
             class: 'exon',
@@ -75,8 +75,8 @@ Exon.prototype.drawExon = function(svgContainer, transcriptStart, transcriptEnd)
             style:'fill:blue;fill-opacity:0.6'
         }
     )
-    $(this.exonSVG).append(exonRect);
-    $(svgContainer).append(this.exonSVG);
+    $(exonGroup).append(this.exonSVG);
+    $(svgContainer).append(exonGroup);
     //$(this.exonSVG).dblclick(function(e)
     //{
     //    this.getExonSequence();
@@ -107,17 +107,24 @@ Exon.prototype.drawExonDescription = function(length)
             class: 'exonDescription hidden',
             x: this.svgStartPointX,
             y: 180,
-            'font-size': 1,
+            'font-size': 3,
         }, "Exon " + this.rank + " / " + length);
     $("#g-"+this.id).append(exonDescriptionSVG);
+
+    //exon hover
     $(this.exonSVG).hover(function(e)
     {
         $('#d-'+ this.id+".show").css('opacity', '1');
     }.bind(this),
     function(e)
     {
-        $('#d-'+this.id+'.show').css('opacity',0.3);
+        $('#d-'+this.id+'.show').css('opacity',0.2);
     }.bind(this));
+}
+Exon.prototype.exonAnimation = function()
+{
+    console.log(this.id);
+    $("#"+this.id).attr('class', 'exon blinkingEach');
 }
 
 

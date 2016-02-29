@@ -11,7 +11,8 @@ function Transcript(start, end, id, strand, name, svgContainer) {
     this.transcriptButton;
     this.exons = [];
     this.svgContainer = svgContainer;
-
+    this.btnExons;
+    this.btnTranscription;
 }
 Transcript.panZoomInstance; //static object variable for all transcript object
 Transcript.prototype.addExon = function(exon)
@@ -191,6 +192,10 @@ Transcript.prototype.drawTranscript = function()
         infoMsg += " Reverse Strand";
     $("#focusing-transcript-info").val(infoMsg);
     //$("#focusing-transcript-info").width($("#focusing-transcript-info").val().length);
+
+
+    //show two btn for explanation
+    this.exonsBtn();
 }
 
 Transcript.prototype.testingMessage = function() //for testing only
@@ -219,15 +224,15 @@ Transcript.prototype.createTranscript = function(dropdownList)
 Transcript.prototype.drawIntron = function()
 {
     for (var i = 0; i < this.exons.length - 1; i++) {
-        console.log(this.strand);
+        //console.log(this.strand);
         if(this.strand == '1') { //forward stard
-            console.log("Forward");
+            //console.log("Forward");
             var startX = this.exons[i].svgEndPointX;
             var endX = this.exons[i + 1].svgStartPointX;
         }
         else if(this.strand == '-1')//reverse strand
         {
-            console.log("reverse");
+            //console.log("reverse");
             var startX = this.exons[i].svgStartPointX;
             var endX = this.exons[i+1].svgEndPointX;
         }
@@ -239,11 +244,72 @@ Transcript.prototype.drawIntron = function()
                 'stroke-width': '2',
                 fill: 'none'
             });
-        console.log(intronSVG);
-        $('#g-' + this.exons[i].id).append(intronSVG);
+        //console.log(intronSVG);
+        $('#svg-container').append(intronSVG);
 
     }
 
 }
+Transcript.prototype.exonsBtn = function()
+{
+    //this.btnExons = "<button class='intronduction btn btn-info btn-lg' id='exons-intro'>EXONS</button>";
+    this.btnExons = document.createElement("button");
+    $(this.btnExons).attr('class', 'introduction btn btn-info btn-lg');
+    $(this.btnExons).attr('id', 'exons-intro');
+    $(this.btnExons).html("EXONS");
+    $("#exons-btn").empty();
+    $("#exons-btn").append(this.btnExons);
 
+    console.log(this.btnExons);
+    var interval;
+    var clicked = false;
+    $(this.btnExons).click(function()
+    {
+        if(!clicked) {
+            clicked = true;
+            $("#exons-intro").attr('class', 'introduction btn btn-success btn-lg');
+            $(".exon").attr('class', 'exon blinking');
+            var explanationText = makeTextSVG('text',
+                {
+                    class: 'fadeInAndOut',
+                    id: 'explanation-text',
+                    x: ($('.svg-container').width() / 2) - 50,
+                    y: '270',
+                    'font-size': '15',
+                    fill: 'black',
+                    'font-weight': 'bold'
+                }, "ALL EXONS");
+            $("#svg-container").append(explanationText);
+            setTimeout(function()
+            {
+                $('.exon').attr('class','exon');
+            },6000)
+            var i = 0;
+            interval = setInterval(function () {
+                $(".exon").attr('class', 'exon');
+                $("#explanation-text").remove();
+                console.log(i);
+                console.log(this.exons.length);
+                explanationText = setSVGText(explanationText, "EXON " + (i+1));
+                this.exons[i].exonAnimation();
+                //$(".exon").attr('class', 'exon');
+                $("#svg-container").append(explanationText);
+                i++;
+                if(i >= this.exons.length)
+                    i = 0;
+            }.bind(this), 7000)
+        }
+        else //click one more time
+        {
+            $('#exons-intro').attr('class', 'introduction btn btn-info btn-lg');
+            clicked= false;
+            clearInterval(interval);
+            $(".exon").attr('class', 'exon')
+            $("#explanation-text").remove();
+        }
+    }.bind(this));
+
+
+
+}
 

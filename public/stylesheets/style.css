@@ -257,7 +257,7 @@ td
 }
 .exonDescription.show
 {
-    opacity:0.3;
+    opacity:0.2;
 }
 .exonDescription.show:hover
 {
@@ -273,6 +273,46 @@ td
     overflow: scroll;
 }
 
+.exon.blinking
+{
+    -webkit-animation-name: blinker;
+    -moz-animation-name: blinker;
+    -o-animation-name: blinker;
+    animation-name: blinker;
+    -webkit-animation-duration: 2s;
+    -moz-animation-duration: 2s;
+    -o-animation-duration: 2s;
+    animation-duration: 2s;
+    -webkit-animation-iteration-count: 3;
+    -moz-animation-iteration-count: 3;
+    -o-animation-iteration-count: 3;
+    animation-iteration-count: 3;
+
+}
+
+.exon.blinkingEach
+{
+    -webkit-animation-name: blinker;
+    -moz-animation-name: blinker;
+    -o-animation-name: blinker;
+    animation-name: blinker;
+    -webkit-animation-duration: 2s;
+    -moz-animation-duration: 2s;
+    -o-animation-duration: 2s;
+    animation-duration: 2s;
+    -webkit-animation-iteration-count: 3;
+    -moz-animation-iteration-count: 3;
+    -o-animation-iteration-count: 3;
+    animation-iteration-count: 3;
+
+}
+
+#explanation-text.fadeInAndOut
+{
+    -webkit-animation:fadeInAndOut 7s;
+    -o-animation:fadeInAndOut 7s;
+    animation:fadeInAndOut 7s;
+}
 /* Animation CSS */
 /* translation direction animation CSS*/
 
@@ -296,4 +336,19 @@ td
     to {transform: translateX(-100%)}
 }
 
+/* CSS ANIMATION FOR EXPLANATION */
+@keyframes blinker /* Exons Flacking*/
+{
+    0% {opacity: 1}
+    20% {opacity: .05}
+    100% {opacity: 1}
+}
+
+@keyframes fadeInAndOut
+{
+    0% {opacity: 0}
+    10% {opacity: 1}
+    70% {opacity: 1}
+    100% {opacity: 0}
+}
 
