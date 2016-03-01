@@ -12,6 +12,9 @@ function Exon(start, end, id, parent, rank) {
     this.svgWidth;
     this.svgEndPointX;
     this.rank = rank;
+    //svg for utr and tr
+    this.utrSVG;
+    this.cdsSVG;
     this.getExonSequence = function()
     {
         //conosle.log('clicked');
@@ -81,6 +84,114 @@ Exon.prototype.drawExon = function(svgContainer, transcriptStart, transcriptEnd)
     //{
     //    this.getExonSequence();
     //}.bind(this));
+}
+
+Exon.prototype.drawExonAndShowUTRs = function(cds)
+{
+    var cdsMatched = false;
+    var exonGroup = makeSVG('g',
+        {
+            id:'g-'+this.id
+        });
+    if(cds == '')
+    {
+        this.utrSVG = makeSVG('rect',
+        {
+            id:'utr-'+this.id,
+            class: 'utr',
+            x: this.svgStartPointX,
+            y: this.svgStartPointY,
+            width: this.svgWidth,
+            height: '50',
+            'stroke-width':1,
+            style:'fill:none'
+        })
+    }
+    else if(this.start == cds.start && this.end == cds.end)
+    {
+        var exonGroup = makeSVG('g',
+            {
+                id:'g-'+this.id
+            });
+        this.cdsSVG = makeSVG('rect',
+            {
+                id: this.id,
+                class: 'exon',
+                x: this.svgStartPointX,
+                y: this.svgStartPointY,
+                width: this.svgWidth,
+                height: '50',
+                style:'fill:blue;fill-opacity:0.6'
+            }
+        )
+        $(exonGroup).append(this.exonSVG);
+        $(svgContainer).append(this.trSVG);
+        cdsMatched = true;
+    }
+    else if(this.start != cds.start && this.end == cds.end) //the most left exon
+    {
+        var utrsWidth = (cds.start - this.start)/(this.end - this.start) * this.svgWidth;
+        var trStartX = this.svgStartPointX + utrsWidth;
+        //make unfilled rectangle for utrs
+        this.utrSVG = makeSVG('rect',
+            {
+                id:'utr-'+this.id,
+                class:'utr',
+                x: this.svgStartPointX,
+                y: this.svgStartPointY,
+                width: trStartX - this.svgStartPointX,
+                height: '50',
+                'stroke-width': '1',
+                style:'fill:none;'
+            })
+        this.cdsSVG = makeSVG('rect',
+            {
+                id:'cds-'+this.id,
+                class:'cds',
+                x: trStartX,
+                y: this.svgStartPointY,
+                width: this.svgStartPointY-trStartX,
+                height: '50',
+                style:'fill:blue;opacity:0.6'
+            })
+        $(exonGroup).append(this.utrSVG);
+        $(exonGroup).append(this.cdsSVG);
+        $(svgContainer).append(exonGroup);
+        cdsMatched = true;
+    }
+    else if(this.start == cds.start && this.end != cds.end) //the most right exon
+    {
+        var utrWidth = (this.end - cds.end) / (this.end - this.start) * this.svgWidth;
+        var utrStartX = this.end - utrsWidth;
+        this.cdsSVG = makeSVG('rect',
+            {
+                id:'cds-'+this.id,
+                class:'cds',
+                x: this.svgEndPointX,
+                y: this.svgStartPointY,
+                width: utrStartX - this.svgStartPointX,
+                height: '50',
+                style:'fill:blue;opacity:0.6'
+
+            });
+        this.utrSVG = makeSVG('rect',
+            {
+                id:'utr-'+this.id,
+                class:'utr',
+                x: trStartX,
+                y: this.svgStartPointY,
+                width: this.svgEndPointX - utrStartX,
+                height: '50',
+                'stroke-width': '1',
+                style: 'fill:none;'
+
+            });
+        $(exonGroup).append(this.cdsSVG);
+        $(exonGroup).append(this.utrSVG);
+        $(svgContainer).append(exonGroup);
+        cdsMatched = true;
+    }
+    return cdsMatched
 }
 Exon.prototype.isBehind = function(exon)
 {

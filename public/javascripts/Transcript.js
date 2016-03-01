@@ -8,11 +8,16 @@ function Transcript(start, end, id, strand, name, svgContainer) {
     this.strand = strand;
     this.name = name;
     this.isCanonical;
-    this.transcriptButton;
     this.exons = [];
+    this.cdsList = [];
+    //web page element
+    this.transcriptButton;
     this.svgContainer = svgContainer;
     this.btnExons;
     this.btnTranscription;
+    //animation variable
+    this.exonAniInterval; //interval for exons Animation
+    this.transcriptionAniInterval; // interval for transcription Animation
 }
 Transcript.panZoomInstance; //static object variable for all transcript object
 Transcript.prototype.addExon = function(exon)
@@ -71,6 +76,33 @@ Transcript.prototype.addExon = function(exon)
     }
 }
 
+Transcript.prototype.addCDS = function(cds)
+{
+var inserted = false;
+    if(this.cdsList.length == 0)
+    {
+        this.cdsList.push(cds);
+        inserted = true;
+    }
+    for(j=0; j<this.cdsList.length - 1 && !inserted; j++)
+    {
+        if(this.cdsList[j].isbehindOf(cds))
+        {
+            this.cdsList.splice(j,0,cds);
+            inserted = true;
+        }
+        else if(this.cdsList[j].isFrontOf(cds) && this.cdsList[j+1].isbehindOf(cds))
+        {
+            this.cdsList.splice(j+1, 0 ,cds);
+            inserted = true;
+        }
+    }
+    if(!inserted)
+    {
+        this.cdsList.push(cds);
+    }
+}
+
 Transcript.prototype.canonicalCheck = function(id)
 {
     console.log("canonicalCheck: "+ this.id + " with canonical ID: "+ id);
@@ -88,11 +120,11 @@ Transcript.prototype.drawCanonicalTranscript = function()
     if(this.isCanonical)
     {
         $(this.transcriptButton).attr('class', 'selected');
-        this.drawTranscript();
+        this.drawTranscript(false);
     }
 }
 
-Transcript.prototype.drawTranscript = function()
+Transcript.prototype.drawTranscript = function(withcds)
 {
     var svgWidth = $(this.svgContainer).width();
     var svgStart = parseInt(svgWidth * 0.05);
@@ -133,7 +165,7 @@ Transcript.prototype.drawTranscript = function()
     this.start);
     var endTextSVG = makeTextSVG('text',
         {
-            x: parseInt(svgWidth*0.9),
+            x: parseInt(svgWidth*0.95),
             y: '40'
         },this.end)
 
@@ -143,18 +175,42 @@ Transcript.prototype.drawTranscript = function()
     $("#scale-ruler").append(startTextSVG);
     $("#scale-ruler").append(endTextSVG);
 
-
-    for(var i=0;i<this.exons.length;i++)
+    if(!withcds) {
+        for (var i = 0; i < this.exons.length; i++) {
+            this.exons[i].drawExon(this.svgContainer, this.start, this.end);
+            if (this.strand == -1) {
+                this.exons[i].drawExonDescription(this.exons.length);
+            }
+            else (this.strand == 1)
+            {
+                this.exons[i].drawExonDescription(this.exons.length);
+            }
+            //$("#g-"+ this.exons[i].id).append(exonDescription, this.exons.length);
+        }
+    }
+    else
     {
-        this.exons[i].drawExon(this.svgContainer, this.start, this.end);
-        if(this.strand == -1) {
-          this.exons[i].drawExonDescription(this.exons.length);
+        if(this.strand == 1)
+            var index = 0;
+        else
+            var index = this.cdsList.length;
+        for (var i = 0; i < this.exons.length; i++) {
+            if(index >= 0)
+                var cdsMatched = this.exons[i].drawExonAndShowUTRs(this.cdsList[index]);
+            else
+                var cdsMatched = this.exons[i].drawExonAndShowUTRs('');
+            if(cdsMatched && this.strand == 1)
+                index++;
+            else if(cdsMatched && this.strand == -1)
+                index --;
+            //if (this.strand == -1) {
+            //    this.exons[i].drawExonDescription(this.exons.length);
+            //}
+            //else (this.strand == 1)
+            //{
+            //    this.exons[i].drawExonDescription(this.exons.length);
+            //}
         }
-        else (this.strand == 1)
-        {
-            this.exons[i].drawExonDescription(this.exons.length);
-        }
-        //$("#g-"+ this.exons[i].id).append(exonDescription, this.exons.length);
     }
     this.drawIntron();
     var container = document.querySelector("#svg-container");
@@ -196,14 +252,15 @@ Transcript.prototype.drawTranscript = function()
 
     //show two btn for explanation
     this.exonsBtn();
+    this.transcriptionBtn();
 }
 
 Transcript.prototype.testingMessage = function() //for testing only
 {
-    console.log("Transcript ID: " + this.id + "Strand: " + this.strand);
-    for(i=0; i<this.exons.length;i++)
+    console.log("Transcript ID: " + this.id + " Strand: " + this.strand + " Name: "+ this.name );
+    for(i=0; i<this.cdsList.length;i++)
     {
-        this.exons[i].testingMessage();
+        this.cdsList[i].testingMsg();
     }
 }
 
@@ -216,7 +273,7 @@ Transcript.prototype.createTranscript = function(dropdownList)
     {
         panZoomInstance.destroy();
         $(this.svgContainer).children().remove();
-        this.drawTranscript();
+        this.drawTranscript(false);
     }.bind(this));
 }
 
@@ -250,6 +307,7 @@ Transcript.prototype.drawIntron = function()
     }
 
 }
+
 Transcript.prototype.exonsBtn = function()
 {
     //this.btnExons = "<button class='intronduction btn btn-info btn-lg' id='exons-intro'>EXONS</button>";
@@ -261,7 +319,7 @@ Transcript.prototype.exonsBtn = function()
     $("#exons-btn").append(this.btnExons);
 
     console.log(this.btnExons);
-    var interval;
+    //var interval;
     var clicked = false;
     $(this.btnExons).click(function()
     {
@@ -285,7 +343,7 @@ Transcript.prototype.exonsBtn = function()
                 $('.exon').attr('class','exon');
             },6000)
             var i = 0;
-            interval = setInterval(function () {
+            this.exonAniInterval = setInterval(function () {
                 $(".exon").attr('class', 'exon');
                 $("#explanation-text").remove();
                 console.log(i);
@@ -303,13 +361,43 @@ Transcript.prototype.exonsBtn = function()
         {
             $('#exons-intro').attr('class', 'introduction btn btn-info btn-lg');
             clicked= false;
-            clearInterval(interval);
+            clearInterval(this.exonAniInterval);
             $(".exon").attr('class', 'exon')
             $("#explanation-text").remove();
         }
     }.bind(this));
+}
 
+Transcript.prototype.transcriptionBtn = function()
+{
+    //create btn
+    this.btnTranscription = document.createElement('button');
+    $(this.btnTranscription).attr('class', 'introduction btn btn-info btn-lg');
+    $(this.btnTranscription).attr('id', 'transcription-intro');
+    $(this.btnTranscription).html("TRANSCRIPTION");
+    $("#transcription-btn").append(this.btnTranscription);
 
+    //button onClick event handler
+    var clicked = false;
+    $(this.btnTranscription).click(function()
+    {
+        if(!clicked)
+        {
+            clicked = true;
+            $("#transcription-intro").attr('class', 'introduction btn btn-success btn-lg');
+            panZoomInstance.destroy();
+            $(this.svgContainer).children().remove();
+            this.drawTranscript(true);
 
+        }
+        else
+        {
+            clicked = false;
+            $("#transcription-intro").attr('class', 'introduction btn btn-info btn-lg');
+            panZoomInstance.destroy();
+            $(this.svgContainer).children().remove();
+            this.drawTranscript(false);
+        }
+    }.bind(this));
 }
 

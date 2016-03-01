@@ -33,7 +33,21 @@ function explanationCreater(transcripts,exons,cds,id,canonicalTranscript)
             this.transcriptList[index].addExon(exon);
         }
     }
-    console.log(this.transcriptList[0].testingMessage());
+
+    for (i=0; i<this.cdsObjs.length; i++)
+    {
+        var cds = new Cds(this.cdsObjs[i].start, this.cdsObjs[i].end, this.cdsObjs[i].Parent, this.cdsObjs[i].strand, this.cdsObjs[i].id);
+        var parent = this.cdsObjs[i].Parent;
+        var index = this.transcriptIDList.indexOf(parent);
+        if(index != -1)
+        {
+            this.transcriptList[index].addCDS(cds);
+        }
+    }
+    for(k=0; k<this.transcriptList.length; k++)
+    {
+        console.log(this.transcriptList[k].testingMessage());
+    }
 }
 explanationCreater.prototype.drawSVG = function()
 {
