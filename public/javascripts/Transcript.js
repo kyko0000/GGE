@@ -84,22 +84,18 @@ var inserted = false;
         this.cdsList.push(cds);
         inserted = true;
     }
-    for(j=0; j<this.cdsList.length - 1 && !inserted; j++)
+    for(j=0; j<this.cdsList.length && !inserted; j++)
     {
         if(this.cdsList[j].isbehindOf(cds))
         {
             this.cdsList.splice(j,0,cds);
             inserted = true;
         }
-        else if(this.cdsList[j].isFrontOf(cds) && this.cdsList[j+1].isbehindOf(cds))
-        {
-            this.cdsList.splice(j+1, 0 ,cds);
-            inserted = true;
-        }
     }
     if(!inserted)
     {
         this.cdsList.push(cds);
+        console.log('add at last');
     }
 }
 
@@ -193,23 +189,17 @@ Transcript.prototype.drawTranscript = function(withcds)
         if(this.strand == 1)
             var index = 0;
         else
-            var index = this.cdsList.length;
+            var index = this.cdsList.length-1;
         for (var i = 0; i < this.exons.length; i++) {
-            if(index >= 0)
-                var cdsMatched = this.exons[i].drawExonAndShowUTRs(this.cdsList[index]);
+            console.log(this.exons[i].start+ "--" +this.cdsList[index].start + "||" + this.exons[i].end + " -- " + this.cdsList[index].end);
+            if(index >= 0 && index < this.cdsList.length)
+                var cdsMatched = this.exons[i].drawExonAndShowUTRs(this.cdsList[index],this.svgContainer);
             else
-                var cdsMatched = this.exons[i].drawExonAndShowUTRs('');
+                var cdsMatched = this.exons[i].drawExonAndShowUTRs('',this.svgContainer);
             if(cdsMatched && this.strand == 1)
                 index++;
             else if(cdsMatched && this.strand == -1)
                 index --;
-            //if (this.strand == -1) {
-            //    this.exons[i].drawExonDescription(this.exons.length);
-            //}
-            //else (this.strand == 1)
-            //{
-            //    this.exons[i].drawExonDescription(this.exons.length);
-            //}
         }
     }
     this.drawIntron();
