@@ -28,18 +28,9 @@ function Exon(start, end, id, parent, rank) {
                 contentType: 'application/json',
                 success: function(data)
                 {
-                    var sequence = makeTextSVG('text',
-                        {
-                            x: this.svgStartPointX,
-                            y: this.svgStartPointY,
-                            'font-size': '0.01',
-                            class: 'exon-sequence'
-                        }, data);
-                    //$(this.exonSVG).append(sequence);
-                    //console.log(this.exonSVG);
-                    //$("#"+this.id).append(sequence);
-                    this.updateSVG(sequence);
-                    console.log(sequence);
+                    $('.sequence-region').empty();
+                    $('.sequence-region').append(data);
+                    //console.log(sequence);
                 }.bind(this),
                 error: function(xhr, status, err)
                 {
@@ -80,10 +71,11 @@ Exon.prototype.drawExon = function(svgContainer, transcriptStart, transcriptEnd)
     )
     $(exonGroup).append(this.exonSVG);
     $(svgContainer).append(exonGroup);
-    //$(this.exonSVG).dblclick(function(e)
-    //{
-    //    this.getExonSequence();
-    //}.bind(this));
+    $(this.exonSVG).dblclick(function(e)
+    {
+        $(this.exonSVG).css('fill','green');
+        this.getExonSequence();
+    }.bind(this));
 }
 
 Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
@@ -93,7 +85,7 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
         {
             id:'g-'+this.id
         });
-    if(cds == '')
+    if(cds == '' || cds.start > this.end)
     {
         this.utrSVG = makeSVG('rect',
         {
@@ -103,7 +95,8 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
             y: this.svgStartPointY,
             width: this.svgWidth,
             height: '50',
-            'stroke-width':1,
+            'stroke-width': '0.1',
+            stroke: 'black',
             style:'fill:none'
         })
         $(exonGroup).append(this.utrSVG);
@@ -141,7 +134,8 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
                 y: this.svgStartPointY,
                 width: trStartX - this.svgStartPointX,
                 height: '50',
-                'stroke-width': '1',
+                'stroke-width': '0.1',
+                stroke: 'black',
                 style:'fill:none;'
             })
         this.cdsSVG = makeSVG('rect',
@@ -150,7 +144,7 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
                 class:'cds',
                 x: trStartX,
                 y: this.svgStartPointY,
-                width: this.svgStartPointY-trStartX,
+                width: this.svgEndPointX-trStartX,
                 height: '50',
                 style:'fill:blue;opacity:0.6'
             })

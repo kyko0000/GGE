@@ -273,6 +273,29 @@ td
     overflow: scroll;
 }
 
+#sequence-title
+{
+    display: inline-block;
+    width:100%;
+}
+.sequence-area-title
+{
+    background-color: skyblue;
+    text-align: center;
+    vertical-align: middle;
+    border-style:solid;
+}
+.sequence-region
+{
+    width:100%;
+    height:100px;
+    border-style: solid;
+    border-width:1px;
+    margin-top: 3px;
+    word-wrap: break-word;
+    overflow: auto;
+}
+
 .exon.blinking
 {
     -webkit-animation-name: blinker;

@@ -183,6 +183,8 @@ Transcript.prototype.drawTranscript = function(withcds)
             }
             //$("#g-"+ this.exons[i].id).append(exonDescription, this.exons.length);
         }
+        this.exonsBtn();
+        this.transcriptionBtn();
     }
     else
     {
@@ -190,8 +192,9 @@ Transcript.prototype.drawTranscript = function(withcds)
             var index = 0;
         else
             var index = this.cdsList.length-1;
+
         for (var i = 0; i < this.exons.length; i++) {
-            console.log(this.exons[i].start+ "--" +this.cdsList[index].start + "||" + this.exons[i].end + " -- " + this.cdsList[index].end);
+            //console.log(this.exons[i].start+ "--" +this.cdsList[index].start + "||" + this.exons[i].end + " -- " + this.cdsList[index].end);
             if(index >= 0 && index < this.cdsList.length)
                 var cdsMatched = this.exons[i].drawExonAndShowUTRs(this.cdsList[index],this.svgContainer);
             else
@@ -241,8 +244,8 @@ Transcript.prototype.drawTranscript = function(withcds)
 
 
     //show two btn for explanation
-    this.exonsBtn();
-    this.transcriptionBtn();
+    //this.exonsBtn();
+    //this.transcriptionBtn();
 }
 
 Transcript.prototype.testingMessage = function() //for testing only
@@ -365,6 +368,7 @@ Transcript.prototype.transcriptionBtn = function()
     $(this.btnTranscription).attr('class', 'introduction btn btn-info btn-lg');
     $(this.btnTranscription).attr('id', 'transcription-intro');
     $(this.btnTranscription).html("TRANSCRIPTION");
+    $("#transcription-btn").empty();
     $("#transcription-btn").append(this.btnTranscription);
 
     //button onClick event handler

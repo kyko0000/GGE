@@ -13,6 +13,8 @@ function explanationCreater(transcripts,exons,cds,id,canonicalTranscript)
     this.transcriptIDList = [];
     this.exonList = [];
     this.cdsList = [];
+    this.seqReg;
+
     var svgContainer = $('#svg-container');
 
     //alert(transcripts);
@@ -44,10 +46,13 @@ function explanationCreater(transcripts,exons,cds,id,canonicalTranscript)
             this.transcriptList[index].addCDS(cds);
         }
     }
-    for(k=0; k<this.transcriptList.length; k++)
-    {
-        console.log(this.transcriptList[k].testingMessage());
-    }
+    this.seqReg = $("#sequence-region");
+    this.hideShowSeqReg(false);
+    ////TESTING ONLY
+    //for(k=0; k<this.transcriptList.length; k++)
+    //{
+    //    console.log(this.transcriptList[k].testingMessage());
+    //}
 }
 explanationCreater.prototype.drawSVG = function()
 {
@@ -58,6 +63,17 @@ explanationCreater.prototype.drawSVG = function()
         this.transcriptList[i].createTranscript(transcriptMenu);
         this.transcriptList[i].drawCanonicalTranscript();
     }
+}
+explanationCreater.prototype.hideShowSeqReg = function()
+{
+
+    $("#sequence-title").click(function()
+    {
+        $(".sequence-region").toggle(1000);
+        $('html, body').animate({
+            scrollTop: $(".sequence-region").offset().top
+        }, 2000);
+    })
 }
 
 
