@@ -219,6 +219,7 @@ var showGeneInfo = function(jsonObj)
     {
         transcripts.push(jsonObj.Transcript[i]);
     }
+    //
     var html="";
     html += "<div class='modal fade' id='dia-" + jsonObj.id + "' role='dialog'>"+
         "<div class='modal-dialog'>"+
