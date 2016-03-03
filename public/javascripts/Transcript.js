@@ -15,18 +15,59 @@ function Transcript(start, end, id, strand, name, svgContainer) {
     this.svgContainer = svgContainer;
     this.btnExons;
     this.btnTranscription;
+    this.btnTranscriptSeq;
+    this.btnCdsSeq;
+    this.btncdnaSeq;
+    this.proteinSeq;
     //animation variable
     this.exonAniInterval; //interval for exons Animation
     this.transcriptionAniInterval; // interval for transcription Animation
+
+    //private method
+    this.getSequence = function()
+    {
+        var data = {};
+        data.id = this.id;
+        data.mask = 'true';
+        $.ajax(
+            {
+                url: './api/getSequence',
+                data: data,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function(data)
+                {
+                    $("#sequence-region").show();
+                    $('#sequence').empty();
+                    $('#sequence').append(data);
+                    $('#sequence').height('inherit');
+                    if($('#sequence').height() > 250)
+                    {
+                        $('#sequence').height(250);
+                    }
+                    $('#sequence-title-text').text("Sequence: " + this.id);
+                    $('html, body').animate({
+                        scrollTop: $("#sequence").offset().top
+                    }, 2000);
+
+                }.bind(this),
+                error: function(xtr, err, status)
+                {
+                    alert("AJAX: GET Sequence ERROR");
+                }
+            }
+        )
+    }
 }
 Transcript.panZoomInstance; //static object variable for all transcript object
 Transcript.prototype.addExon = function(exon)
 {
     if(!exon.isChildOf(this.id))
     {
-        console.log("Exon is not belong to " + this.id)
+        console.log("Exon is not belong to " + this.id);
         return;
     }
+    exon.addTranscript(this);
     if (this.exons.length == 0) {
         this.exons.push(exon);
         inserted = true;
@@ -35,26 +76,6 @@ Transcript.prototype.addExon = function(exon)
         var inserted = false
         for (j = 0; j < this.exons.length && !inserted; j++) //check from first exon to last exon
         {
-            //    if(j == 0 || exon.isFrontOf(this.exons[0])) //if exon is in front of all exons in list --> put it at the front
-            //    {
-            //        this.exons.splice(0,0,exon);
-            //        inserted = true;
-            //    }
-            //    if (exon.isBehind(this.exons[j])&&exon.isFrontOf(this.exons[j+1])) //if exon is Behind i th exon and in front of i+1 th exon --> put it between of them
-            //    {
-            //        this.exons.splice(j+1, 0, exon);
-            //        inserted = true;
-            //    }
-            //    if(j = this.exons.length-1&&exon.isBehind(this.exons[j])) //if exon is behind all exons in list --> put it to the last
-            //    {
-            //        this.exons.push(exon);
-            //        inserted = true;
-            //    }
-            //}
-            //if(inserted)
-            //{
-            //    console.log("Inserted");
-            //}
             if(exon.rank == 1)
             {
                 this.exons.splice(0,0,exon);
@@ -171,6 +192,7 @@ Transcript.prototype.drawTranscript = function(withcds)
     $("#scale-ruler").append(startTextSVG);
     $("#scale-ruler").append(endTextSVG);
 
+    //draw exon or cds
     if(!withcds) {
         for (var i = 0; i < this.exons.length; i++) {
             this.exons[i].drawExon(this.svgContainer, this.start, this.end);
@@ -183,8 +205,13 @@ Transcript.prototype.drawTranscript = function(withcds)
             }
             //$("#g-"+ this.exons[i].id).append(exonDescription, this.exons.length);
         }
+
+        //button for explanation
         this.exonsBtn();
         this.transcriptionBtn();
+        //button for sequence
+        $("#sequences-menu > .menu").empty();
+        this.seqBtn();
     }
     else
     {
@@ -205,6 +232,8 @@ Transcript.prototype.drawTranscript = function(withcds)
                 index --;
         }
     }
+
+    //draw intron
     this.drawIntron();
     var container = document.querySelector("#svg-container");
     var exonDescriptionShowned = false;
@@ -232,6 +261,7 @@ Transcript.prototype.drawTranscript = function(withcds)
                 //console.log(zoomScale);
             }
         });
+
     //textbox show info
     $("#focusing-transcript-info").val('');
     var infoMsg = this.name;
@@ -240,12 +270,7 @@ Transcript.prototype.drawTranscript = function(withcds)
     else if(this.strand == -1)
         infoMsg += " Reverse Strand";
     $("#focusing-transcript-info").val(infoMsg);
-    //$("#focusing-transcript-info").width($("#focusing-transcript-info").val().length);
 
-
-    //show two btn for explanation
-    //this.exonsBtn();
-    //this.transcriptionBtn();
 }
 
 Transcript.prototype.testingMessage = function() //for testing only
@@ -312,12 +337,14 @@ Transcript.prototype.exonsBtn = function()
     $("#exons-btn").append(this.btnExons);
 
     console.log(this.btnExons);
-    //var interval;
     var clicked = false;
+
+    //button click event----------------------------
     $(this.btnExons).click(function()
     {
         if(!clicked) {
             clicked = true;
+            //animation
             $("#exons-intro").attr('class', 'introduction btn btn-success btn-lg');
             $(".exon").attr('class', 'exon blinking');
             var explanationText = makeTextSVG('text',
@@ -330,11 +357,14 @@ Transcript.prototype.exonsBtn = function()
                     fill: 'black',
                     'font-weight': 'bold'
                 }, "ALL EXONS");
+
             $("#svg-container").append(explanationText);
+
             setTimeout(function()
             {
                 $('.exon').attr('class','exon');
-            },6000)
+            },6000);
+
             var i = 0;
             this.exonAniInterval = setInterval(function () {
                 $(".exon").attr('class', 'exon');
@@ -359,6 +389,7 @@ Transcript.prototype.exonsBtn = function()
             $("#explanation-text").remove();
         }
     }.bind(this));
+    //button click event end-----------------
 }
 
 Transcript.prototype.transcriptionBtn = function()
@@ -382,7 +413,6 @@ Transcript.prototype.transcriptionBtn = function()
             panZoomInstance.destroy();
             $(this.svgContainer).children().remove();
             this.drawTranscript(true);
-
         }
         else
         {
@@ -392,6 +422,43 @@ Transcript.prototype.transcriptionBtn = function()
             $(this.svgContainer).children().remove();
             this.drawTranscript(false);
         }
+
+        //animation
     }.bind(this));
 }
+
+Transcript.prototype.seqBtn = function()
+{
+    // Basic Btn Setting
+    this.btnTranscriptSeq = document.createElement('a');
+    $(this.btnTranscriptSeq).text("Transcript Sequences");
+    $("#sequences-menu > .menu").append(this.btnTranscriptSeq);
+    if(this.cdsList.length > 0)
+    {
+        this.btnCdsSeq = document.createElement('a');
+        $(this.btnCdsSeq).text("cds Sequences");
+        this.btnProteinSeq = document.createElement('a');
+        $(this.btnProteinSeq).text("Protein Sequences");
+        $("#sequences-menu > .menu").append(this.btnCdsSeq);
+        $("#sequences-menu > .menu").append(this.btnProteinSeq);
+    }
+
+
+    //btn click handler
+    $(this.btnTranscriptSeq).click(function(e)
+    {
+        this.getSequence();
+        this.clearAllExonSVGFocus();
+    }
+    .bind(this));
+}
+
+Transcript.prototype.clearAllExonSVGFocus = function()
+{
+    for(i=0;i<this.exons.length;i++)
+    {
+        this.exons[i].svgExonFocusing(false);
+    }
+}
+
 

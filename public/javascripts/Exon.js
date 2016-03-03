@@ -5,7 +5,8 @@ function Exon(start, end, id, parent, rank) {
     this.start = start;
     this.end = end;
     this.id = id;
-    this.parent = parent
+    this.parent = parent;
+    this.parentTranscript;
     this.exonSVG;
     this.svgStartPointX;
     this.svgStartPointY = 125;
@@ -28,8 +29,18 @@ function Exon(start, end, id, parent, rank) {
                 contentType: 'application/json',
                 success: function(data)
                 {
-                    $('.sequence-region').empty();
-                    $('.sequence-region').append(data);
+                    $("#sequence-region").show();
+                    $('#sequence').empty();
+                    $('#sequence').append(data);
+                    $('#sequence').height('inherit');
+                    if($('#sequence').height() > 250)
+                    {
+                        $('#sequence').height(250);
+                    }
+                    $('#sequence-title-text').text("Sequence: " + this.id);
+                    $('html, body').animate({
+                        scrollTop: $("#sequence").offset().top
+                    }, 2000);
                     //console.log(sequence);
                 }.bind(this),
                 error: function(xhr, status, err)
@@ -44,6 +55,13 @@ Exon.prototype.isChildOf = function(transcriptID)
 {
     return (this.parent == transcriptID);
 }
+
+Exon.prototype.addTranscript = function(transcript)
+{
+    this.transcript = transcript;
+}
+
+//draw Exon
 Exon.prototype.drawExon = function(svgContainer, transcriptStart, transcriptEnd)
 {
     var svgWidth = $(svgContainer).width();
@@ -71,13 +89,16 @@ Exon.prototype.drawExon = function(svgContainer, transcriptStart, transcriptEnd)
     )
     $(exonGroup).append(this.exonSVG);
     $(svgContainer).append(exonGroup);
+
     $(this.exonSVG).dblclick(function(e)
     {
-        $(this.exonSVG).css('fill','green');
         this.getExonSequence();
+        this.transcript.clearAllExonSVGFocus();
+        this.svgExonFocusing(true);
     }.bind(this));
 }
 
+//draw cds and utrs
 Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
 {
     var cdsMatched = false;
@@ -191,23 +212,41 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
     }
     return cdsMatched
 }
+
+Exon.prototype.svgExonFocusing = function(focusing)
+{
+    if(!focusing)
+    {
+        $(this.exonSVG).css('fill', 'blue');
+        $(this.exonSVG).css('fill-opacity','0.6');
+    }
+    else
+    {
+        $(this.exonSVG).css('fill', 'green');
+    }
+}
+
 Exon.prototype.isBehind = function(exon)
 {
     return (this.rank > exon.rank);
 }
+
 Exon.prototype.isFrontOf = function(exon)
 {
     return (this.rank < exon.rank);
 }
+
 Exon.prototype.testingMessage = function()
 {
     console.log("Exon: Parent: "+this.parent+" Start: "+this.start+" End: "+ this.end + "Rank:" + this.rank);
 }
+
 Exon.prototype.updateSVG = function(svg)
 {
     $("#g-"+this.id).append(svg);
 
 }
+
 Exon.prototype.drawExonDescription = function(length)
 {
     var exonDescriptionSVG = makeTextSVG('text',
@@ -230,6 +269,7 @@ Exon.prototype.drawExonDescription = function(length)
         $('#d-'+this.id+'.show').css('opacity',0.2);
     }.bind(this));
 }
+
 Exon.prototype.exonAnimation = function()
 {
     console.log(this.id);

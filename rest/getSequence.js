@@ -14,12 +14,17 @@ function rest(router, res)
     router.get('/getSequence',function(req, res)
     {
         var id = req.query.id;
+        var mask = req.query.mask;
         var getData = function(sequence)
         {
             console.log(sequence);
             res.send(sequence);
         }
         option.path = "/sequence/id/"+id;
+        if(mask == 'true')
+        {
+            option.path +="?mask_feature=1";
+        }
         ensemblRestApi.callRestGet(option, getData);
     })
 }

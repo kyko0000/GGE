@@ -13,14 +13,19 @@
                 li.disabled
                     a(style="background-color:lightyellow") Canonical Transcript
             input#focusing-transcript-info(readonly)
+        .dropdown#seq-menu
+            button.btn.btn-xs.btn-default.dropdown-toggle#seq-dropdown(type='button', data-toggle='dropdown',aria-haspopup='true',aria-expanded='false') Sequences
+                span.caret
+            ul.dropdown-menu#sequences-menu(aria-labelledby='seq-dropdown')
+                li.menu
         svg.explanation-area#svg-container
     .svg-btn
         .btn-container#exons-btn
         .btn-container#transcription-btn
-.container.sequence-container#sequence-region
+.container#sequence-region
     .sequence-area-title#sequence-title
         h4#sequence-title-text Sequence
-    .sequence-region
+    .sequence-container#sequence
 
 script(type='text/javascript' src='javascripts/Transcript.js')
 script(type='text/javascript' src='javascripts/Exon.js')

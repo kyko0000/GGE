@@ -47,7 +47,7 @@ function explanationCreater(transcripts,exons,cds,id,canonicalTranscript)
         }
     }
     this.seqReg = $("#sequence-region");
-    this.hideShowSeqReg(false);
+    this.hideShowSeqReg();
     ////TESTING ONLY
     //for(k=0; k<this.transcriptList.length; k++)
     //{
@@ -66,12 +66,12 @@ explanationCreater.prototype.drawSVG = function()
 }
 explanationCreater.prototype.hideShowSeqReg = function()
 {
-
+    $("#sequence-region").hide();
     $("#sequence-title").click(function()
     {
-        $(".sequence-region").toggle(1000);
+        $("#sequence").toggle(1000);
         $('html, body').animate({
-            scrollTop: $(".sequence-region").offset().top
+            scrollTop: $("#sequence").offset().top
         }, 2000);
     })
 }
