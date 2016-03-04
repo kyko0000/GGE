@@ -413,12 +413,29 @@ Transcript.prototype.transcriptionBtn = function()
             panZoomInstance.destroy();
             $(this.svgContainer).children().remove();
             this.drawTranscript(true);
+            var startTimeOut = setTimeout(function() {
+                var periousAni='';
+                var firstIndex;
+                var firstCreated=false;
+                for(i=0; i<this.exons.length; i++) {
+                    this.exons[i].hideShowcdsAndutrs(true);
+                    periousAni = this.exons[i].transcriptionAnimation(this.strand, periousAni);
+                    if(!firstCreated && periousAni.length>0)
+                    {
+                        firstIndex = i;
+                        firstCreated=true;
+                    }
+                }
+                this.exons[firstIndex].transcriptionAniRestart(periousAni);
+
+            }.bind(this),3000);
         }
         else
         {
             clicked = false;
             $("#transcription-intro").attr('class', 'introduction btn btn-info btn-lg');
             panZoomInstance.destroy();
+            clearInterval(this.transcriptionAniInterval);
             $(this.svgContainer).children().remove();
             this.drawTranscript(false);
         }

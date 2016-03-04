@@ -111,6 +111,7 @@ var drawTable = function(start, end)
 {
     var length = end - start;
     var partition = parseInt(length / 4);
+    $(".selected-info").val("Chromosome " + $(".chromosome").attr("id") + " : " + start + " - " + end);
     $('.selected-length').val(length + "bp.");
     var x = start;
     for(i = 1; i <= 4; i++)
@@ -251,7 +252,6 @@ var showGeneInfo = function(jsonObj)
             "</div>"+
         "</div>"+
     "</div>";
-    $(".selected-info").val("Chromosome " + $(".chromosome").attr("id") + " : " + actualStart + " - " + actualEnd);
     console.log(selectedGeneCanonicalTranscript.canonicalTranscript);
     return html;
 }
