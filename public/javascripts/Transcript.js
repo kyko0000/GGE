@@ -23,6 +23,13 @@ function Transcript(start, end, id, strand, name, svgContainer) {
     this.exonAniInterval; //interval for exons Animation
     this.transcriptionAniInterval; // interval for transcription Animation
 
+    this.upperStrand;
+    this.lowerStrand;
+    this.rnaPolymerase;
+    this.rna;
+    this.rnaPolymeraseAni;
+    this.rnaAni=[];
+
     //private method
     this.getSequence = function()
     {
@@ -146,65 +153,65 @@ Transcript.prototype.drawTranscript = function(withcds)
     var svgWidth = $(this.svgContainer).width();
     var svgStart = parseInt(svgWidth * 0.05);
     var svgEnd = parseInt(svgWidth * 0.95);
-    var groupSVG = makeSVG('g', { //group svg tag for the ruler
-        stroke: 'black',
-        'stroke-width': '1',
-        id: 'scale-ruler'
-    });
-    $(this.svgContainer).append(groupSVG);
-    var rulerleftStraightLine = makeSVG('line',
-        {
-            x1: svgStart,
-            y1: '50',
-            x2: svgStart,
-            y2: '60'
-        });
-    var rulerhorizontalLine = makeSVG('line',
-        {
-            x1:svgStart,
-            y1: '55',
-            x2: svgEnd,
-            y2: '55'
-        });
-    var rulerRightStraightLine = makeSVG('line',
-        {
-            x1: svgEnd,
-            y1: '50',
-            x2: svgEnd,
-            y2: '60'
-        });
-
-    var startTextSVG = makeTextSVG('text',
-        {
-            x: '0',
-            y: '40'
-        },
-    this.start);
-    var endTextSVG = makeTextSVG('text',
-        {
-            x: parseInt(svgWidth*0.95),
-            y: '40'
-        },this.end)
-
-    $("#scale-ruler").append(rulerleftStraightLine);
-    $("#scale-ruler").append(rulerhorizontalLine);
-    $("#scale-ruler").append(rulerRightStraightLine);
-    $("#scale-ruler").append(startTextSVG);
-    $("#scale-ruler").append(endTextSVG);
-
     //draw exon or cds
-    if(!withcds) {
-        for (var i = 0; i < this.exons.length; i++) {
-            this.exons[i].drawExon(this.svgContainer, this.start, this.end);
-            if (this.strand == -1) {
-                this.exons[i].drawExonDescription(this.exons.length);
-            }
-            else (this.strand == 1)
+    if(!withcds) { //draw noral exon
+        var groupSVG = makeSVG('g', { //group svg tag for the ruler
+            stroke: 'black',
+            'stroke-width': '1',
+            id: 'scale-ruler'
+        });
+        $(this.svgContainer).append(groupSVG);
+        var rulerleftStraightLine = makeSVG('line',
             {
-                this.exons[i].drawExonDescription(this.exons.length);
-            }
-            //$("#g-"+ this.exons[i].id).append(exonDescription, this.exons.length);
+                x1: svgStart,
+                y1: '50',
+                x2: svgStart,
+                y2: '60'
+            });
+        var rulerhorizontalLine = makeSVG('line',
+            {
+                x1:svgStart,
+                y1: '55',
+                x2: svgEnd,
+                y2: '55'
+            });
+        var rulerRightStraightLine = makeSVG('line',
+            {
+                x1: svgEnd,
+                y1: '50',
+                x2: svgEnd,
+                y2: '60'
+            });
+
+        var startTextSVG = makeTextSVG('text',
+            {
+                x: '0',
+                y: '40'
+            },
+        this.start);
+        var endTextSVG = makeTextSVG('text',
+            {
+                x: parseInt(svgWidth*0.95),
+                y: '40'
+            },this.end)
+
+        $("#scale-ruler").append(rulerleftStraightLine);
+        $("#scale-ruler").append(rulerhorizontalLine);
+        $("#scale-ruler").append(rulerRightStraightLine);
+        $("#scale-ruler").append(startTextSVG);
+        $("#scale-ruler").append(endTextSVG);
+
+        for (var i = 0; i < this.exons.length; i++) {
+        this.exons[i].drawExon(this.svgContainer, this.start, this.end);
+        if (this.strand == -1) {
+            this.exons[i].drawExonDescription(this.exons.length);
         }
+        else (this.strand == 1)
+        {
+            this.exons[i].drawExonDescription(this.exons.length);
+        }
+        //$("#g-"+ this.exons[i].id).append(exonDescription, this.exons.length);
+    }
 
         //button for explanation
         this.exonsBtn();
@@ -213,13 +220,103 @@ Transcript.prototype.drawTranscript = function(withcds)
         $("#sequences-menu > .menu").empty();
         this.seqBtn();
     }
-    else
+    else //draw utrs and cds
     {
-        if(this.strand == 1)
-            var index = 0;
-        else
-            var index = this.cdsList.length-1;
+        var groupSVG = makeSVG('g', { //group svg tag for the chromosome and rna polymerase
+            stroke: 'black',
+            'stroke-width': '1',
+            id: 'chromosome-svg'
+        });
+        //draw chromosome left to right strand.
+        this.upperStrand = makeSVG('line',
+            {
+                x1: svgStart,
+                y1:'20',
+                x2: svgEnd,
+                y2:'20',
+                style:'stoke:black;stroke-width:1'
+            });
 
+        this.lowerStrand = makeSVG('line',
+            {
+                x1: svgStart,
+                y1:'40',
+                x2:svgEnd,
+                y2:'40',
+                style:'stroke:black;stoke-width:1'
+            });
+        if(this.strand == 1) {
+            var index = 0; //forward strand
+
+            this.rnaPolymerase = makeSVG('rect',
+                {
+                    x:svgStart,
+                    y:'32',
+                    width:'10',
+                    height:'10',
+                    style:'fill:red;opacity:0.3'
+                });
+
+            this.rna = makeSVG('line',
+                {
+                    x1:svgStart,
+                    y1:'35',
+                    x2:svgStart,
+                    y2:'35',
+                    style:'stroke:blue;opacity:1'
+                });
+
+            //rna Polymerase Animation
+            this.rnaPolymeraseAni = makeSVG('animate',
+                {
+                    id:'rnapolymerase',
+                    dur:'20s',
+                    attributeName:'x',
+                    from: svgStart,
+                    to: svgEnd,
+                    begin:'3s'
+                })
+
+            //rna animation
+            this.rnaAni.push(makeSVG('animate', //moving animation
+                {
+                    id:'rnaCreate',
+                    dur:'20s',
+                    attributeName:'x2',
+                    from:svgStart,
+                    to:svgEnd,
+                    begin:'3s',
+                    fill:'freeze'
+                }));
+            $(this.rnaPolymerase).append(this.rnaPolymeraseAni);
+            for(ani=0;ani<this.rnaAni.length;ani++) {
+                $(this.rna).append(this.rnaAni[ani]);
+            }
+        }
+        else { //reverse strand
+            var index = this.cdsList.length - 1;
+            this.rnaPolymerase= makeSVG('rect',
+                {
+                    x:(svgEnd-10),
+                    y:'18',
+                    width:'10',
+                    height:'10',
+                    style:'fill:red;opacity:0.3'
+                })
+            this.rna = makeSVG('line',
+                {
+                    x1:svgStart,
+                    y1:'26',
+                    x2:svgEnd,
+                    y2:'26',
+                    style:'opacity:0'
+                })
+        }
+        $(groupSVG).append(this.upperStrand);
+        $(groupSVG).append(this.lowerStrand);
+        $(groupSVG).append(this.rnaPolymerase);
+        $(groupSVG).append(this.rna);
+        $(this.svgContainer).append(groupSVG);
         for (var i = 0; i < this.exons.length; i++) {
             //console.log(this.exons[i].start+ "--" +this.cdsList[index].start + "||" + this.exons[i].end + " -- " + this.cdsList[index].end);
             if(index >= 0 && index < this.cdsList.length)
@@ -413,29 +510,30 @@ Transcript.prototype.transcriptionBtn = function()
             panZoomInstance.destroy();
             $(this.svgContainer).children().remove();
             this.drawTranscript(true);
-            var startTimeOut = setTimeout(function() {
-                var periousAni='';
-                var firstIndex;
-                var firstCreated=false;
-                for(i=0; i<this.exons.length; i++) {
-                    this.exons[i].hideShowcdsAndutrs(true);
-                    periousAni = this.exons[i].transcriptionAnimation(this.strand, periousAni);
-                    if(!firstCreated && periousAni.length>0)
-                    {
-                        firstIndex = i;
-                        firstCreated=true;
-                    }
-                }
-                this.exons[firstIndex].transcriptionAniRestart(periousAni);
 
-            }.bind(this),3000);
+            //var startTimeOut = setTimeout(function() {
+            //    var periousAni='';
+            //    var firstIndex;
+            //    var firstCreated=false;
+            //    for(i=0; i<this.exons.length; i++) {
+            //        this.exons[i].hideShowcdsAndutrs(true);
+            //        periousAni = this.exons[i].transcriptionAnimation(this.strand, periousAni);
+            //        if(!firstCreated && periousAni.length>0)
+            //        {
+            //            firstIndex = i;
+            //            firstCreated=true;
+            //        }
+            //    }
+            //    this.exons[firstIndex].transcriptionAniRestart(periousAni);
+
+            //}.bind(this),3000);
         }
         else
         {
             clicked = false;
             $("#transcription-intro").attr('class', 'introduction btn btn-info btn-lg');
             panZoomInstance.destroy();
-            clearInterval(this.transcriptionAniInterval);
+            //clearInterval(this.transcriptionAniInterval);
             $(this.svgContainer).children().remove();
             this.drawTranscript(false);
         }
