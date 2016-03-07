@@ -15,9 +15,10 @@ function Exon(start, end, id, parent, rank) {
     this.utrsWidth;
     this.cdsWidth;
     this.rank = rank;
-    //svg for utr and tr
+    //svg for utr and cds
     this.utrSVG;
     this.cdsSVG;
+    this.utrCdsList = []; //order of utr and cds
     //ani
     this.transcriptionAni;
     this.transcriptionOpacityAni;
@@ -55,6 +56,35 @@ function Exon(start, end, id, parent, rank) {
             }
         )
     }
+
+    //class for create different animates
+    this.createAnimate = function(periousAni, attributeName, from, to, id)
+    {
+        var animation = makeSVG('animate',
+            {
+                id:id,
+                dur:'3s',
+                attributeName: attributeName,
+                from:from,
+                to:to,
+                fill:'freeze'
+            })
+        if(periousAni.length != 0)
+        {
+            animation = setSVGAttr(animation,
+                {
+                    begin: periousAni
+                })
+        }
+        else
+        {
+            animation = setSVGAttr(animation,
+                {
+                    begin: 'btnStart.click'
+                })
+        }
+        return animation;
+    }
 }
 Exon.prototype.isChildOf = function(transcriptID)
 {
@@ -69,7 +99,7 @@ Exon.prototype.addTranscript = function(transcript)
 //draw Exon
 Exon.prototype.drawExon = function(svgContainer, transcriptStart, transcriptEnd)
 {
-    var svgWidth = $(svgContainer).width();
+    var svgWidth = $(svgContainer)[0].getBoundingClientRect().width;
     var svgStartPoint = svgWidth * 0.05; //5% left space
     var svgEndPoint = parseInt(svgWidth*0.95);
     var svgLength = svgEndPoint - svgStartPoint;
@@ -107,11 +137,12 @@ Exon.prototype.drawExon = function(svgContainer, transcriptStart, transcriptEnd)
 Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
 {
     var cdsMatched = false;
+    var thisLastAnimateID ='';
     //var exonGroup = makeSVG('g',
     //    {
     //        id:'g-'+this.id
     //    });
-    if(cds == '' || cds.start > this.end)
+    if(cds == '' || cds.start > this.end) //No cds or this exon not consist any cds
     {
         this.utrSVG = makeSVG('rect',
         {
@@ -125,7 +156,10 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
             stroke: 'black',
             style:'fill:none'
         })
-        //$(exonGroup).append(this.utrSVG);
+        thisLastAnimateID = 'utr'+this.id;
+        //var utrAnimation = this.createAnimate(periousAnimate, 'width', 0, this.svgWidth, thisLastAnimateID);
+        //this.utrSVG.append(utrAnimation);
+        this.utrCdsList.push(this.utrSVG);
         $(svgContainer).append(this.utrSVG);
         console.log('inserted utr Only');
     }
@@ -143,6 +177,7 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
                 style:'fill:blue;fill-opacity:0.6'
             }
         )
+        this.utrCdsList.push(this.cdsSVG);
         $(svgContainer).append(this.cdsSVG);
         //$(svgContainer).append(exonGroup);
         cdsMatched = true;
@@ -176,6 +211,14 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
                 height: '50',
                 style:'fill:blue;opacity:0.6'
             })
+        thisLastAnimateID = cds+this.id;
+        //var utrSVGAnimate = this.createAnimate(periousAnimate, 'width', 0, (trStartX - this.svgStartPointX), 'utr'+this.id);
+        //var cdsSVGAnimate = this.createAnimate('utr'+this.id, 'width', 0, (this.cdsWidth), thisLastAnimateID);
+        //this.utrSVG.append(utrSVGAnimate);
+        //this.cdsSVG.append(cdsSVGAnimate);
+        this.utrCdsList.push(this.utrSVG);
+        this.utrCdsList.push(this.cdsSVG);
+
         $(svgContainer).append(this.utrSVG);
         $(svgContainer).append(this.cdsSVG);
         //$(svgContainer).append(exonGroup);
@@ -212,6 +255,14 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
                 style: 'fill:none;'
 
             });
+        thisLastAnimateID = 'utr'+this.id
+
+       //var cdsSVGAnimate = this.createAnimate(periousAnimate, 'width', 0, this.cdsWidth,'cds'+this.id);
+        //var utrSVGAnimate = this.createAnimate('cds'+this.id, 'width', 0, this.utrsWidth, thisLastAnimateID);
+
+        this.utrCdsList.push(this.cdsSVG);
+        this.utrCdsList.push(this.utrSVG);
+
         $(svgContainer).append(this.cdsSVG);
         $(svgContainer).append(this.utrSVG);
         //$(svgContainer).append(exonGroup);
@@ -221,6 +272,20 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
     return cdsMatched
 }
 
+Exon.prototype.createTranscriptionAnimate = function(periousAnimate, strand)
+{
+    /*if(strand == 1)
+    {
+        for(k=0; k<this.utrCdsList.length; k++)
+        {
+            var id = 'ani'+this.id+k;
+            var animate = this.createAnimate(periousAnimate, 'width', '0', this.utrCdsList.getAttribute('width'), id);
+            $(this.utrCdsList[k]).append(animate);
+            periousAnimate = id
+        }
+        return id;
+    }*/
+}
 Exon.prototype.svgExonFocusing = function(focusing)
 {
     if(!focusing)

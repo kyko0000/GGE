@@ -367,7 +367,7 @@ var drawStrand = function()
     {
         if($(genePositionSVGs[i]).parent().parent().attr("class") == "gene") {
             if ($(genePositionSVGs[i]).data("strand") == 1) {
-                var topPoint = parseInt($(genePositionSVGs[i]).width()/3);
+                var topPoint = parseInt($(genePositionSVGs[i])[0].getBoundingClientRect().width/3);
                 var turningPoint = parseInt((topPoint * 0.85)/3);
                 var def = makeSVG('defs', {class:'display'});
                 var pattern = makeSVG('pattern',{
@@ -394,7 +394,7 @@ var drawStrand = function()
                     class:'strand-display',
                     x:'0',
                     y:'0',
-                    width:$(genePositionSVGs[i]).width()*2,
+                    width:$(genePositionSVGs[i])[0].getBoundingClientRect().width*2,
                     height: '100%',
                     fill:'url(#arrow-'+i+')'
                 });
@@ -403,7 +403,7 @@ var drawStrand = function()
             }
             else {
                 //var turningPoint = parseInt($(genePositionSVGs[i]).width()*0.15);
-                var tailPoint = parseInt($(genePositionSVGs[i]).width());
+                var tailPoint = parseInt($(genePositionSVGs[i])[0].getBoundingClientRect.width);
                 var turningPoint = parseInt(tailPoint * 0.15);
                 var svg = makeSVG('polygon', {
                     class: 'strand-display',

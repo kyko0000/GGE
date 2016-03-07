@@ -13,6 +13,7 @@ function Transcript(start, end, id, strand, name, svgContainer) {
     //web page element
     this.transcriptButton;
     this.svgContainer = svgContainer;
+    this.intronSVGs = [];
     this.btnExons;
     this.btnTranscription;
     this.btnTranscriptSeq;
@@ -64,7 +65,47 @@ function Transcript(start, end, id, strand, name, svgContainer) {
                 }
             }
         )
-    }
+    };
+
+    this.addPanAndZoom = function()
+    {
+        var container = document.querySelector("#svg-container");
+        panZoomInstance = svgPanZoom(container,
+            {
+                zoomEnable: true,
+                controlIconsEnabled: true,
+                dblClickZoomEnabled: false,
+                minZoom: 0.5,
+                maxZoom:10,
+                fit: 1,
+                center: 1,
+                onZoom: function(zoomScale)
+                {
+                    if(zoomScale > 2 && !exonDescriptionShowned)
+                    {
+                        $(".exonDescription").attr("class", "exonDescription show");
+                        exonDescriptionShowned = true;
+                    }
+                    else if(zoomScale < 2)
+                    {
+                        $(".exonDescription").attr("class", "exonDescription hidden");
+                        exonDescriptionShowned = false;
+                    }
+
+                    //console.log(zoomScale);
+                }
+            });
+    };
+    this.transcriptionAnimate = function()
+    {
+        var periousAnimate = '';
+        for(x=0; x<this.exons.length; x++)
+        {
+            periousAnimate = this.exons[x].createTranscriptionAnimate(periousAnimate, this.strand);
+            if(x < this.exons.length - 1)
+                periousAnimate = this.drawIntronWithAnimate(periousAnimate, x);
+        }
+    };
 }
 Transcript.panZoomInstance; //static object variable for all transcript object
 Transcript.prototype.addExon = function(exon)
@@ -102,7 +143,7 @@ Transcript.prototype.addExon = function(exon)
 
         //return inserted;
     }
-}
+};
 
 Transcript.prototype.addCDS = function(cds)
 {
@@ -125,7 +166,7 @@ var inserted = false;
         this.cdsList.push(cds);
         console.log('add at last');
     }
-}
+};
 
 Transcript.prototype.canonicalCheck = function(id)
 {
@@ -137,7 +178,7 @@ Transcript.prototype.canonicalCheck = function(id)
     else {
         this.isCanonical = false
     }
-}
+};
 
 Transcript.prototype.drawCanonicalTranscript = function()
 {
@@ -146,15 +187,16 @@ Transcript.prototype.drawCanonicalTranscript = function()
         $(this.transcriptButton).attr('class', 'selected');
         this.drawTranscript(false);
     }
-}
+};
 
 Transcript.prototype.drawTranscript = function(withcds)
 {
-    var svgWidth = $(this.svgContainer).width();
+    var svgWidth = $(this.svgContainer)[0].getBoundingClientRect().width;
     var svgStart = parseInt(svgWidth * 0.05);
     var svgEnd = parseInt(svgWidth * 0.95);
     //draw exon or cds
-    if(!withcds) { //draw noral exon
+    if(!withcds)
+    { //draw noral exon
         var groupSVG = makeSVG('g', { //group svg tag for the ruler
             stroke: 'black',
             'stroke-width': '1',
@@ -202,23 +244,24 @@ Transcript.prototype.drawTranscript = function(withcds)
         $("#scale-ruler").append(endTextSVG);
 
         for (var i = 0; i < this.exons.length; i++) {
-        this.exons[i].drawExon(this.svgContainer, this.start, this.end);
-        if (this.strand == -1) {
-            this.exons[i].drawExonDescription(this.exons.length);
-        }
-        else (this.strand == 1)
-        {
-            this.exons[i].drawExonDescription(this.exons.length);
-        }
-        //$("#g-"+ this.exons[i].id).append(exonDescription, this.exons.length);
-    }
+            this.exons[i].drawExon(this.svgContainer, this.start, this.end);
+            if (this.strand == -1) {
+                this.exons[i].drawExonDescription(this.exons.length);
+            }
+            else (this.strand == 1)
+            {
+                this.exons[i].drawExonDescription(this.exons.length);
+            }
 
+        }
+        //draw Intron
+        this.drawIntron();
+        //var container = document.querySelector("#svg-container");
+        this.addPanAndZoom();
         //button for explanation
         this.exonsBtn();
         this.transcriptionBtn();
-        //button for sequence
-        $("#sequences-menu > .menu").empty();
-        this.seqBtn();
+
     }
     else //draw utrs and cds
     {
@@ -227,14 +270,14 @@ Transcript.prototype.drawTranscript = function(withcds)
             'stroke-width': '1',
             id: 'chromosome-svg'
         });
-        //draw chromosome left to right strand.
+        //draw chromosome left to right strand and RNA----------------------
         this.upperStrand = makeSVG('line',
             {
                 x1: svgStart,
                 y1:'20',
                 x2: svgEnd,
                 y2:'20',
-                style:'stoke:black;stroke-width:1'
+                style:'stroke:black;stroke-width:1'
             });
 
         this.lowerStrand = makeSVG('line',
@@ -245,6 +288,14 @@ Transcript.prototype.drawTranscript = function(withcds)
                 y2:'40',
                 style:'stroke:black;stoke-width:1'
             });
+        var upperFiveEnd = makeTextSVG('text', {x: (svgStart - 15), y:'20'}, "5'");
+        var upperThreeEnd = makeTextSVG('text', {x:(svgEnd + 10), y:'20'}, "3'");
+        $(this.svgContainer).append(upperFiveEnd);
+        $(this.svgContainer).append(upperThreeEnd);
+        var lowerFiveEnd = makeTextSVG('text', {x: (svgEnd + 10), y:'40'}, "5'");
+        var lowerThreeEnd = makeTextSVG('text', {x:(svgStart - 15), y:'40'}, "3'");
+        $(this.svgContainer).append(lowerFiveEnd);
+        $(this.svgContainer).append(lowerThreeEnd);
         if(this.strand == 1) {
             var index = 0; //forward strand
 
@@ -269,13 +320,14 @@ Transcript.prototype.drawTranscript = function(withcds)
             //rna Polymerase Animation
             this.rnaPolymeraseAni = makeSVG('animate',
                 {
-                    id:'rnapolymerase',
+                    begin:'btnPlay.click',
+                    id:'rnaPolymerase',
                     dur:'20s',
                     attributeName:'x',
                     from: svgStart,
                     to: svgEnd,
-                    begin:'3s'
-                })
+                    fill:'freeze'
+                });
 
             //rna animation
             this.rnaAni.push(makeSVG('animate', //moving animation
@@ -285,7 +337,7 @@ Transcript.prototype.drawTranscript = function(withcds)
                     attributeName:'x2',
                     from:svgStart,
                     to:svgEnd,
-                    begin:'3s',
+                    begin:'rnaPolymerase.begin',
                     fill:'freeze'
                 }));
             $(this.rnaPolymerase).append(this.rnaPolymeraseAni);
@@ -302,7 +354,7 @@ Transcript.prototype.drawTranscript = function(withcds)
                     width:'10',
                     height:'10',
                     style:'fill:red;opacity:0.3'
-                })
+                });
             this.rna = makeSVG('line',
                 {
                     x1:svgStart,
@@ -312,11 +364,33 @@ Transcript.prototype.drawTranscript = function(withcds)
                     style:'opacity:0'
                 })
         }
-        $(groupSVG).append(this.upperStrand);
-        $(groupSVG).append(this.lowerStrand);
-        $(groupSVG).append(this.rnaPolymerase);
-        $(groupSVG).append(this.rna);
+        $(this.svgContainer).append(this.upperStrand);
+        $(this.svgContainer).append(this.lowerStrand);
+        $(this.svgContainer).append(this.rnaPolymerase);
+        $(this.svgContainer).append(this.rna);
+
+        //button for animation start
+        var startBtn = makeSVG('rect',{
+            id:'btnPlay',
+            x:(((svgEnd - svgStart)/2)-20),
+            y:($(this.svgContainer)[0].getBoundingClientRect().height - 20),
+            width: '40',
+            height: '20',
+            style:'fill:green;stroke-width:1;stroke:black;cursor:pointer'
+        });
+
+        $(this.svgContainer).append(startBtn);
+
+        $("#btnPlay").click(function(self,e)
+        {
+            self.addPanAndZoom();
+        }.bind(null,this));
         $(this.svgContainer).append(groupSVG);
+        //End of draw Chromosome and rna-------------------------
+
+        //draw all exon with utrs and cds with animation
+
+        var animationIDList = [];
         for (var i = 0; i < this.exons.length; i++) {
             //console.log(this.exons[i].start+ "--" +this.cdsList[index].start + "||" + this.exons[i].end + " -- " + this.cdsList[index].end);
             if(index >= 0 && index < this.cdsList.length)
@@ -328,37 +402,14 @@ Transcript.prototype.drawTranscript = function(withcds)
             else if(cdsMatched && this.strand == -1)
                 index --;
         }
+        this.transcriptionAnimate();
     }
 
-    //draw intron
-    this.drawIntron();
-    var container = document.querySelector("#svg-container");
+    //button for sequence
+    $("#sequences-menu > .menu").empty();
+    this.seqBtn();
+    //var container = document.querySelector("#svg-container");
     var exonDescriptionShowned = false;
-    panZoomInstance = svgPanZoom(container,
-        {
-            zoomEnable: true,
-            controlIconsEnabled: true,
-            minZoom: 0.5,
-            maxZoom:10,
-            fit: 1,
-            center: 1,
-            onZoom: function(zoomScale)
-            {
-                if(zoomScale > 2 && !exonDescriptionShowned)
-                {
-                    $(".exonDescription").attr("class", "exonDescription show");
-                    exonDescriptionShowned = true;
-                }
-                else if(zoomScale < 2)
-                {
-                    $(".exonDescription").attr("class", "exonDescription hidden");
-                    exonDescriptionShowned = false;
-                }
-
-                //console.log(zoomScale);
-            }
-        });
-
     //textbox show info
     $("#focusing-transcript-info").val('');
     var infoMsg = this.name;
@@ -368,7 +419,7 @@ Transcript.prototype.drawTranscript = function(withcds)
         infoMsg += " Reverse Strand";
     $("#focusing-transcript-info").val(infoMsg);
 
-}
+};
 
 Transcript.prototype.testingMessage = function() //for testing only
 {
@@ -377,7 +428,7 @@ Transcript.prototype.testingMessage = function() //for testing only
     {
         this.cdsList[i].testingMsg();
     }
-}
+};
 
 Transcript.prototype.createTranscript = function(dropdownList)
 {
@@ -390,7 +441,7 @@ Transcript.prototype.createTranscript = function(dropdownList)
         $(this.svgContainer).children().remove();
         this.drawTranscript(false);
     }.bind(this));
-}
+};
 
 
 Transcript.prototype.drawIntron = function()
@@ -416,12 +467,48 @@ Transcript.prototype.drawIntron = function()
                 'stroke-width': '2',
                 fill: 'none'
             });
+        this.intronSVGs.push(intronSVG);
         //console.log(intronSVG);
         $('#svg-container').append(intronSVG);
 
     }
 
-}
+};
+
+Transcript.prototype.drawIntronWithAnimate = function(periousAnimate, index)
+{
+    if(this.strand == '1') { //Forward stard
+        var startX = this.exons[index].svgEndPointX;
+        var endX = this.exons[index + 1].svgStartPointX;
+    }
+    else if(this.strand == '-1')//Reverse strand
+    {
+        var startX = this.exons[index].svgStartPointX;
+        var endX = this.exons[index+1].svgEndPointX;
+    }
+    var xRadius = (endX - startX) * 4;
+    var intronSVG = makeSVG('path',
+        {
+            d: 'M ' + startX + ' 150 A ' + xRadius + " " + xRadius + " 0 0 1 " + endX + " 150",
+            stroke: '#e0e0e0',
+            'stroke-width': '2',
+            fill: 'none'
+        });
+    var id = 'intronAni'+index;
+    var intronAnimate = makeSVG('animate',
+        {
+            id:id,
+            dur:'3s',
+            attributeName:'d',
+            from: 'M ' + startX + ' 150 A ' + xRadius + " " + xRadius + " 0 0 1 " + startX + " 150",
+            end: 'M ' + startX + ' 150 A ' + xRadius + " " + xRadius + " 0 0 1 " + endX + " 150",
+            fill:'freeze',
+            begin:periousAnimate
+        })
+    return id;
+
+};
+
 
 Transcript.prototype.exonsBtn = function()
 {
@@ -448,7 +535,7 @@ Transcript.prototype.exonsBtn = function()
                 {
                     class: 'fadeInAndOut',
                     id: 'explanation-text',
-                    x: ($('.svg-container').width() / 2) - 50,
+                    x: ($('.svg-container').getBoundingClientRect().width / 2) - 50,
                     y: '270',
                     'font-size': '15',
                     fill: 'black',
@@ -487,7 +574,7 @@ Transcript.prototype.exonsBtn = function()
         }
     }.bind(this));
     //button click event end-----------------
-}
+};
 
 Transcript.prototype.transcriptionBtn = function()
 {
@@ -540,7 +627,7 @@ Transcript.prototype.transcriptionBtn = function()
 
         //animation
     }.bind(this));
-}
+};
 
 Transcript.prototype.seqBtn = function()
 {
@@ -566,7 +653,7 @@ Transcript.prototype.seqBtn = function()
         this.clearAllExonSVGFocus();
     }
     .bind(this));
-}
+};
 
 Transcript.prototype.clearAllExonSVGFocus = function()
 {
@@ -574,6 +661,7 @@ Transcript.prototype.clearAllExonSVGFocus = function()
     {
         this.exons[i].svgExonFocusing(false);
     }
-}
+};
+
 
 
