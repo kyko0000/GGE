@@ -63,6 +63,10 @@ explanationCreater.prototype.drawSVG = function()
         this.transcriptList[i].createTranscript(transcriptMenu);
         this.transcriptList[i].drawCanonicalTranscript();
     }
+    $('html, body').animate(
+        {
+            scrollTop: $(".svg-container").offset().top
+        },2000)
 }
 explanationCreater.prototype.hideShowSeqReg = function()
 {
@@ -71,7 +75,7 @@ explanationCreater.prototype.hideShowSeqReg = function()
     {
         $("#sequence").toggle(1000);
         $('html, body').animate({
-            scrollTop: $("#sequence").offset().top
+            scrollTop: $("#explanation-container").offset().top
         }, 2000);
     })
 }

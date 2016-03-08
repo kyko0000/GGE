@@ -58,32 +58,44 @@ function Exon(start, end, id, parent, rank) {
     }
 
     //class for create different animates
-    this.createAnimate = function(periousAni, attributeName, from, to, id)
+    this.createAnimate = function(periousAni, attributeName, from, to, id, svgWidth, time)
     {
+        var animations=[];
         var animation = makeSVG('animate',
             {
                 id:id,
-                dur:'3s',
+                dur:((to/svgWidth)*time)+"s",
                 attributeName: attributeName,
                 from:from,
                 to:to,
+                fill:'freeze'
+            })
+        var animationSet = makeSVG('animate',
+            {
+                begin:id+".begin",
+                dur:'0.000001',
+                attributeName:'opacity',
+                from:'0',
+                to:'1',
                 fill:'freeze'
             })
         if(periousAni.length != 0)
         {
             animation = setSVGAttr(animation,
                 {
-                    begin: periousAni
+                    begin: periousAni+".end"
                 })
         }
         else
         {
             animation = setSVGAttr(animation,
                 {
-                    begin: 'btnStart.click'
+                    begin: 'rnaPolymerase.begin'
                 })
         }
-        return animation;
+        animations.push(animation);
+        animations.push(animationSet);
+        return animations;
     }
 }
 Exon.prototype.isChildOf = function(transcriptID)
@@ -138,6 +150,7 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
 {
     var cdsMatched = false;
     var thisLastAnimateID ='';
+    this.utrCdsList = [];
     //var exonGroup = makeSVG('g',
     //    {
     //        id:'g-'+this.id
@@ -154,7 +167,7 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
             height: '50',
             'stroke-width': '0.1',
             stroke: 'black',
-            style:'fill:none'
+            style:'fill:none;opacity:0'
         })
         thisLastAnimateID = 'utr'+this.id;
         //var utrAnimation = this.createAnimate(periousAnimate, 'width', 0, this.svgWidth, thisLastAnimateID);
@@ -174,7 +187,7 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
                 y: this.svgStartPointY,
                 width: this.cdsWidth,
                 height: '50',
-                style:'fill:blue;fill-opacity:0.6'
+                style:'fill:blue;opacity:0'
             }
         )
         this.utrCdsList.push(this.cdsSVG);
@@ -199,7 +212,7 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
                 height: '50',
                 'stroke-width': '0.1',
                 stroke: 'black',
-                style:'fill:none;'
+                style:'fill:none;opacity:0'
             })
         this.cdsSVG = makeSVG('rect',
             {
@@ -209,7 +222,7 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
                 y: this.svgStartPointY,
                 width: this.cdsWidth,
                 height: '50',
-                style:'fill:blue;opacity:0.6'
+                style:'fill:blue;opacity:0'
             })
         thisLastAnimateID = cds+this.id;
         //var utrSVGAnimate = this.createAnimate(periousAnimate, 'width', 0, (trStartX - this.svgStartPointX), 'utr'+this.id);
@@ -239,7 +252,7 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
                 y: this.svgStartPointY,
                 width: this.cdsWidth,
                 height: '50',
-                style:'fill:blue;opacity:0.6'
+                style:'fill:blue;opacity:0'
 
             });
         this.utrSVG = makeSVG('rect',
@@ -252,7 +265,7 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
                 height: '50',
                 stroke: 'black',
                 'stroke-width': '0.1',
-                style: 'fill:none;'
+                style: 'fill:none;opacity:0'
 
             });
         thisLastAnimateID = 'utr'+this.id
@@ -272,19 +285,20 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
     return cdsMatched
 }
 
-Exon.prototype.createTranscriptionAnimate = function(periousAnimate, strand)
+Exon.prototype.createTranscriptionAnimate = function(periousAnimate, strand, svgWidth, time)
 {
-    /*if(strand == 1)
+    if(strand == 1)
     {
         for(k=0; k<this.utrCdsList.length; k++)
         {
             var id = 'ani'+this.id+k;
-            var animate = this.createAnimate(periousAnimate, 'width', '0', this.utrCdsList.getAttribute('width'), id);
-            $(this.utrCdsList[k]).append(animate);
+            var animates = this.createAnimate(periousAnimate, 'width', '0', $(this.utrCdsList[k]).attr('width'), id, svgWidth, time);
+            for(animateIndex=0; animateIndex<animates.length;animateIndex++)
+                $(this.utrCdsList[k]).append(animates[animateIndex]);
             periousAnimate = id
         }
         return id;
-    }*/
+    }
 }
 Exon.prototype.svgExonFocusing = function(focusing)
 {
@@ -349,7 +363,7 @@ Exon.prototype.exonAnimation = function()
     $("#"+this.id).attr('class', 'exon blinkingEach');
 }
 
-Exon.prototype.transcriptionAnimation = function(strand,periousAni)
+/*Exon.prototype.transcriptionAnimation = function(strand,periousAni)
 {
     if(strand == 1) //forward strand
     {
@@ -396,7 +410,7 @@ Exon.prototype.transcriptionAnimation = function(strand,periousAni)
     {
 
     }
-}
+}*/
 
 Exon.prototype.transcriptionAniRestart = function(lastAni)
 {

@@ -403,7 +403,7 @@ var drawStrand = function()
             }
             else {
                 //var turningPoint = parseInt($(genePositionSVGs[i]).width()*0.15);
-                var tailPoint = parseInt($(genePositionSVGs[i])[0].getBoundingClientRect.width);
+                var tailPoint = parseInt($(genePositionSVGs[i])[0].getBoundingClientRect().width);
                 var turningPoint = parseInt(tailPoint * 0.15);
                 var svg = makeSVG('polygon', {
                     class: 'strand-display',

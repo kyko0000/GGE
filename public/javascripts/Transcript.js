@@ -99,11 +99,12 @@ function Transcript(start, end, id, strand, name, svgContainer) {
     this.transcriptionAnimate = function()
     {
         var periousAnimate = '';
+        var svgWidth = $(this.svgContainer)[0].getBoundingClientRect().width;
         for(x=0; x<this.exons.length; x++)
         {
-            periousAnimate = this.exons[x].createTranscriptionAnimate(periousAnimate, this.strand);
+            periousAnimate = this.exons[x].createTranscriptionAnimate(periousAnimate, this.strand, svgWidth, 20);
             if(x < this.exons.length - 1)
-                periousAnimate = this.drawIntronWithAnimate(periousAnimate, x);
+                periousAnimate = this.drawIntronWithAnimate(periousAnimate, x, svgWidth, 20);
         }
     };
 }
@@ -307,7 +308,8 @@ Transcript.prototype.drawTranscript = function(withcds)
                     height:'10',
                     style:'fill:red;opacity:0.3'
                 });
-
+            var svgTitle = makeTextSVG('title',{},'RNA Polymerase');
+            $(this.rnaPolymerase).append(svgTitle);
             this.rna = makeSVG('line',
                 {
                     x1:svgStart,
@@ -381,10 +383,15 @@ Transcript.prototype.drawTranscript = function(withcds)
 
         $(this.svgContainer).append(startBtn);
 
-        $("#btnPlay").click(function(self,e)
+        $("#btnPlay").click(function(self,button,e)
         {
             self.addPanAndZoom();
-        }.bind(null,this));
+            $(button).css('opacity', '0');
+            $(self.btnTranscription).prop('disabled', true);
+            setTimeout(function() {
+                $(self.btnTranscription).prop('disabled', false);
+            }, 20000)
+        }.bind(null,this, $("#btnPlay")));
         $(this.svgContainer).append(groupSVG);
         //End of draw Chromosome and rna-------------------------
 
@@ -475,7 +482,7 @@ Transcript.prototype.drawIntron = function()
 
 };
 
-Transcript.prototype.drawIntronWithAnimate = function(periousAnimate, index)
+Transcript.prototype.drawIntronWithAnimate = function(periousAnimate, index, svgWidth, time)
 {
     if(this.strand == '1') { //Forward stard
         var startX = this.exons[index].svgEndPointX;
@@ -492,19 +499,32 @@ Transcript.prototype.drawIntronWithAnimate = function(periousAnimate, index)
             d: 'M ' + startX + ' 150 A ' + xRadius + " " + xRadius + " 0 0 1 " + endX + " 150",
             stroke: '#e0e0e0',
             'stroke-width': '2',
-            fill: 'none'
+            fill: 'none',
+            style:'opacity:0'
         });
     var id = 'intronAni'+index;
     var intronAnimate = makeSVG('animate',
         {
             id:id,
-            dur:'3s',
+            dur:(((endX-startX)/svgWidth)*time)+'s',
             attributeName:'d',
             from: 'M ' + startX + ' 150 A ' + xRadius + " " + xRadius + " 0 0 1 " + startX + " 150",
-            end: 'M ' + startX + ' 150 A ' + xRadius + " " + xRadius + " 0 0 1 " + endX + " 150",
+            to: 'M ' + startX + ' 150 A ' + xRadius + " " + xRadius + " 0 0 1 " + endX + " 150",
             fill:'freeze',
-            begin:periousAnimate
+            begin:periousAnimate+".end"
         })
+    var intronOpacityAnimate = makeSVG('animate',
+        {
+            begin:id+".begin",
+            dur:'0.000001s',
+            attributeName:'opacity',
+            from:'0',
+            to:'1',
+            fill:'freeze'
+        })
+    $(intronSVG).append(intronAnimate);
+    $(intronSVG).append(intronOpacityAnimate);
+    $(this.svgContainer).append(intronSVG);
     return id;
 
 };
@@ -535,7 +555,7 @@ Transcript.prototype.exonsBtn = function()
                 {
                     class: 'fadeInAndOut',
                     id: 'explanation-text',
-                    x: ($('.svg-container').getBoundingClientRect().width / 2) - 50,
+                    x: ($(this.svgContainer)[0].getBoundingClientRect().width / 2) - 50,
                     y: '270',
                     'font-size': '15',
                     fill: 'black',
@@ -594,33 +614,18 @@ Transcript.prototype.transcriptionBtn = function()
         {
             clicked = true;
             $("#transcription-intro").attr('class', 'introduction btn btn-success btn-lg');
-            panZoomInstance.destroy();
+            if(panZoomInstance.length > 1)
+                panZoomInstance.destroy();
             $(this.svgContainer).children().remove();
             this.drawTranscript(true);
 
-            //var startTimeOut = setTimeout(function() {
-            //    var periousAni='';
-            //    var firstIndex;
-            //    var firstCreated=false;
-            //    for(i=0; i<this.exons.length; i++) {
-            //        this.exons[i].hideShowcdsAndutrs(true);
-            //        periousAni = this.exons[i].transcriptionAnimation(this.strand, periousAni);
-            //        if(!firstCreated && periousAni.length>0)
-            //        {
-            //            firstIndex = i;
-            //            firstCreated=true;
-            //        }
-            //    }
-            //    this.exons[firstIndex].transcriptionAniRestart(periousAni);
-
-            //}.bind(this),3000);
         }
         else
         {
             clicked = false;
             $("#transcription-intro").attr('class', 'introduction btn btn-info btn-lg');
-            panZoomInstance.destroy();
-            //clearInterval(this.transcriptionAniInterval);
+            if(panZoomInstance.length > 1)
+                panZoomInstance.destroy();
             $(this.svgContainer).children().remove();
             this.drawTranscript(false);
         }
