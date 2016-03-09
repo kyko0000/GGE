@@ -58,7 +58,7 @@ function Exon(start, end, id, parent, rank) {
     }
 
     //class for create different animates
-    this.createAnimate = function(periousAni, attributeName, from, to, id, svgWidth, time)
+    this.createAnimate = function(periousAni, attributeName, from, to, id, svgWidth, time, strand, svgStart)
     {
         var animations=[];
         var animation = makeSVG('animate',
@@ -95,6 +95,23 @@ function Exon(start, end, id, parent, rank) {
         }
         animations.push(animation);
         animations.push(animationSet);
+        //one more animation from reverse Strand making it seem like created from right to left
+        if(strand == -1)
+        {
+            var svgEnd = (parseFloat(svgStart) + parseFloat(to));
+            console.log(svgStart + " + " + to +" = "+ svgEnd);
+            var reverse = makeSVG('animate',
+                {
+                    begin:id+".begin",
+                    id:'revsrse'+id,
+                    dur:((to/svgWidth)*time)+"s",
+                    attributeName:'x',
+                    from: svgEnd,
+                    to: svgStart,
+                    fill:'freeze'
+                })
+            animations.push(reverse);
+        }
         return animations;
     }
 }
@@ -146,7 +163,7 @@ Exon.prototype.drawExon = function(svgContainer, transcriptStart, transcriptEnd)
 }
 
 //draw cds and utrs
-Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
+Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer, strand)
 {
     var cdsMatched = false;
     var thisLastAnimateID ='';
@@ -194,7 +211,7 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
         $(svgContainer).append(this.cdsSVG);
         //$(svgContainer).append(exonGroup);
         cdsMatched = true;
-        console.log('inserted cds only')
+        console.log('inserted cds only');
     }
     else if(this.start != cds.start && this.end == cds.end) //the most left exon
     {
@@ -229,9 +246,15 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
         //var cdsSVGAnimate = this.createAnimate('utr'+this.id, 'width', 0, (this.cdsWidth), thisLastAnimateID);
         //this.utrSVG.append(utrSVGAnimate);
         //this.cdsSVG.append(cdsSVGAnimate);
-        this.utrCdsList.push(this.utrSVG);
-        this.utrCdsList.push(this.cdsSVG);
-
+        if(strand == 1) {
+            this.utrCdsList.push(this.utrSVG);
+            this.utrCdsList.push(this.cdsSVG);
+        }
+        else if(strand == -1)
+        {
+            this.utrCdsList.push(this.cdsSVG);
+            this.utrCdsList.push(this.utrSVG);
+        }
         $(svgContainer).append(this.utrSVG);
         $(svgContainer).append(this.cdsSVG);
         //$(svgContainer).append(exonGroup);
@@ -272,9 +295,15 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
 
        //var cdsSVGAnimate = this.createAnimate(periousAnimate, 'width', 0, this.cdsWidth,'cds'+this.id);
         //var utrSVGAnimate = this.createAnimate('cds'+this.id, 'width', 0, this.utrsWidth, thisLastAnimateID);
-
-        this.utrCdsList.push(this.cdsSVG);
-        this.utrCdsList.push(this.utrSVG);
+        if(strand == 1) {
+            this.utrCdsList.push(this.cdsSVG);
+            this.utrCdsList.push(this.utrSVG);
+        }
+        else if(strand == -1)
+        {
+            this.utrCdsList.push(this.utrSVG);
+            this.utrCdsList.push(this.cdsSVG)
+        }
 
         $(svgContainer).append(this.cdsSVG);
         $(svgContainer).append(this.utrSVG);
@@ -287,18 +316,15 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer)
 
 Exon.prototype.createTranscriptionAnimate = function(periousAnimate, strand, svgWidth, time)
 {
-    if(strand == 1)
+    for(k=0; k<this.utrCdsList.length; k++)
     {
-        for(k=0; k<this.utrCdsList.length; k++)
-        {
-            var id = 'ani'+this.id+k;
-            var animates = this.createAnimate(periousAnimate, 'width', '0', $(this.utrCdsList[k]).attr('width'), id, svgWidth, time);
-            for(animateIndex=0; animateIndex<animates.length;animateIndex++)
-                $(this.utrCdsList[k]).append(animates[animateIndex]);
-            periousAnimate = id
-        }
-        return id;
+        var id = 'ani'+this.id+k;
+        var animates = this.createAnimate(periousAnimate, 'width', '0', $(this.utrCdsList[k]).attr('width'), id, svgWidth, time, strand, $(this.utrCdsList[k]).attr('x'));
+        for(animateIndex=0; animateIndex<animates.length;animateIndex++)
+            $(this.utrCdsList[k]).append(animates[animateIndex]);
+        periousAnimate = id
     }
+    return id;
 }
 Exon.prototype.svgExonFocusing = function(focusing)
 {

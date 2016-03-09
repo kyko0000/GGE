@@ -69,6 +69,8 @@ function Transcript(start, end, id, strand, name, svgContainer) {
 
     this.addPanAndZoom = function()
     {
+        //console.log("pan zoom");
+        panZoomInstanceCreated=true;
         var container = document.querySelector("#svg-container");
         panZoomInstance = svgPanZoom(container,
             {
@@ -109,6 +111,7 @@ function Transcript(start, end, id, strand, name, svgContainer) {
     };
 }
 Transcript.panZoomInstance; //static object variable for all transcript object
+Transcript.panZoomInstanceCreated=false;
 Transcript.prototype.addExon = function(exon)
 {
     if(!exon.isChildOf(this.id))
@@ -122,7 +125,7 @@ Transcript.prototype.addExon = function(exon)
         inserted = true;
     }
     else {
-        var inserted = false
+        var inserted = false;
         for (j = 0; j < this.exons.length && !inserted; j++) //check from first exon to last exon
         {
             if(exon.rank == 1)
@@ -342,11 +345,7 @@ Transcript.prototype.drawTranscript = function(withcds)
                     begin:'rnaPolymerase.begin',
                     fill:'freeze'
                 }));
-            $(this.rnaPolymerase).append(this.rnaPolymeraseAni);
-            for(ani=0;ani<this.rnaAni.length;ani++) {
-                $(this.rna).append(this.rnaAni[ani]);
-            }
-        }
+        } //--------------------------------RNA FOR forward Strand---------------------------------------------
         else { //reverse strand
             var index = this.cdsList.length - 1;
             this.rnaPolymerase= makeSVG('rect',
@@ -359,13 +358,43 @@ Transcript.prototype.drawTranscript = function(withcds)
                 });
             this.rna = makeSVG('line',
                 {
-                    x1:svgStart,
+                    x1:svgEnd,
                     y1:'26',
                     x2:svgEnd,
                     y2:'26',
-                    style:'opacity:0'
+                    style:'opacity:1;stroke:blue'
                 })
+
+            //rna polymerase animation from right to left
+            this.rnaPolymeraseAni = makeSVG('animate',
+                {
+                    begin:'btnPlay.click',
+                    id:'rnaPolymerase',
+                    dur:'20s',
+                    attributeName:'x',
+                    from: svgEnd,
+                    to: svgStart,
+                    fill:'freeze'
+                });
+            this.rnaAni.push(makeSVG('animate',
+                {
+                    id:'rnaCreate',
+                    dur:'20s',
+                    attributeName:'x1',
+                    from:svgEnd,
+                    to:svgStart,
+                    begin:'rnaPolymerase.begin',
+                    fill:'freeze'
+                }));
         }
+
+        //put animate to the rna and rna polymerase
+        $(this.rnaPolymerase).append(this.rnaPolymeraseAni);
+
+        for(ani=0;ani<this.rnaAni.length;ani++) {
+            $(this.rna).append(this.rnaAni[ani]);
+        }
+
         $(this.svgContainer).append(this.upperStrand);
         $(this.svgContainer).append(this.lowerStrand);
         $(this.svgContainer).append(this.rnaPolymerase);
@@ -398,16 +427,17 @@ Transcript.prototype.drawTranscript = function(withcds)
         //draw all exon with utrs and cds with animation
 
         var animationIDList = [];
+        //index decleared in the first line after checking the strand.
         for (var i = 0; i < this.exons.length; i++) {
             //console.log(this.exons[i].start+ "--" +this.cdsList[index].start + "||" + this.exons[i].end + " -- " + this.cdsList[index].end);
             if(index >= 0 && index < this.cdsList.length)
-                var cdsMatched = this.exons[i].drawExonAndShowUTRs(this.cdsList[index],this.svgContainer);
+                var cdsMatched = this.exons[i].drawExonAndShowUTRs(this.cdsList[index],this.svgContainer, this.strand);
             else
-                var cdsMatched = this.exons[i].drawExonAndShowUTRs('',this.svgContainer);
+                var cdsMatched = this.exons[i].drawExonAndShowUTRs('',this.svgContainer, this.strand);
             if(cdsMatched && this.strand == 1)
                 index++;
             else if(cdsMatched && this.strand == -1)
-                index --;
+                index--;
         }
         this.transcriptionAnimate();
     }
@@ -445,6 +475,7 @@ Transcript.prototype.createTranscript = function(dropdownList)
     $(this.transcriptButton).click(function(e)
     {
         panZoomInstance.destroy();
+        panZoomInstanceCreated = false;
         $(this.svgContainer).children().remove();
         this.drawTranscript(false);
     }.bind(this));
@@ -487,11 +518,13 @@ Transcript.prototype.drawIntronWithAnimate = function(periousAnimate, index, svg
     if(this.strand == '1') { //Forward stard
         var startX = this.exons[index].svgEndPointX;
         var endX = this.exons[index + 1].svgStartPointX;
+        var duration = ((endX-startX)/svgWidth)*time;
     }
     else if(this.strand == '-1')//Reverse strand
     {
         var startX = this.exons[index].svgStartPointX;
         var endX = this.exons[index+1].svgEndPointX;
+        var duration = ((startX - endX)/svgWidth)*time;
     }
     var xRadius = (endX - startX) * 4;
     var intronSVG = makeSVG('path',
@@ -506,7 +539,7 @@ Transcript.prototype.drawIntronWithAnimate = function(periousAnimate, index, svg
     var intronAnimate = makeSVG('animate',
         {
             id:id,
-            dur:(((endX-startX)/svgWidth)*time)+'s',
+            dur:duration+'s',
             attributeName:'d',
             from: 'M ' + startX + ' 150 A ' + xRadius + " " + xRadius + " 0 0 1 " + startX + " 150",
             to: 'M ' + startX + ' 150 A ' + xRadius + " " + xRadius + " 0 0 1 " + endX + " 150",
@@ -614,8 +647,11 @@ Transcript.prototype.transcriptionBtn = function()
         {
             clicked = true;
             $("#transcription-intro").attr('class', 'introduction btn btn-success btn-lg');
-            if(panZoomInstance.length > 1)
+            if(panZoomInstanceCreated) {
+                console.log('Instance destroy');
                 panZoomInstance.destroy();
+                panZoomInstance=false;
+            }
             $(this.svgContainer).children().remove();
             this.drawTranscript(true);
 
@@ -624,8 +660,10 @@ Transcript.prototype.transcriptionBtn = function()
         {
             clicked = false;
             $("#transcription-intro").attr('class', 'introduction btn btn-info btn-lg');
-            if(panZoomInstance.length > 1)
+            if(panZoomInstanceCreated) {
                 panZoomInstance.destroy();
+                panZoomInstanceCreated=false;
+            }
             $(this.svgContainer).children().remove();
             this.drawTranscript(false);
         }

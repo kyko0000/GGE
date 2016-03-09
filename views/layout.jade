@@ -19,8 +19,11 @@ html
           a.navbar-brand(href="#") GGE
         ul.nav.navbar-nav
           li.active: a(href="#") HOME
-          li: a(href="#") Genome Browser
-          li: a(href="#") Basic Information
+          li: a(href="#") Sequence Search
+          li.dropdown
+            a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false') Chromosomes
+              span.caret
+
         .col-sm-3.col-md-3.pull-right
           form.navbar-form#gene-search(role="search" method="get" action="javascript:search();")
             .input-group
@@ -30,6 +33,7 @@ html
     script(type='text/javascript', src='javascripts/search.js')
     .spinner-div
       .spinner-inner
+        //loading icon
     script.
       $(".spinner-div").hide();
     block content
