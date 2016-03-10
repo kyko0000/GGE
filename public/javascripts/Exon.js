@@ -37,7 +37,9 @@ function Exon(start, end, id, parent, rank) {
                 {
                     $("#sequence-region").show();
                     $('#sequence').empty();
-                    $('#sequence').append(data);
+                    var sequenceObj = JSON.parse(data);
+                    $('#sequence').append("DNA Sequence of "+sequenceObj.id+": ");
+                    $('#sequence').append(sequenceObj.seq);
                     $('#sequence').height('inherit');
                     if($('#sequence').height() > 250)
                     {

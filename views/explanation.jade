@@ -4,7 +4,7 @@
     .explanation-area-title
         h1.title-text Gene Structure and Information
     .svg-container
-        .dropdown#svg-menu
+        .dropdown.dropdown-btn#svg-menu
             button.btn.btn-xs.btn-default.dropdown-toggle#svg-dropbown(type='button', data-toggle='dropdown',aria-haspopup='true',aria-expanded='false') Transcripts
                 span.caret
             ul.dropdown-menu#transcript-menu(aria-labelledby='svg-dropdown')
@@ -13,7 +13,7 @@
                 li.disabled
                     a(style="background-color:lightyellow") Canonical Transcript
             input#focusing-transcript-info(readonly)
-        .dropdown#seq-menu
+        .dropdown.dropdown-btn#seq-menu
             button.btn.btn-xs.btn-default.dropdown-toggle#seq-dropdown(type='button', data-toggle='dropdown',aria-haspopup='true',aria-expanded='false') Sequences
                 span.caret
             ul.dropdown-menu#sequences-menu(aria-labelledby='seq-dropdown')

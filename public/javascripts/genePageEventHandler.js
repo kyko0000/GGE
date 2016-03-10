@@ -102,8 +102,11 @@ var drawPosition = function(start, end)
     var c = document.getElementById('indicator');
     var ctx = c.getContext('2d');
     ctx.clearRect(0, 0, c.width, c.height);
-    ctx.fillStyle = "rgba(0, 255, 0, 1)";
-    ctx.fillRect(start, 0, end - start, 5);
+    ctx.strokeStyle = "rgba(255, 0, 0, 1)";
+    ctx.strokeRect(start, 0, end - start, 10);
+    ctx.fillStyle = "rgba(0,255,0, 1)";
+    ctx.fillRect(start, 0, end-start, 10);
+
 }
 
 //show the start, end and length information to the textbox under the chromosome.

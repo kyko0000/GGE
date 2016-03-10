@@ -46,7 +46,6 @@ td
 #indicator
 {
     position: relative;
-    top: -7px;
 }
 .selected-info
 {
@@ -102,11 +101,17 @@ td
     border-radius: 15px;
 }
 
+#chromosome-navigator
+{
+    box-shadow: 1px 1px 5px grey;
+    border-radius: 10px;
+}
+
 .info-area input
 {
     background-color: #FFFFFF;
     border: hidden;
-    font-size: large;
+    font-size: medium;
 }
 .gene-position
 {
@@ -290,6 +295,9 @@ td
     text-align: center;
     vertical-align: middle;
     border-style:solid;
+    border-color:grey;
+    border-width: 1px;
+    margin-top: 1%;
 }
 #sequence
 {
@@ -297,8 +305,12 @@ td
     height:inherit;
     border-style: solid;
     border-width:1px;
-    margin-top: 3px;
+    border-color:grey;
+    border-top:none;
+    margin-bottom: 1%;
     word-wrap: break-word;
+    padding-left: 1%;
+    padding-right: 1%;
     overflow: auto;
 }
 
@@ -311,7 +323,11 @@ td
 .dropdown
 {
     display:inline-block;
-    width: 50%;
+}
+
+.dropdown-btn
+{
+    width:50%;
 }
 
 .exon.blinking

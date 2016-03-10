@@ -47,7 +47,16 @@ function Transcript(start, end, id, strand, name, svgContainer) {
                 {
                     $("#sequence-region").show();
                     $('#sequence').empty();
-                    $('#sequence').append(data);
+                    var sequenceObj = JSON.parse(data);
+                    if(sequenceObj.length > 1)
+                    {
+
+                    }
+                    else
+                    {
+                        $("#sequence").append(sequenceObj.id+": ");
+                        $('#sequence').append(sequenceObj.seq);
+                    }
                     $('#sequence').height('inherit');
                     if($('#sequence').height() > 250)
                     {

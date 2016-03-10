@@ -5,7 +5,7 @@ var ensemblRestApi = require('./ensemblRestApi');
 var option = {
     host: 'rest.ensembl.org',
     path: '',
-    headers: {'Content-Type':'text/plain'},
+    headers: {'Content-Type':'application/json'},
     method: 'GET'
 }
 
