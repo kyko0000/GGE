@@ -32,11 +32,12 @@ function Transcript(start, end, id, strand, name, svgContainer) {
     this.rnaAni=[];
 
     //private method
-    this.getSequence = function()
+    this.getSequence = function(type)
     {
         var data = {};
         data.id = this.id;
         data.mask = 'true';
+        data.type = type;
         $.ajax(
             {
                 url: './api/getSequence',
@@ -50,11 +51,16 @@ function Transcript(start, end, id, strand, name, svgContainer) {
                     var sequenceObj = JSON.parse(data);
                     if(sequenceObj.length > 1)
                     {
+                        for(x=0; x<sequenceObj.length; x++)
+                        {
 
+                            $("#sequence").append( type + " sequence of " + " " +sequenceObj[x].id+": ");
+                            $("#sequence").append(sequenceObj[x].seq);
+                        }
                     }
                     else
                     {
-                        $("#sequence").append(sequenceObj.id+": ");
+                        $("#sequence").append(type+" sequence of " + sequenceObj.id+": ");
                         $('#sequence').append(sequenceObj.seq);
                     }
                     $('#sequence').height('inherit');
@@ -64,7 +70,7 @@ function Transcript(start, end, id, strand, name, svgContainer) {
                     }
                     $('#sequence-title-text').text("Sequence: " + this.id);
                     $('html, body').animate({
-                        scrollTop: $("#sequence").offset().top
+                        scrollTop: $("#sequence-region").offset().top
                     }, 2000);
 
                 }.bind(this),
@@ -113,9 +119,9 @@ function Transcript(start, end, id, strand, name, svgContainer) {
         var svgWidth = $(this.svgContainer)[0].getBoundingClientRect().width;
         for(x=0; x<this.exons.length; x++)
         {
-            periousAnimate = this.exons[x].createTranscriptionAnimate(periousAnimate, this.strand, svgWidth, 20);
+            periousAnimate = this.exons[x].createTranscriptionAnimate(periousAnimate, this.strand, svgWidth, 10);
             if(x < this.exons.length - 1)
-                periousAnimate = this.drawIntronWithAnimate(periousAnimate, x, svgWidth, 20);
+                periousAnimate = this.drawIntronWithAnimate(periousAnimate, x, svgWidth, 10);
         }
     };
 }
@@ -301,6 +307,10 @@ Transcript.prototype.drawTranscript = function(withcds)
                 y2:'40',
                 style:'stroke:black;stoke-width:1'
             });
+
+        var templateStrand = makeTextSVG('title', {}, "Template Strand");
+        var codingStrand = makeTextSVG('title', {}, "Coding Strand");
+
         var upperFiveEnd = makeTextSVG('text', {x: (svgStart - 15), y:'20'}, "5'");
         var upperThreeEnd = makeTextSVG('text', {x:(svgEnd + 10), y:'20'}, "3'");
         $(this.svgContainer).append(upperFiveEnd);
@@ -309,11 +319,27 @@ Transcript.prototype.drawTranscript = function(withcds)
         var lowerThreeEnd = makeTextSVG('text', {x:(svgStart - 15), y:'40'}, "3'");
         $(this.svgContainer).append(lowerFiveEnd);
         $(this.svgContainer).append(lowerThreeEnd);
-        if(this.strand == 1) {
-            var index = 0; //forward strand
+
+        if(this.strand == 1) { //forward strand
+            var index = 0;
+            //---- chromosome strand tooltip
+            $(this.lowerStrand).append(templateStrand);
+            $(this.upperStrand).append(codingStrand)
+            //---- chromosome strand tooltip
+
+            //---description
+            var descrtiption = makeTextSVG('text',
+                {
+                    id:'transcription-description',
+                    x:((svgEnd - svgStart)/2)-250,
+                    y:($(this.svgContainer)[0].getBoundingClientRect().height-20),
+                    opacity: '0'
+                },"Polymerase move though the Template Strand (Lower Strand) and transcript the RNA from right to left");
+            $(this.svgContainer).append(descrtiption);
 
             this.rnaPolymerase = makeSVG('rect',
                 {
+                    id:'rna-polymerase',
                     x:svgStart,
                     y:'32',
                     width:'10',
@@ -336,7 +362,7 @@ Transcript.prototype.drawTranscript = function(withcds)
                 {
                     begin:'btnPlay.click',
                     id:'rnaPolymerase',
-                    dur:'20s',
+                    dur:'10s',
                     attributeName:'x',
                     from: svgStart,
                     to: svgEnd,
@@ -347,7 +373,7 @@ Transcript.prototype.drawTranscript = function(withcds)
             this.rnaAni.push(makeSVG('animate', //moving animation
                 {
                     id:'rnaCreate',
-                    dur:'20s',
+                    dur:'10s',
                     attributeName:'x2',
                     from:svgStart,
                     to:svgEnd,
@@ -357,8 +383,22 @@ Transcript.prototype.drawTranscript = function(withcds)
         } //--------------------------------RNA FOR forward Strand---------------------------------------------
         else { //reverse strand
             var index = this.cdsList.length - 1;
+            $(this.upperStrand).append(templateStrand);
+            $(this.lowerStrand).append(codingStrand);
+
+            //description
+            var descrtiption = makeTextSVG('text',
+                {
+                    id:'transcription-description',
+                    x:((svgEnd - svgStart)/2)-250,
+                    y:($(this.svgContainer)[0].getBoundingClientRect().height-20),
+                    opacity: '0'
+                },"Polymerase move though the Template Strand (Upper Strand) and transcript the RNA from left to right");
+            $(this.svgContainer).append(descrtiption);
+
             this.rnaPolymerase= makeSVG('rect',
                 {
+                    id:"rna-polymerase",
                     x:(svgEnd-10),
                     y:'18',
                     width:'10',
@@ -372,14 +412,17 @@ Transcript.prototype.drawTranscript = function(withcds)
                     x2:svgEnd,
                     y2:'26',
                     style:'opacity:1;stroke:blue'
-                })
+                });
+
+            var svgTitle = makeTextSVG('title',{},'RNA Polymerase');
+            $(this.rnaPolymerase).append(svgTitle);
 
             //rna polymerase animation from right to left
             this.rnaPolymeraseAni = makeSVG('animate',
                 {
                     begin:'btnPlay.click',
                     id:'rnaPolymerase',
-                    dur:'20s',
+                    dur:'10s',
                     attributeName:'x',
                     from: svgEnd,
                     to: svgStart,
@@ -388,7 +431,7 @@ Transcript.prototype.drawTranscript = function(withcds)
             this.rnaAni.push(makeSVG('animate',
                 {
                     id:'rnaCreate',
-                    dur:'20s',
+                    dur:'10s',
                     attributeName:'x1',
                     from:svgEnd,
                     to:svgStart,
@@ -419,6 +462,7 @@ Transcript.prototype.drawTranscript = function(withcds)
             style:'fill:green;stroke-width:1;stroke:black;cursor:pointer'
         });
 
+
         $(this.svgContainer).append(startBtn);
 
         $("#btnPlay").click(function(self,button,e)
@@ -428,7 +472,8 @@ Transcript.prototype.drawTranscript = function(withcds)
             $(self.btnTranscription).prop('disabled', true);
             setTimeout(function() {
                 $(self.btnTranscription).prop('disabled', false);
-            }, 20000)
+            }, 10000)
+            $("#transcription-description").attr('class', 'description-active');
         }.bind(null,this, $("#btnPlay")));
         $(this.svgContainer).append(groupSVG);
         //End of draw Chromosome and rna-------------------------
@@ -701,10 +746,20 @@ Transcript.prototype.seqBtn = function()
     //btn click handler
     $(this.btnTranscriptSeq).click(function(e)
     {
-        this.getSequence();
+        this.getSequence('genomic');
         this.clearAllExonSVGFocus();
     }
     .bind(this));
+    $(this.btnCdsSeq).click(function(e)
+    {
+        this.getSequence('cds');
+        this.clearAllExonSVGFocus();
+    }.bind(this));
+    $(this.btnProteinSeq).click(function(e)
+    {
+        this.getSequence('protein');
+        this.clearAllExonSVGFocus();
+    }.bind(this));
 };
 
 Transcript.prototype.clearAllExonSVGFocus = function()

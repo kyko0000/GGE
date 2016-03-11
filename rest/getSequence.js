@@ -15,15 +15,16 @@ function rest(router, res)
     {
         var id = req.query.id;
         var mask = req.query.mask;
+        var type = req.query.type;
         var getData = function(sequence)
         {
             console.log(sequence);
             res.send(sequence);
         }
-        option.path = "/sequence/id/"+id;
+        option.path = "/sequence/id/"+id+"?type="+type+";multipile_sequences=1;";
         if(mask == 'true')
         {
-            option.path +="?mask_feature=1";
+            option.path +="mask_feature=1";
         }
         ensemblRestApi.callRestGet(option, getData);
     })

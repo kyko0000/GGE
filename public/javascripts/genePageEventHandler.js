@@ -9,14 +9,20 @@ var selectedGeneCanonicalTranscript = {canonicalTranscript:''};
 $(".selected-info").val("Chromosome " + $(".chromosome").attr("id") + " : ");
 $("[name='my-checkbox']").bootstrapSwitch();
 //$(".spinning-div").hide();
-
+//hide the Slide Instruction
+setTimeout(function()
+{
+    $('slide-instruction').toggle(1000);
+},5000);
 //event handler
 //event handler for chromosome
+
 $(".position-locator").mousedown(function(e)
 {
     relativeStart = recordStartAndEnd(e, this);
+    $(".position-locator").css('cursor','col-resize')
 
-})
+});
 
 $(".position-locator").mouseup(function(e)
 {
@@ -24,6 +30,7 @@ $(".position-locator").mouseup(function(e)
     relativeLength();
     drawPosition(relativeStart, relativeEnd);
     drawTable(actualStart, actualEnd);
+    $(".position-locator").css('cursor','default');
     getGenes();
 
 });
@@ -55,6 +62,7 @@ var geneEventHandler = function() {
         }
         else {
             getGeneInfo(selectedGeneID);
+            $('body').css('cursor', 'wait');
         }
     });
 
@@ -90,8 +98,21 @@ var relativeLength = function()
 {
     var length = $(".chromosome").data("length");
     var width = $(".position-locator").width();
+    if(relativeStart > relativeEnd)
+    {
+        var temp = relativeStart;
+        relativeStart = relativeEnd;
+        relativeEnd = temp;
+    }
     actualStart = parseInt(length * relativeStart/width);
     actualEnd = parseInt(length * relativeEnd/width);
+
+
+    if((actualEnd - actualStart) > 5000000)
+    {
+        actualEnd = actualStart + 4999999;
+        relativeEnd = (actualEnd/length)*width;
+    }
 
     $(".selected-info").val("Chromosome " + $(".chromosome").attr("id") + " : " + actualStart + " - " + actualEnd);
 }
@@ -181,6 +202,7 @@ var getGeneInfo = function(id)
                 });
             });
             $("#dia-"+id).modal('toggle');
+            $('body').css('cursor','default');
         },
         error: function(xhr, status, error)
         {
@@ -249,8 +271,8 @@ var showGeneInfo = function(jsonObj)
                     "</div>"+
                 "</div>"+
                 "<div class='modal-footer'>"+
-                    "<button type='button' class='btn btn-default' data-dismiss='modal' data-canonical='"+selectedGeneCanonicalTranscript.canonicalTranscript+"' data-id='"+jsonObj.id+"' onclick='callExplaination(this)'> More Information </button>"+
-                    "<button type='button' class='btn btn-default' data-dismiss='modal'>Close</button>"+
+                    "<button type='button' class='btn btn-success' data-dismiss='modal' data-canonical='"+selectedGeneCanonicalTranscript.canonicalTranscript+"' data-id='"+jsonObj.id+"' onclick='callExplaination(this)'> More Information </button>"+
+                    "<button type='button' class='btn btn-danger' data-dismiss='modal'>Close</button>"+
                 "</div>"+
             "</div>"+
         "</div>"+

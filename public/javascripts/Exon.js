@@ -22,11 +22,12 @@ function Exon(start, end, id, parent, rank) {
     //ani
     this.transcriptionAni;
     this.transcriptionOpacityAni;
-    this.getExonSequence = function()
+    this.getExonSequence = function(type)
     {
         //conosle.log('clicked');
         var data = {};
         data.id = this.id;
+        data.type = type;
         $.ajax(
             {
                 url: './api/getSequence',
@@ -148,9 +149,11 @@ Exon.prototype.drawExon = function(svgContainer, transcriptStart, transcriptEnd)
             class: 'exon',
             x: this.svgStartPointX,
             y: this.svgStartPointY,
+            rx:'5',
+            ry:'5',
             width: this.svgWidth,
             height: '50',
-            style:'fill:blue;fill-opacity:0.6'
+            style:'fill:green;fill-opacity:0.6'
         }
     )
     $(svgContainer).append(this.exonSVG);
@@ -158,7 +161,7 @@ Exon.prototype.drawExon = function(svgContainer, transcriptStart, transcriptEnd)
 
     $(this.exonSVG).dblclick(function(e)
     {
-        this.getExonSequence();
+        this.getExonSequence('genomic');
         this.transcript.clearAllExonSVGFocus();
         this.svgExonFocusing(true);
     }.bind(this));

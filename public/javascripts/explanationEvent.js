@@ -75,7 +75,7 @@ explanationCreater.prototype.hideShowSeqReg = function()
     {
         $("#sequence").toggle(1000);
         $('html, body').animate({
-            scrollTop: $("#explanation-container").offset().top
+            scrollTop: $("#sequence-region").offset().top
         }, 2000);
     })
 }
