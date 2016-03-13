@@ -2,6 +2,7 @@
  * Created by yuechungng on 4/2/2016.
  */
 var ensemblRestApi = require('./ensemblRestApi');
+
 var option = {
     host : 'rest.ensembl.org',
     path : '',
@@ -25,6 +26,7 @@ function rest(router, data)
         option.path = "/lookup/id/" + geneID +"?expand=1";
         //console.log()
         ensemblRestApi.callRestGet(option, getData);
+
     });
 
 
