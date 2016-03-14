@@ -14,5 +14,6 @@
  require('./getGene').rest(router);
  require('./GeneInfo').rest(router);
  require('./getSequence').rest(router);
+ require('./getGeneFromDiseaseOrSymbol').rest(router);
 
  module.exports = router;

@@ -396,6 +396,23 @@ td
     animation:fadeInAndOut 10s;
 }
 
+/*Search Result Page*/
+.result-container
+{
+    border-bottom: solid;
+    border-width: 1px;
+    border-color: #c4c4c4;
+}
+
+.result-container:hover
+{
+    background-color: #ffffb3;
+}
+
+.disease-name span
+{
+    color: red;
+}
 /*spinner icon*/
 .loader,
 .loader:before,

@@ -38,11 +38,12 @@ var search = function()
         query.id = searchString;
         callEnsemblAjax(query);
     }
-    else //search by symbol
+    else //search by symbol or disease
     {
         query.type = "symbol";
-        query.symbol = searchString;
-        callEnsemblAjax(query);
+        query.queryString = searchString;
+        //callEnsemblAjax(query);
+        textQueryAjax(query);
     }
 
 }
@@ -65,4 +66,24 @@ var callEnsemblAjax = function(query)
                 alert("Error: "+ error.message);
             }
         });
+}
+
+var textQueryAjax = function(query)
+{
+    $.ajax(
+        {
+            url:'./api/geneFromDisSym',
+            data: query,
+            type:'GET',
+            success: function(data){
+                var result = new SearchResult(data);
+                result.showResult(query.queryString);
+                $('.spinner-div').hide();
+            },
+            error: function(err, status, xhr)
+            {
+                console.log("Ajax Error: Text Query");
+            }
+        }
+    )
 }

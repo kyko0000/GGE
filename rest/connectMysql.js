@@ -18,16 +18,19 @@ exports.searchGeneByDisease = function(condition, callback)
     {
         callback(rows, field);
     }
-    queryMysqlServer(condition, result);
+    var query = "SELECT GeneSymbol, DiseaseName From GeneNDisease Where " + condition +";";
+    queryMysqlServer(query, result);
 }
 
-var queryMysqlServer = function(query, callback)
+ queryMysqlServer = function(query, callback)
 {
-    connection.connect();
+    //connection.connect();
+    console.log(query);
     connection.query(query, function(err, rows, fields)
     {
         if(err) throw err;
         callback(rows, fields);
     });
+    //connection.end();
 
 }

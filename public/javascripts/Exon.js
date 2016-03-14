@@ -335,12 +335,12 @@ Exon.prototype.svgExonFocusing = function(focusing)
 {
     if(!focusing)
     {
-        $(this.exonSVG).css('fill', 'blue');
+        $(this.exonSVG).css('fill', 'green');
         $(this.exonSVG).css('fill-opacity','0.6');
     }
     else
     {
-        $(this.exonSVG).css('fill', 'green');
+        $(this.exonSVG).css('fill', 'red');
     }
 }
 
