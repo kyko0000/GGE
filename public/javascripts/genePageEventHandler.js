@@ -5,7 +5,7 @@ var relativeStart;
 var relativeEnd;
 var actualStart;
 var actualEnd;
-var selectedGeneCanonicalTranscript = {canonicalTranscript:''};
+var selectedGeneCanonicalTranscript = {};
 $(".selected-info").val("Chromosome " + $(".chromosome").attr("id") + " : ");
 $("[name='my-checkbox']").bootstrapSwitch();
 //$(".spinning-div").hide();
@@ -278,6 +278,7 @@ var showGeneInfo = function(jsonObj)
         "</div>"+
     "</div>";
     console.log(selectedGeneCanonicalTranscript.canonicalTranscript);
+    selectedGeneCanonicalTranscript.symbol = jsonObj.display_name;
     return html;
 }
 

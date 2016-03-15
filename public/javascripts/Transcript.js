@@ -8,8 +8,10 @@ function Transcript(start, end, id, strand, name, svgContainer) {
     this.strand = strand;
     this.name = name;
     this.isCanonical;
+    this.symbol;
     this.exons = [];
     this.cdsList = [];
+    this.haveDisease = false;
     //web page element
     this.transcriptButton;
     this.svgContainer = svgContainer;
@@ -17,6 +19,7 @@ function Transcript(start, end, id, strand, name, svgContainer) {
     this.btnExons;
     this.btnTranscription;
     this.btnTranscriptSeq;
+    this.btnDisease;
     this.btnCdsSeq;
     this.btncdnaSeq;
     this.proteinSeq;
@@ -265,11 +268,11 @@ Transcript.prototype.drawTranscript = function(withcds)
         for (var i = 0; i < this.exons.length; i++) {
             this.exons[i].drawExon(this.svgContainer, this.start, this.end);
             if (this.strand == -1) {
-                this.exons[i].drawExonDescription(this.exons.length);
+                this.exons[i].drawExonDescription(this.exons.length, this.svgContainer);
             }
             else (this.strand == 1)
             {
-                this.exons[i].drawExonDescription(this.exons.length);
+                this.exons[i].drawExonDescription(this.exons.length, this.svgContainer);
             }
 
         }
@@ -280,7 +283,7 @@ Transcript.prototype.drawTranscript = function(withcds)
         //button for explanation
         this.exonsBtn();
         this.transcriptionBtn();
-
+        this.diseaseBtn();
     }
     else //draw utrs and cds
     {
@@ -761,6 +764,36 @@ Transcript.prototype.seqBtn = function()
         this.clearAllExonSVGFocus();
     }.bind(this));
 };
+
+Transcript.prototype.diseaseBtn = function()
+{
+    this.btnDisease = document.createElement('button');
+    $(this.btnDisease).attr('class', 'btn btn-default btn-lg');
+    $(this.btnDisease).text("Related Disease(s)");
+    $("#Disease-btn").append(this.btnDisease);
+
+    $(this.btnDisease).click(function(e)
+    {
+        var data={};
+        data.type = 'disease';
+        data.symbol = selectedGeneCanonicalTranscript.symbol;
+        $.ajax({
+            url:'./api/geneFromDisSym',
+            data:data,
+            type:'GET',
+            contentType:'application/json',
+            success: function(data)
+            {
+                alert(data);
+            },
+            error: function(xhr, status, error)
+            {
+                alert("Ajax : Get Disease Error /n"+error.message);
+            }
+
+        });
+    });
+}
 
 Transcript.prototype.clearAllExonSVGFocus = function()
 {

@@ -22,6 +22,7 @@
     .svg-btn
         .btn-container#exons-btn
         .btn-container#transcription-btn
+        .btn-container#Disease-btn
 .container#sequence-region
     .sequence-area-title#sequence-title
         h4#sequence-title-text Sequence
@@ -32,6 +33,6 @@ script(type='text/javascript' src='javascripts/Exon.js')
 script(type='text/javascript' src='javascripts/cds.js')
 script(type='text/javascript' src='javascripts/explanationEvent.js')
 script.
-    //console.log(getCanonicalTranscript());
-    var explanation = new explanationCreater('#{transcripts}', '#{exons}', '#{cds}','#{id}',selectedGeneCanonicalTranscript.canonicalTranscript);
+    console.log(selectedGeneCanonicalTranscript.canonicalTranscript);
+    var explanation = new explanationCreater('#{transcripts}', '#{exons}', '#{cds}','#{id}',selectedGeneCanonicalTranscript.canonicalTranscript, selectedGeneCanonicalTranscript.symbol);
     explanation.drawSVG();

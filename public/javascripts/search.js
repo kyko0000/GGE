@@ -40,7 +40,7 @@ var search = function()
     }
     else //search by symbol or disease
     {
-        query.type = "symbol";
+        query.type = "search";
         query.queryString = searchString;
         //callEnsemblAjax(query);
         textQueryAjax(query);

@@ -30,14 +30,14 @@ Band.prototype.createTD = function(tr)
 {
     //$("#"+tr).append(td);
     if(this.isStart) {
-        var td = "<td id='"+ this.id +"'"+"data-start='" + this.start + "' data-end='" + this.end + "' class='start'><div class='bands' style=\"'width:"+ this.lengthPer +"%'\"></div></td>";
+        var td = "<td id='"+ this.id +"'"+"data-start='" + this.start + "' data-end='" + this.end + "' class='start'><div class='bands' title='"+this.id+"' style=\"'width:"+ this.lengthPer +"%'\"></div></td>";
     }
     else if(this.isEnd) {
-        var td = "<td id='" + this.id + "'" + "data-start='" + this.start + "' data-end='" + this.end + "' class='end'><div class='bands' style=\"'width:"+ this.lengthPer +"%'\"></div></td>";
+        var td = "<td id='" + this.id + "'" + "data-start='" + this.start + "' data-end='" + this.end + "' class='end'><div class='bands' title='"+this.id+"' style=\"'width:"+ this.lengthPer +"%'\"></div></td>";
     }
     else
     {
-        var td = "<td id='"+ this.id +"'"+"data-start='" + this.start + "' data-end='" + this.end + "'><div class='bands' style=\"'width:"+ this.lengthPer +"%'\"></div></td>";
+        var td = "<td id='"+ this.id +"'"+"data-start='" + this.start + "' data-end='" + this.end + "'><div class='bands' title='"+this.id+"' style=\"'width:"+ this.lengthPer +"%'\"></div></td>";
     }
     $("#"+tr).append(td);
 

@@ -1,7 +1,7 @@
 /**
  * Created by yuechungng on 19/2/2016.
  */
-function explanationCreater(transcripts,exons,cds,id,canonicalTranscript)
+function explanationCreater(transcripts,exons,cds,id,canonicalTranscript, symbol)
 {
     transcripts = transcripts.replace(/&quot;/g, '"');
     exons = exons.replace(/&quot;/g, '"');
@@ -14,18 +14,16 @@ function explanationCreater(transcripts,exons,cds,id,canonicalTranscript)
     this.exonList = [];
     this.cdsList = [];
     this.seqReg;
+    this.symbol = symbol;
 
     var svgContainer = $('#svg-container');
-
-    //alert(transcripts);
+    //generate transripts
     for (i = 0; i < this.transcriptObjs.length; i++) {
         var transcript = new Transcript(this.transcriptObjs[i].start, this.transcriptObjs[i].end, this.transcriptObjs[i].transcript_id, this.transcriptObjs[i].strand, this.transcriptObjs[i].external_name, svgContainer);
         transcript.canonicalCheck(canonicalTranscript);
         this.transcriptList.push(transcript);
         this.transcriptIDList.push(this.transcriptObjs[i].transcript_id);
     }
-    //console.log(exonObjs.length);
-
     for (i = 0; i < this.exonObjs.length; i++) {
         var exon = new Exon(this.exonObjs[i].start, this.exonObjs[i].end, this.exonObjs[i].id, this.exonObjs[i].Parent, this.exonObjs[i].rank);
         var parent = this.exonObjs[i].Parent;
@@ -36,23 +34,18 @@ function explanationCreater(transcripts,exons,cds,id,canonicalTranscript)
         }
     }
 
-    for (i=0; i<this.cdsObjs.length; i++)
-    {
+    for (i = 0; i < this.cdsObjs.length; i++) {
         var cds = new Cds(this.cdsObjs[i].start, this.cdsObjs[i].end, this.cdsObjs[i].Parent, this.cdsObjs[i].strand, this.cdsObjs[i].id);
         var parent = this.cdsObjs[i].Parent;
         var index = this.transcriptIDList.indexOf(parent);
-        if(index != -1)
-        {
+        if (index != -1) {
             this.transcriptList[index].addCDS(cds);
         }
     }
     this.seqReg = $("#sequence-region");
     this.hideShowSeqReg();
-    ////TESTING ONLY
-    //for(k=0; k<this.transcriptList.length; k++)
-    //{
-    //    console.log(this.transcriptList[k].testingMessage());
-    //}
+
+
 }
 explanationCreater.prototype.drawSVG = function()
 {
@@ -79,6 +72,8 @@ explanationCreater.prototype.hideShowSeqReg = function()
         }, 2000);
     })
 }
+
+
 
 
 

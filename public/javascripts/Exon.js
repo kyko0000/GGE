@@ -365,7 +365,7 @@ Exon.prototype.updateSVG = function(svg)
 
 }
 
-Exon.prototype.drawExonDescription = function(length)
+Exon.prototype.drawExonDescription = function(length, svgContainer)
 {
     var exonDescriptionSVG = makeTextSVG('text',
         {
@@ -375,7 +375,7 @@ Exon.prototype.drawExonDescription = function(length)
             y: 180,
             'font-size': 3,
         }, "Exon " + this.rank + " / " + length);
-    $("#g-"+this.id).append(exonDescriptionSVG);
+    $(svgContainer).append(exonDescriptionSVG);
 
     //exon hover
     $(this.exonSVG).hover(function(e)
