@@ -296,6 +296,7 @@ var callExplaination = function(btn)
             {
                 $(".explanation-container").remove();
                 $("#sequence-region").remove();
+                $(".related-disease").remove();
                 //
                 //selectedGeneCanonicalTranscript = $(btn).data('canonical');
                 $('body').append(data);

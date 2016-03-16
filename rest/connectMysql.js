@@ -39,7 +39,8 @@ exports.getDiseaseByGene = function(condition, callback)
     {
         callback(rows, field);
     }
-    var query = "SELECT G.DiseaseName, D.DEF FROM GeneNDisease AS G, DiseaseDef AS D "+ condition+";"
+    var query = "SELECT G2.ConceptID, G2.GeneSymbol, G2.DiseaseName, D.Def FROM GeneNDisease AS G1, GeneNDisease AS G2, DiseaseDef AS D WHERE " +
+        "G1.GeneSymbol = '"+ condition+"' AND G1.ConceptID = G2.ConceptID AND G1.ConceptID = D.CUI ORDER BY G2.ConceptID;"
     queryMysqlServer(query, result);
 }
 

@@ -77,13 +77,47 @@ function rest(router, data) {
         else if(functionType == 'disease')
         {
             var symbol = req.query.symbol;
-            var condition = "Where G.GeneSymbol = '"+symbol+"' AND G.ConceptID = D.CUI";
             var sendData = function(rows, field)
             {
-                var stringData = JSON.stringify(rows);
-                res.send(stringData);
+                if(rows.length == 0)
+                {
+                    var result = {};
+                    result.count = 0;
+                    var resultString = JSON.stringify(result);
+                    res.send(resultString);
+                }
+                else {
+                    var result = [];
+                    var currentConceptID = rows[0].ConceptID;
+                    var diseaseObject = {};
+                    diseaseObject.diseaseName = rows[0].DiseaseName;
+                    diseaseObject.diseaseDef = rows[0].Def;
+                    diseaseObject.symbol = [];
+                    diseaseObject.symbol.push(rows[0].GeneSymbol);
+                    for (i = 1; i < rows.length; i++) {
+                        if (rows[i].ConceptID == currentConceptID) {
+                            diseaseObject.symbol.push(rows[i].GeneSymbol);
+                        }
+                        else {
+                            console.log(rows[i].DiseaseName)
+                            result.push(diseaseObject);
+                            diseaseObject = {};
+                            diseaseObject.diseaseName = rows[i].DiseaseName;
+                            diseaseObject.diseaseDef = rows[i].Def;
+                            diseaseObject.symbol = [];
+                            diseaseObject.symbol.push(rows[i].GeneSymbol);
+                            currentConceptID = rows[i].ConceptID;
+                        }
+                    }
+                    result.push(diseaseObject); //add last object
+                    console.log(result);
+                    var resultString = JSON.stringify(result);
+                    //var stringData = JSON.stringify(rows);
+                    //console.log(stringData);
+                    res.send(resultString);
+                }
             }
-            mysql.getDiseaseByGene(condition, sendData);
+            mysql.getDiseaseByGene(symbol, sendData);
 
         }
     });

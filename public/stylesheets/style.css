@@ -124,6 +124,10 @@ td
     border: hidden;
     font-size: medium;
 }
+.gene-name:hover
+{
+    background-color:#ffffe6;
+}
 .gene-position
 {
     display: inline-block;
@@ -412,6 +416,23 @@ td
 .disease-name span
 {
     color: red;
+}
+
+.disease-info
+{
+    border-bottom:solid;
+    border-bottom-width: 1px;
+    border-bottom-color:grey;
+}
+
+#btnDiseases
+{
+    background-color:#ff9999;
+    color: #ffffff;
+}
+#btnDiseases:hover
+{
+    background-color:#ff8080;
 }
 /*spinner icon*/
 .loader,

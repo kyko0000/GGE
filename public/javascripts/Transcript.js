@@ -769,8 +769,12 @@ Transcript.prototype.diseaseBtn = function()
 {
     this.btnDisease = document.createElement('button');
     $(this.btnDisease).attr('class', 'btn btn-default btn-lg');
+    $(this.btnDisease).attr('id','btnDiseases');
     $(this.btnDisease).text("Related Disease(s)");
-    $("#Disease-btn").append(this.btnDisease);
+    var diseaseBtnContainer = $("#Disease-btn");
+    $(diseaseBtnContainer).empty();
+    $(diseaseBtnContainer).append(this.btnDisease);
+
 
     $(this.btnDisease).click(function(e)
     {
@@ -785,10 +789,48 @@ Transcript.prototype.diseaseBtn = function()
             success: function(data)
             {
                 alert(data);
+                var diseasesObj = JSON.parse(data);
+                var diseasesContainer = document.createElement('div');
+                $(diseasesContainer).attr('class', 'container related-disease');
+                //Display related disease(s)
+                if(diseasesObj.count == 0)
+                {
+                    var noResult = "<div><h3>Disease Not Found: </h3><h6>There are still haven't any disease related to "+selectedGeneCanonicalTranscript.symbol+"</h6></div>";
+                    $(diseasesContainer).append(noResult);
+                }
+                else {
+                    var title = "<div><h3>Disease Related: </h3></div>";
+                    $(diseasesContainer).append(title);
+                    for(index=0;index<diseasesObj.length; index++)
+                    {
+                        var currentDieaseObj = diseasesObj[index];
+                        var diseaseContainer = document.createElement('div');
+                        $(diseaseContainer).attr('class', 'disease-info');
+                        //console.log(currentDieaseObj);
+                        var diseaseNameDiv = "<div><h4>"+currentDieaseObj.diseaseName+"</h4></div>";
+                        var diseaseDefDiv = "<div><h6>Definition: "+currentDieaseObj.diseaseDef+"</h6></div>";
+                        var relatedSymbol = currentDieaseObj.symbol;
+                        var symbolDiv = document.createElement('div');
+                        $(symbolDiv).append("<h6>Related Genes: </h6>")
+                        for(x=0;x<relatedSymbol.length;x++)
+                        {
+                            var symbolElement = "<h6 style='display:inline-block'>"+relatedSymbol[x]+"&nbsp;</h6>";
+                            $(symbolDiv).append(symbolElement);
+                        }
+                        $(diseaseContainer).append(diseaseNameDiv);
+                        $(diseaseContainer).append(diseaseDefDiv);
+                        $(diseaseContainer).append(symbolDiv);
+                        $(diseasesContainer).append(diseaseContainer);
+                    }
+                }
+                $('body').append(diseasesContainer);
+                $('html, body').animate({
+                    scrollTop: $(diseasesContainer).offset().top
+                }, 2000);
             },
             error: function(xhr, status, error)
             {
-                alert("Ajax : Get Disease Error /n"+error.message);
+                alert("Ajax : Get Disease Error :"+error.message);
             }
 
         });
