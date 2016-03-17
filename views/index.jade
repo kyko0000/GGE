@@ -4,4 +4,31 @@
 extends layout
 
 block content
+    #chromosomes-navigator-container.container
+        #chromosomes-nav-title-container
+            h3#chromosomes-nav-title Chromosomes Navigator
+        svg#chromosomes-navigator(style='width:100%; height:100%;')
+        script.
+            $(document).ready()
+            {
+                var chrNavHeight = screen.height * 0.6;
+                $("#chromosomes-navigator").css('height', chrNavHeight);
+                $.ajax({
+                    url: './api/getChromosome/',
+                    data: '',
+                    type: "GET",
+                    success: function(data)
+                    {
+                        var chromosomesObj = JSON.parse(data);
+                        var chrNav = new ChrNav(chromosomesObj,$("#chromosomes-navigator"));
+                        //alert(data);
+                    },
+                    error:function(xtr, status, err)
+                    {
+                        alert("Ajax Get Chromosome Error");
+                    }
+                })
+            }
+
+
 

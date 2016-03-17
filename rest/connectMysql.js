@@ -33,6 +33,7 @@ exports.checkDiseaseBySymbol = function(condition, callback)
     queryMysqlServer(query, result);
 };
 
+//Get the Diseases and related genes which they are related to the target gene
 exports.getDiseaseByGene = function(condition, callback)
 {
     var result = function(rows, field)
@@ -41,6 +42,16 @@ exports.getDiseaseByGene = function(condition, callback)
     }
     var query = "SELECT G2.ConceptID, G2.GeneSymbol, G2.DiseaseName, D.Def FROM GeneNDisease AS G1, GeneNDisease AS G2, DiseaseDef AS D WHERE " +
         "G1.GeneSymbol = '"+ condition+"' AND G1.ConceptID = G2.ConceptID AND G1.ConceptID = D.CUI ORDER BY G2.ConceptID;"
+    queryMysqlServer(query, result);
+}
+
+exports.fetchAllChromosome = function(callback)
+{
+    var result = function(rows, field)
+    {
+        callback(rows);
+    }
+    var query = "SELECT * FROM Chromosome ORDER BY ChrOrder;"
     queryMysqlServer(query, result);
 }
 

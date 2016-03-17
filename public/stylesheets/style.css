@@ -434,6 +434,18 @@ td
 {
     background-color:#ff8080;
 }
+
+/*chromosomes navigator on index*/
+#chromosomes-navigator-div
+{
+    height:auto;
+}
+#chromosomes-navigator
+{
+    border:solid;
+    border-width: 1px;
+    border-color: #dddddd;
+}
 /*spinner icon*/
 .loader,
 .loader:before,
