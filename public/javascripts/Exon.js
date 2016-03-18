@@ -76,7 +76,7 @@ function Exon(start, end, id, parent, rank) {
         var animationSet = makeSVG('animate',
             {
                 begin:id+".begin",
-                dur:'0.000001',
+                dur:'0.01s',
                 attributeName:'opacity',
                 from:'0',
                 to:'1',

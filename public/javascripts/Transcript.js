@@ -606,7 +606,7 @@ Transcript.prototype.drawIntronWithAnimate = function(periousAnimate, index, svg
     var intronOpacityAnimate = makeSVG('animate',
         {
             begin:id+".begin",
-            dur:'0.000001s',
+            dur:'0.01s',
             attributeName:'opacity',
             from:'0',
             to:'1',

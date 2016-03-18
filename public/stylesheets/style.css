@@ -445,6 +445,66 @@ td
     border:solid;
     border-width: 1px;
     border-color: #dddddd;
+    box-shadow: 1px 1px 1px #888888;
+}
+#chromosomes-navigator:hover
+{
+    cursor: pointer;
+}
+
+.Chr-Group > rect
+{
+    fill:#dddddd;
+}
+.Chr-Group:hover rect
+{
+    fill:#bbbbbb;
+}
+
+.Chr-Group > text
+{
+    opacity:0;
+    font-size: 0.8em;
+}
+
+.Chr-Group:hover text
+{
+    opacity:1;
+}
+.chrTypeA.info-showing > rect
+{
+    fill: #66ff66
+}
+
+.chrTypeS.info-showing > rect
+{
+    fill:#ff3333;
+}
+
+#btn-chromosome-type
+{
+    border:solid;
+    border-width: 1px;
+    border-color: #99c2ff;
+    display: inline-block;
+}
+#btn-chromosome-type:hover
+{
+    background-color:#f5f8fa;
+}
+.chromosome-type
+{
+    display:none;
+}
+.chromosome-type .Autosomes
+{
+    color:green;
+    font-size: 1.5em;
+}
+.chromosome-type .Allosomes
+{
+    color:red;
+    font-size:1.5em;
 }
 /*spinner icon*/
 .loader,
