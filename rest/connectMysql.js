@@ -51,8 +51,8 @@ exports.fetchAllChromosome = function(callback)
     {
         callback(rows);
     }
-    var query = "SELECT * FROM Chromosome ORDER BY ChrOrder;"
-    queryMysqlServer(query, result);
+    var query = "SELECT * FROM Chromosome ORDER BY ChrOrder;";
+    queryMysqlServer(query, result)
 }
 
  queryMysqlServer = function(query, callback)

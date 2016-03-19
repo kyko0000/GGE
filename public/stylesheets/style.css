@@ -132,12 +132,15 @@ td
 {
     display: inline-block;
     height: 41px;
-    border: 1px;
-    background-color: #00ff00;
+    border: solid;
+    border-width: 0.1px;
+    border-color:#55ff55;
+    background-color: #99ff99;
+    cursor: pointer;
 }
 .gene-position:hover
 {
-    background-color: rgba(0,255,0,0.3);
+    background-color: #55ff55;
 }
 .gene-padding
 {
@@ -175,7 +178,10 @@ td
 }
 .modal-header {
     background-color: #63bddf;
-    border-radius: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom:solid;
+    border-bottom-width:1px;
 }
 
 .strand-display.forward-animate
@@ -398,6 +404,21 @@ td
     -webkit-animation:fadeInAndOut 10s;
     -o-animation:fadeInAndOut 10s;
     animation:fadeInAndOut 10s;
+}
+#btn-instruction
+{
+    border:solid;
+    border-width:1px;
+    border-color:grey;
+}
+#transcript-instruction
+{
+    position: absolute;
+    background-color:black;
+    opacity:0.9;
+    z-index:998;
+    color:white;
+    display: none;
 }
 
 /*Search Result Page*/

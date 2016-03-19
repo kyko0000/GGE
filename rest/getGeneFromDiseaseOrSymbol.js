@@ -58,6 +58,7 @@ function rest(router, data) {
             };
             if (req.query.queryString.indexOf(' ') > 0) {
                 mysql.searchGeneByDisease(condition, diseaseData);
+                result.haveSymbol = 0;
             }
             else {
                 ensemblRestApi.callRestGet(option, symbolResult);

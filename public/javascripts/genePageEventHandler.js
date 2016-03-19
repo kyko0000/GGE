@@ -47,15 +47,15 @@ var showGene = function()
     getGenes();
 }
 var geneEventHandler = function() {
-    $(".gene-position").click(function (e) {
-        actualStart = $(this).data('start');
-        actualEnd = $(this).data('end');
+    $(".gene-name").click(function (e) {
+        actualStart = $(this).parent().data('start');
+        actualEnd = $(this).parent().data('end');
         showGene();
     });
 
-    $(".gene-name").click(function(e)
+    $(".gene-position").click(function(e)
     {
-        var selectedGeneID = $(this).parent().attr('id');
+        var selectedGeneID = $(this).parent().parent().attr('id');
         if($("#dia-"+selectedGeneID).length)
         {
             $("#dia-"+selectedGeneID).modal('toggle');
@@ -363,13 +363,13 @@ var drawGene = function(jsonObj, length, start, end)
             html += "<div class='gene-padding' style='width:" + ((jsonObj[i].start - start) / length) * 100 + "%'></div>";
             html += "<SVG class='gene-position' id='svg-" + jsonObj[i].gene_id + "' style='width:" + ((jsonObj[i].end - jsonObj[i].start) / length) * 100 + "%' preserveAspctRaio='none' data-start='" + jsonObj[i].start + "' data-end='" + jsonObj[i].end + "' data-strand='" + jsonObj[i].strand + "'></SVG>";
                 //"<polygon points='0,60 75,60 75,50 100,70 75,90 75,80 0,80 0,60' style='fill:red;stroke:purple;stroke-width:1' />" + "</SVG>";
-            html += "<div class='gene-padding' style='width:" + ((end - jsonObj[i].end) / length) * 100 + "%'></div>";
+           // html += "<div class='gene-padding' style='width:" + ((end - jsonObj[i].end) / length) * 100 + "%'></div>";
         }
         else if(start > jsonObj[i].start && jsonObj[i].end <= end) //overlap from the begining only
         {
             //html += "<div class='gene-position left' style='width:" + ((jsonObj[i].end - start) / length) * 100 + "% data-start='" + jsonObj[i].start + "' data-end='" + jsonObj[i].end +"'></div>";
             html += "<SVG class='gene-position left' id='svg-" + jsonObj[i].gene_id + "' style='width:" + ((jsonObj[i].end - start) / length) * 100 + "%' preserveAspctRaio='none' data-start='" + jsonObj[i].start + "' data-end='" + jsonObj[i].end + "' data-strand='" + jsonObj[i].strand + "'></SVG>";
-            html += "<div class='gene-padding' style='width:" + ((end - jsonObj[i].end) / length) * 100 + "%'></div>";
+            //html += "<div class='gene-padding' style='width:" + ((end - jsonObj[i].end) / length) * 100 + "%'></div>";
         }
         else if(end < jsonObj[i].end && start <= jsonObj[i].start) //overlap at the end only
         {

@@ -4,6 +4,13 @@
     .explanation-area-title
         h1.title-text Gene Structure and Information
     .svg-container
+        #transcript-instruction
+            button.btn.btn-xs#btn-instuction-close X
+            .instruction-content
+                button.btn.btn-info(style='display:inline-block; opacity:1;') Exon
+                h6 Button For Showing Exon Inside Transcript
+                button.btn.btn-info(style='display:inline-block; opacity:1;') Transcription
+        button.btn.btn-xs#btn-instruction ?
         .dropdown.dropdown-btn#svg-menu
             button.btn.btn-xs.btn-default.dropdown-toggle#svg-dropbown(type='button', data-toggle='dropdown',aria-haspopup='true',aria-expanded='false') Transcripts
                 span.caret
@@ -36,3 +43,16 @@ script.
     console.log(selectedGeneCanonicalTranscript.canonicalTranscript);
     var explanation = new explanationCreater('#{transcripts}', '#{exons}', '#{cds}','#{id}',selectedGeneCanonicalTranscript.canonicalTranscript, selectedGeneCanonicalTranscript.symbol);
     explanation.drawSVG();
+    $(document).ready()
+    {
+        $('#transcript-instruction').width($('.svg-container').width());
+        $('#transcript-instruction').height($('.svg-container').height());
+        $('#btn-instruction').click(function(e)
+        {
+           $('#transcript-instruction').toggle(1000);
+        });
+        $("#btn-instuction-close").click(function(e)
+        {
+           $('#transcript-instruction').toggle(1000);
+        });
+    }
