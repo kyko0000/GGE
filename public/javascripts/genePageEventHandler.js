@@ -394,38 +394,14 @@ var drawStrand = function()
     {
         if($(genePositionSVGs[i]).parent().parent().attr("class") == "gene") {
             if ($(genePositionSVGs[i]).data("strand") == 1) {
-                var topPoint = parseInt($(genePositionSVGs[i])[0].getBoundingClientRect().width/3);
-                var turningPoint = parseInt((topPoint * 0.85)/3);
-                var def = makeSVG('defs', {class:'display'});
-                var pattern = makeSVG('pattern',{
-                    class:"arrow",
-                    id:"arrow-"+i,
-                    x:'0',
-                    y:'0',
-                    width: '16.667%',
-                    height:'100%'
-                })
-
-
-                //var svg = "<polygon points='0,15 "+turningPoint+",15 "+turningPoint+",20 "+topPoint+",10 "+turningPoint+",0 "+turningPoint+",5 0,5 0,15' style='fill:red;stroke:purple;stroke-width:1' />"
-                var patternSVG = makeSVG('polygon', {
+                var topPoint = parseInt($(genePositionSVGs[i])[0].getBoundingClientRect().width);
+                var turningPoint = parseInt(topPoint * 0.85);
+                var svg = makeSVG('polygon', {
                     class: 'strand-display',
-                    points: '0,25 '+turningPoint+',25 '+turningPoint+',20 '+topPoint+',30 '+turningPoint+',40 '+turningPoint+',35 0,35 0,25',
-                    style: 'fill:red;stroke:purple;stroke-width:1'
+                    points: '0,25 ' + turningPoint + ',25, ' + turningPoint + ',20 ' + topPoint + ',30 ' + turningPoint + ',40 ' + turningPoint + ',35 0,35 0,25',
+                    style: 'fill:#66b3ff;'
                 });
-                $(pattern).append(patternSVG);
-                $(def).append(pattern);
-                $(genePositionSVGs[i]).append(def);
-               // $('#arrow-'+i).append(patternSVG);
-                var containerSVG = makeSVG('rect',{
-                    class:'strand-display',
-                    x:'0',
-                    y:'0',
-                    width:$(genePositionSVGs[i])[0].getBoundingClientRect().width*2,
-                    height: '100%',
-                    fill:'url(#arrow-'+i+')'
-                });
-                $(genePositionSVGs[i]).append(containerSVG);
+                $(genePositionSVGs[i]).append(svg);
 
             }
             else {
@@ -435,7 +411,7 @@ var drawStrand = function()
                 var svg = makeSVG('polygon', {
                     class: 'strand-display',
                     points: '0,30 ' + turningPoint + ',20, ' + turningPoint + ',25 ' + tailPoint + ',25 ' + tailPoint + ',35 ' + turningPoint + ',35 ' + turningPoint + ',40 0,30',
-                    style: 'fill:blue;stroke:purpose;stroke-width:1'
+                    style: 'fill:#ff6666;'
                 });
                 $(genePositionSVGs[i]).append(svg);
             }

@@ -5,11 +5,14 @@
         h1.title-text Gene Structure and Information
     .svg-container
         #transcript-instruction
-            button.btn.btn-xs#btn-instuction-close X
+            button.btn.btn-xs#btn-instuction-close(style='background-color:black; opacity:0.9;') X
+            .instruction-title
+            h3(style='text-align: center') Gene Structure Instruction
             .instruction-content
                 button.btn.btn-info(style='display:inline-block; opacity:1;') Exon
-                h6 Button For Showing Exon Inside Transcript
+                h6 Button For Showing Exon Inside Transcript using animation.
                 button.btn.btn-info(style='display:inline-block; opacity:1;') Transcription
+                h6 Button For showing the basic transcription concept using animation.
         button.btn.btn-xs#btn-instruction ?
         .dropdown.dropdown-btn#svg-menu
             button.btn.btn-xs.btn-default.dropdown-toggle#svg-dropbown(type='button', data-toggle='dropdown',aria-haspopup='true',aria-expanded='false') Transcripts

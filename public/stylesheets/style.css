@@ -410,6 +410,7 @@ td
     border:solid;
     border-width:1px;
     border-color:grey;
+    background-color: white;
 }
 #transcript-instruction
 {
