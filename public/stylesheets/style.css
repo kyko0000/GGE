@@ -522,11 +522,15 @@ td
 {
     color:green;
     font-size: 1.5em;
+    cursor:pointer;
+    width:50%;
 }
 .chromosome-type .Allosomes
 {
     color:red;
     font-size:1.5em;
+    cursor:pointer;
+    width:50%;
 }
 /*spinner icon*/
 .loader,

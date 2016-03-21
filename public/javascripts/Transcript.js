@@ -483,7 +483,7 @@ Transcript.prototype.drawTranscript = function(withcds)
 
         //draw all exon with utrs and cds with animation
 
-        var animationIDList = [];
+        //var animationIDList = [];
         //index decleared in the first line after checking the strand.
         for (var i = 0; i < this.exons.length; i++) {
             //console.log(this.exons[i].start+ "--" +this.cdsList[index].start + "||" + this.exons[i].end + " -- " + this.cdsList[index].end);
@@ -788,7 +788,7 @@ Transcript.prototype.diseaseBtn = function()
             contentType:'application/json',
             success: function(data)
             {
-                alert(data);
+                //alert(data);
                 var diseasesObj = JSON.parse(data);
                 var diseasesContainer = document.createElement('div');
                 $(diseasesContainer).attr('class', 'container related-disease');

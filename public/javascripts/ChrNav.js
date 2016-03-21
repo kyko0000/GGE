@@ -57,6 +57,7 @@ function ChrNav(chromosomesData, chrNavSvg)
 
             var chromosomeName = makeTextSVG('text',
                 {
+                    class: 'chromosome-name',
                     id: 'chrName'+this.chromosomesData[i].Chr,
                     x: startPointX-(chromosomeBoxWidth/4),
                     y: startPointY+pArmHeight+qArmHeight+svgContainerHeight*0.05, //Below the Chromosome
@@ -94,6 +95,31 @@ function ChrNav(chromosomesData, chrNavSvg)
         }, 500);
         $(this).hide();
     });
+
+    //special effect on Allosome and Autosome
+    $('.Autosomes').hover(function(e)
+    {
+        $('.chrTypeS').animate({opacity:0}, {duration:500});
+        $('.chromosome-name').animate({opacity:1}, {duration:100});
+        $('.Allosomes').css('opacity', '0.3');
+    },function(e)
+    {
+        $('.chrTypeS').animate({opacity:1}, {duration:500});
+        $('.chromosome-name').animate({opacity:0}, {duration:100});
+        $('.Allosomes').css('opacity','1');
+    });
+
+    $('.Allosomes').hover(function(e)
+    {
+        $('.chrTypeA').animate({opacity:0}, {duration:500});
+        $('.chromosome-name').animate({opacity:1}, {duration:100});
+        $('.Autosomes').css('opacity', '0.3');
+    },function(e)
+    {
+        $('.chrTypeA').animate({opacity:1}, {duration:500});
+        $('.chromosome-name').animate({opacity:0}, {duration:100});
+        $('.Autosomes').css('opacity','1');
+    })
     //double click --> go to chromosome and gene page
     $('.Chr-Group').dblclick(function(e)
     {
