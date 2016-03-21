@@ -23,12 +23,9 @@ html
           li.active: a(href="#") HOME
           li: a(href="#") Sequence Search
           li.dropdown
-            a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false') Chromosomes
-              span.caret
-
         .col-sm-3.col-md-3.pull-right
           form.navbar-form#gene-search(role="search" method="get" action="javascript:search();")
-            .input-group
+            .input-group(style='float:right')
               input.form-control#query-string(type="text" placeholder="Search" name="srch-term" onClick="this.select();")
               .input-group-btn
                 button.btn.btn-default(type="submit") Search

@@ -4,6 +4,12 @@
 extends layout
 
 block content
+    .container#cookies-reminder
+        #cookies-text A past visit record has been detected. Do you want to recover the the past record?
+        btn#cookies-ok.btn-circle(style='background-color:green')
+            i.glyphicon.glyphicon-ok
+        btn#cookies-no.btn-circle(style='background-color:red')
+            span.glyphicon.glyphicon-remove
     #chromosomes-navigator-container.container
         #chromosomes-nav-title-container
             h3#chromosomes-nav-title Chromosomes Navigator
@@ -34,6 +40,46 @@ block content
                         alert("Ajax Get Chromosome Error");
                     }
                 })
+
+                //handle cookies
+                var cookies = '#{cookies}';
+                if(cookies != '0')
+                {
+                    $('#cookies-reminder').toggle(500);
+                    cookies = cookies.replace(/&quot;/g, '"');
+                    var cookiesObj = JSON.parse(cookies);
+                    $('#cookies-text').append(" Chromosome" + cookiesObj.chr + ": " + cookiesObj.regionStart + " - " + cookiesObj.regionEnd);
+                }
+
+                $('#cookies-no').click(function(e)
+                {
+                    $('#cookies-reminder').toggle(500);
+                });
+
+                $("#cookies-ok").click(function(e)
+                {
+                    $('#cookies-reminder').toggle(500);
+                    var query  = {};
+                    query.chromosomeName = cookiesObj.chr;
+                    query.regionStart = cookiesObj.regionStart;
+                    query.regionEnd = cookiesObj.regionEnd;
+                    query.type = 'chromosome-region';
+                    $('.spinner-div').show();
+                    $.ajax(
+                            {
+                                url: './gene',
+                                data: query,
+                                type: 'GET',
+                                success: function (data) {
+                                    $(".container").remove();
+                                    $('body').append(data);
+                                }
+                                ,
+                                error: function (xhr, status, error) {
+                                    alert("Error: " + error.message);
+                                }
+                            });
+                });
             }
 
 

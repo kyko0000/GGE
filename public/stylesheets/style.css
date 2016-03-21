@@ -532,6 +532,22 @@ td
     cursor:pointer;
     width:50%;
 }
+
+#cookies-reminder
+{
+    height: inherit;
+    background-color: black;
+    opacity: 0.7;
+    color: #ffffff;
+    display:none;
+}
+.btn-circle
+{
+    font-size: 1.3em;
+    line-height: 1.428571429;
+    border-radius: 15px;
+    margin-right: 20px;
+}
 /*spinner icon*/
 .loader,
 .loader:before,

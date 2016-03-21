@@ -2,7 +2,9 @@ var express = require('express');
 var Chromosome = require('../public/javascripts/chromosome.js');
 var http = require('http');
 var router = express.Router();
-
+var cookieParser = require('cookie-parser');
+var app = express();
+app.use(cookieParser());
 
 var option = {
     host: 'rest.ensembl.org',
@@ -25,6 +27,11 @@ router.get('/', function(req, res, next) {
             region.start = req.query.regionStart;
             region.end = req.query.regionEnd;
             regionJSON = JSON.stringify(region);
+            var cookiesData = {};
+            cookiesData.chr = req.query.chromosomeName;
+            cookiesData.regionStart = region.start;
+            cookiesData.regionEnd = region.end;
+            res.cookie('regionCookies', cookiesData, {maxAge:900000, httpOnly:true});
         }
         var sendData = function(data)
         {
