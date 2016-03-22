@@ -216,6 +216,7 @@ Transcript.prototype.drawTranscript = function(withcds)
     var svgWidth = $(this.svgContainer)[0].getBoundingClientRect().width;
     var svgStart = parseInt(svgWidth * 0.05);
     var svgEnd = parseInt(svgWidth * 0.95);
+    var drawAbleSvgWidth = svgEnd - svgStart;
     //draw exon or cds
     if(!withcds)
     { //draw noral exon
@@ -296,30 +297,30 @@ Transcript.prototype.drawTranscript = function(withcds)
         this.upperStrand = makeSVG('line',
             {
                 x1: svgStart,
-                y1:'20',
+                y1:'40',
                 x2: svgEnd,
-                y2:'20',
+                y2:'40',
                 style:'stroke:black;stroke-width:1'
             });
 
         this.lowerStrand = makeSVG('line',
             {
                 x1: svgStart,
-                y1:'40',
+                y1:'60',
                 x2:svgEnd,
-                y2:'40',
+                y2:'60',
                 style:'stroke:black;stoke-width:1'
             });
 
         var templateStrand = makeTextSVG('title', {}, "Template Strand");
         var codingStrand = makeTextSVG('title', {}, "Coding Strand");
 
-        var upperFiveEnd = makeTextSVG('text', {x: (svgStart - 15), y:'20'}, "5'");
-        var upperThreeEnd = makeTextSVG('text', {x:(svgEnd + 10), y:'20'}, "3'");
+        var upperFiveEnd = makeTextSVG('text', {x: (svgStart - 15), y:'40'}, "5'");
+        var upperThreeEnd = makeTextSVG('text', {x:(svgEnd + 10), y:'40'}, "3'");
         $(this.svgContainer).append(upperFiveEnd);
         $(this.svgContainer).append(upperThreeEnd);
-        var lowerFiveEnd = makeTextSVG('text', {x: (svgEnd + 10), y:'40'}, "5'");
-        var lowerThreeEnd = makeTextSVG('text', {x:(svgStart - 15), y:'40'}, "3'");
+        var lowerFiveEnd = makeTextSVG('text', {x: (svgEnd + 10), y:'60'}, "5'");
+        var lowerThreeEnd = makeTextSVG('text', {x:(svgStart - 15), y:'60'}, "3'");
         $(this.svgContainer).append(lowerFiveEnd);
         $(this.svgContainer).append(lowerThreeEnd);
 
@@ -334,17 +335,35 @@ Transcript.prototype.drawTranscript = function(withcds)
             var descrtiption = makeTextSVG('text',
                 {
                     id:'transcription-description',
-                    x:((svgEnd - svgStart)/2)-250,
+                    x:((drawAbleSvgWidth)/2)-(drawAbleSvgWidth *0.3),
                     y:($(this.svgContainer)[0].getBoundingClientRect().height-20),
                     opacity: '0'
                 },"Polymerase move though the Template Strand (Lower Strand) and transcript the RNA from right to left");
             $(this.svgContainer).append(descrtiption);
 
+            //mark the template strand and coding strand
+            var codingStrand = makeTextSVG('text',
+                {
+                    id:'codingStrandText',
+                    x: (drawAbleSvgWidth)/2 - (drawAbleSvgWidth*0.05),
+                    y: '30',
+                    font: '12px'
+                },"Coding Strand");
+
+            var templateStrand = makeTextSVG('text',
+                {
+                    id:'templateStrandText',
+                    x: (drawAbleSvgWidth)/2 - (drawAbleSvgWidth*0.05),
+                    y: '85',
+                    font:'12px'
+                },"Template Strand");
+            $(this.svgContainer).append(codingStrand);
+            $(this.svgContainer).append(templateStrand);
             this.rnaPolymerase = makeSVG('rect',
                 {
                     id:'rna-polymerase',
                     x:svgStart,
-                    y:'32',
+                    y:'52',
                     width:'10',
                     height:'10',
                     style:'fill:red;opacity:0.3'
@@ -354,9 +373,9 @@ Transcript.prototype.drawTranscript = function(withcds)
             this.rna = makeSVG('line',
                 {
                     x1:svgStart,
-                    y1:'35',
+                    y1:'55',
                     x2:svgStart,
-                    y2:'35',
+                    y2:'55',
                     style:'stroke:blue;opacity:1'
                 });
 
@@ -411,9 +430,9 @@ Transcript.prototype.drawTranscript = function(withcds)
             this.rna = makeSVG('line',
                 {
                     x1:svgEnd,
-                    y1:'26',
+                    y1:'46',
                     x2:svgEnd,
-                    y2:'26',
+                    y2:'46',
                     style:'opacity:1;stroke:blue'
                 });
 

@@ -48,7 +48,13 @@ block content
                     $('#cookies-reminder').toggle(500);
                     cookies = cookies.replace(/&quot;/g, '"');
                     var cookiesObj = JSON.parse(cookies);
-                    $('#cookies-text').append(" Chromosome" + cookiesObj.chr + ": " + cookiesObj.regionStart + " - " + cookiesObj.regionEnd);
+                    var cookiesText = $('#cookies-text');
+                    if(cookiesObj.type == 'chromosome-region')
+                        $(cookiesText).append(" Chromosome" + cookiesObj.chr + ": " + cookiesObj.regionStart + " - " + cookiesObj.regionEnd);
+                    else if (cookiesObj.type == 'symbol')
+                        $(cookiesText).append(" Gene Symbol: " + cookiesObj.symbol);
+                    else if(cookiesObj.type == 'gene-id')
+                        $(cookiesText).append(" Gene ID: " + cookiesObj.id);
                 }
 
                 $('#cookies-no').click(function(e)
@@ -59,11 +65,22 @@ block content
                 $("#cookies-ok").click(function(e)
                 {
                     $('#cookies-reminder').toggle(500);
+
                     var query  = {};
-                    query.chromosomeName = cookiesObj.chr;
-                    query.regionStart = cookiesObj.regionStart;
-                    query.regionEnd = cookiesObj.regionEnd;
-                    query.type = 'chromosome-region';
+                    query.type = cookiesObj.type;
+                    if(query.type == 'chromosome-region') {
+                        query.chromosomeName = cookiesObj.chr;
+                        query.regionStart = cookiesObj.regionStart;
+                        query.regionEnd = cookiesObj.regionEnd;
+                    }
+                    else if(query.type  == 'symbol')
+                    {
+                        query.symbol = cookiesObj.symbol;
+                    }
+                    else if(query.type == 'gene-id')
+                    {
+                        query.id = cookiesObj.id;
+                    }
                     $('.spinner-div').show();
                     $.ajax(
                             {

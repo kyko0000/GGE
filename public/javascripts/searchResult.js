@@ -28,7 +28,7 @@ SearchResult.prototype.showResult = function(query)
         var symbolResult = this.resultObj.symbolData;
         var resultContainer = document.createElement('div');
         $(resultContainer).attr('class', 'result-container');
-        var symbolFound = "<div><h5><a class='region' data-start='"+symbolResult.start+"' data-end='"+symbolResult.end+"' data-chr='"+symbolResult.seq_region_name+"' >"+ symbolResult.display_name +"</a></h5></div>";
+        var symbolFound = "<div><h5><a class='region' data-start='"+symbolResult.start+"' data-end='"+symbolResult.end+"' data-chr='"+symbolResult.seq_region_name+"' style='cursor:pointer' >"+ symbolResult.display_name +"</a></h5></div>";
         var symbolDescription = "<div><h6>"+symbolResult.description+"</h6></div>";
         $(resultContainer).append(symbolFound);
         $(resultContainer).append(symbolDescription);
@@ -47,7 +47,7 @@ SearchResult.prototype.showResult = function(query)
             var resultContainer = document.createElement('div');
             $(resultContainer).attr('class', 'result-container');
             var highlightedText = this.highLightKeyword(diseaseResults[i].DiseaseName, query);
-            var diseaseSymbol = "<div><h5><a class='symbol' data-symbol='"+diseaseResults[i].GeneSymbol+"'>"+diseaseResults[i].GeneSymbol+"</a></h5></div>";
+            var diseaseSymbol = "<div><h5><a class='symbol' data-symbol='"+diseaseResults[i].GeneSymbol+"'  style='cursor:pointer'>"+diseaseResults[i].GeneSymbol+"</a></h5></div>";
             //Disease Name Display
             var disease = "<div><h6>Related Disease:</h6><h6 class='disease-name'><b>"+highlightedText+"</b></h6></div>";
             //Disease Def Display

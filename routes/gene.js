@@ -28,10 +28,11 @@ router.get('/', function(req, res, next) {
             region.end = req.query.regionEnd;
             regionJSON = JSON.stringify(region);
             var cookiesData = {};
+            cookiesData.type = 'chromosome-region';
             cookiesData.chr = req.query.chromosomeName;
             cookiesData.regionStart = region.start;
             cookiesData.regionEnd = region.end;
-            res.cookie('regionCookies', cookiesData, {maxAge:900000, httpOnly:true});
+            res.cookie('historyCookies', cookiesData, {maxAge:7*24*3600000, httpOnly:true}); //expire after one week
         }
         var sendData = function(data)
         {
@@ -70,7 +71,11 @@ router.get('/', function(req, res, next) {
         //call back for output data
         var sendDataWithGene = function(data)
         {
-            res.render('gene',{data: data, genesData: genesData, geneRegion: regionJSON});
+            var cookiesData = {};
+            cookiesData.type = req.query.type;
+            cookiesData.id = req.query.id;
+            res.cookie('historyCookies', cookiesData, {maxAge:7*24*3600000, httpOnly:true});
+            res.render('gene',{data: data, region: regionJSON});
         }
 
         callEnsembl(option, getChromosomeAndRegion);
@@ -86,13 +91,17 @@ router.get('/', function(req, res, next) {
             var gene = JSON.parse(data);
             geneRegion.start = gene.start;
             geneRegion.end = gene.end;
-            regionJSON = JSON.stringify(geneRegion)
+            regionJSON = JSON.stringify(geneRegion);
             option.path = "/info/assembly/human/" + gene.seq_region_name + "?feature=gene;bands=1";
             callEnsembl(option, sendData)
 
         }
         var sendData = function(data)
         {
+            var cookiesData = {};
+            cookiesData.type = 'symbol';
+            cookiesData.symbol = req.query.symbol;
+            res.cookie('historyCookies', cookiesData, {maxAge: 7*24*3600000, httpOnly:true});
             res.render('gene', {title: 'Genetic General Education System', data: data, region: regionJSON});
         }
         callEnsembl(option, getChromosome);

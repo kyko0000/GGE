@@ -24,8 +24,12 @@ function rest(router, data) {
         var getData = function(data)
         {
             console.log("Data: " + data);
-            //var jsonObj = JSON.parse(data);
-            //var htmlResponse = drawGene(jsonObj, length, start, end);
+            var cookiesData ={};
+            cookiesData.type = 'chromosome-region';
+            cookiesData.chr = chromosome;
+            cookiesData.regionStart = start;
+            cookiesData.regionEnd = end;
+            res.cookie('historyCookies', cookiesData,{maxAge:7*24*3600000, httpOnly:true});
             res.send(data);
         }
         option.path = "/overlap/region/human/"+ chromosome +':' + start + "-" + end +"?feature=gene;";

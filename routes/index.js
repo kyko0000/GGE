@@ -11,9 +11,10 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  if(req.cookies.regionCookies !== undefined)
+  if(req.cookies.historyCookies !== undefined)
   {
-    var cookieString = JSON.stringify(req.cookies.regionCookies);
+    var cookieString = JSON.stringify(req.cookies.historyCookies);
+    console.log(req.cookies.historyCookies)
     res.render('index', {cookies: cookieString});
   }
   else
