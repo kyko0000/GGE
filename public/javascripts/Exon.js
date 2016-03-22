@@ -76,7 +76,7 @@ function Exon(start, end, id, parent, rank) {
         var animationSet = makeSVG('animate',
             {
                 begin:id+".begin",
-                dur:'0.01s',
+                dur:'0.1s',
                 attributeName:'opacity',
                 from:'0',
                 to:'1',
@@ -372,8 +372,8 @@ Exon.prototype.drawExonDescription = function(length, svgContainer)
             id: "d-"+this.id,
             class: 'exonDescription hidden',
             x: this.svgStartPointX,
-            y: 180,
-            'font-size': 3,
+            y: 195,
+            'font-size': 12,
         }, "Exon " + this.rank + " / " + length);
     $(svgContainer).append(exonDescriptionSVG);
 

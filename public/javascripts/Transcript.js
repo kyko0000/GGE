@@ -101,12 +101,12 @@ function Transcript(start, end, id, strand, name, svgContainer) {
                 center: 1,
                 onZoom: function(zoomScale)
                 {
-                    if(zoomScale > 2 && !exonDescriptionShowned)
+                    if(zoomScale > 1.5 && !exonDescriptionShowned)
                     {
                         $(".exonDescription").attr("class", "exonDescription show");
                         exonDescriptionShowned = true;
                     }
-                    else if(zoomScale < 2)
+                    else if(zoomScale < 1.5)
                     {
                         $(".exonDescription").attr("class", "exonDescription hidden");
                         exonDescriptionShowned = false;
@@ -300,7 +300,7 @@ Transcript.prototype.drawTranscript = function(withcds)
                 y1:'40',
                 x2: svgEnd,
                 y2:'40',
-                style:'stroke:black;stroke-width:1'
+                style:'stroke:black;stroke-width:3'
             });
 
         this.lowerStrand = makeSVG('line',
@@ -309,7 +309,7 @@ Transcript.prototype.drawTranscript = function(withcds)
                 y1:'60',
                 x2:svgEnd,
                 y2:'60',
-                style:'stroke:black;stoke-width:1'
+                style:'stroke:black;stroke-width:3'
             });
 
         var templateStrand = makeTextSVG('title', {}, "Template Strand");
@@ -412,11 +412,27 @@ Transcript.prototype.drawTranscript = function(withcds)
             var descrtiption = makeTextSVG('text',
                 {
                     id:'transcription-description',
-                    x:((svgEnd - svgStart)/2)-250,
+                    x:((drawAbleSvgWidth)/2)-drawAbleSvgWidth*0.3,
                     y:($(this.svgContainer)[0].getBoundingClientRect().height-20),
                     opacity: '0'
                 },"Polymerase move though the Template Strand (Upper Strand) and transcript the RNA from left to right");
             $(this.svgContainer).append(descrtiption);
+
+            //mark the template strand and coding strand
+            var templateStrandText = makeTextSVG('text',{
+                id:'templateStrandText',
+                x: drawAbleSvgWidth/2 - drawAbleSvgWidth*0.05,
+                y: '35',
+                font: '12px'
+            },"Template Strand");
+            var codingStrandText = makeTextSVG('text',{
+                id:'codingStrandText',
+                x:drawAbleSvgWidth/2 - drawAbleSvgWidth*0.05,
+                y:'85',
+                font:'12px'
+            },"Coding Strand");
+            $(this.svgContainer).append(templateStrandText);
+            $(this.svgContainer).append(codingStrand);
 
             this.rnaPolymerase= makeSVG('rect',
                 {
@@ -477,7 +493,7 @@ Transcript.prototype.drawTranscript = function(withcds)
         //button for animation start
         var startBtn = makeSVG('rect',{
             id:'btnPlay',
-            x:(((svgEnd - svgStart)/2)-20),
+            x:(((drawAbleSvgWidth)/2)-drawAbleSvgWidth*0.05),
             y:($(this.svgContainer)[0].getBoundingClientRect().height - 20),
             width: '40',
             height: '20',
@@ -502,7 +518,6 @@ Transcript.prototype.drawTranscript = function(withcds)
 
         //draw all exon with utrs and cds with animation
 
-        //var animationIDList = [];
         //index decleared in the first line after checking the strand.
         for (var i = 0; i < this.exons.length; i++) {
             //console.log(this.exons[i].start+ "--" +this.cdsList[index].start + "||" + this.exons[i].end + " -- " + this.cdsList[index].end);
@@ -625,7 +640,7 @@ Transcript.prototype.drawIntronWithAnimate = function(periousAnimate, index, svg
     var intronOpacityAnimate = makeSVG('animate',
         {
             begin:id+".begin",
-            dur:'0.01s',
+            dur:'0.1s',
             attributeName:'opacity',
             from:'0',
             to:'1',
