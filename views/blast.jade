@@ -1,0 +1,20 @@
+//
+   Created by yuechungng on 23/3/2016.
+include ./layout.jade
+.container#blast-container
+    #blast-title
+        h3 Sequence Search with BLAST (BLAST by NCBI)
+    #blast-instruction
+        h6 Put the genomic seqence into the box below and Click the blast button. The system will find the most similar Genomic Sequence from your query
+    #blast-seq-container
+        textarea(rows='10' cols='50')#txt-seq
+        btn.btn.btn-default#btnBlast BLAST
+    script(type='text/javascript', src='javascripts/blastSeq.js')
+    script.
+        $('#nav-home').attr('class','');
+        $('#nav-blast').attr('class', 'active');
+        $('#btnBlast').click(function(e)
+        {
+
+            blastTheSequence($('#txt-seq').val());
+        })

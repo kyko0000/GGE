@@ -548,6 +548,11 @@ td
     border-radius: 15px;
     margin-right: 20px;
 }
+
+#txt-seq
+{
+    width: 100%
+}
 /*spinner icon*/
 .loader,
 .loader:before,

@@ -16,5 +16,6 @@
  require('./getSequence').rest(router);
  require('./getGeneFromDiseaseOrSymbol').rest(router);
  require('./getChromosome').rest(router);
+ require('./blastSeq').rest(router);
 
  module.exports = router;

@@ -10,6 +10,7 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var gene = require('./routes/gene');
 var explanation = require('./routes/explanation');
+var blast = require('./routes/blast');
 var rests = require('./rest/restapi');
 
 var app = express();
@@ -31,6 +32,7 @@ app.use('/users', users);
 app.use('/gene', gene);
 app.use('/api', rests);
 app.use('/explanation', explanation);
+app.use('/blast', blast);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
