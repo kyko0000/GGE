@@ -7,7 +7,6 @@ var database ='GPIPE/9606/current/all_top_level%20GPIPE/9606/current/rna';
 var option =
 {
     host: 'www.ncbi.nlm.nih.gov',
-    path:'',
     headers : {'Content-Type': 'application/x-www-form-urlencoded'},
     method:'POST'
 }
@@ -15,7 +14,7 @@ var option =
 exports.callBlast = function(query, callback)
 {
     var result='';
-    option.path += '/blast/Blast.cgi?CMD=Put&PROGRAM=blastn&DATABASE='+database+'&QUERY='+query;
+    option.path = '/blast/Blast.cgi?CMD=Put&PROGRAM=blastn&DATABASE='+database+'&QUERY='+query;
     console.log('ready to call blast... Path :'+ option.path);
     http.get(option, function(res)
     {
@@ -27,8 +26,28 @@ exports.callBlast = function(query, callback)
         });
         res.on('end', function()
         {
-            console.log(result);
+            //console.log(result);
             callback(result);
         })
     })
 }
+
+exports.checkResultReady = function(rid, rtoe, callback)
+{
+    option.path='/blast/Blast.cgi?RID='+rid+'&CMD=Get';
+    console.log('Checking the search info...');
+    var result='';
+    http.get(option, function(res)
+    {
+        res.on('data', function(chunk)
+        {
+            console.log('search info data retriving...');
+            result += chunk;
+        });
+        res.on('end', function()
+        {
+            console.log(result);
+            callback(result);
+        })
+    });
+};
