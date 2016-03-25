@@ -14,7 +14,7 @@ var option =
 exports.callBlast = function(query, callback)
 {
     var result='';
-    option.path = '/blast/Blast.cgi?CMD=Put&PROGRAM=blastn&DATABASE='+database+'&QUERY='+query;
+    option.path = '/blast/Blast.cgi?CMD=Put&PROGRAM=blastn&MEGABLAST=on&DATABASE='+database+'&QUERY='+query;
     console.log('ready to call blast... Path :'+ option.path);
     http.get(option, function(res)
     {
@@ -51,3 +51,24 @@ exports.checkResultReady = function(rid, rtoe, callback)
         })
     });
 };
+
+exports.getResult = function(rid, callback)
+{
+    option.path = '/blast/Blast.cgi?CMD=Get&FORMAT_TYPE=Text&RID='+rid;
+    console.log('retrieve result...');
+    var result = '';
+    http.get(option, function(res)
+    {
+        res.on('data', function(chunk)
+        {
+            console.log('geting the result...');
+            result += chunk;
+        });
+
+        res.on('end', function()
+        {
+            //console.log(result);
+            callback(result);
+        });
+    })
+}

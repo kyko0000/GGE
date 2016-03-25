@@ -10,7 +10,21 @@ function rest(router, data)
         var rid='';
         var rtoe='';
         var query = req.query.query;
+        var result={};
         console.log('get the query: '+ query);
+        var sendResultError = function()
+        {
+            var resultString = JSON.stringify(result);
+            res.send(resultString);
+        }
+        var sendResult = function(data)
+        {
+            //console.log(data);
+            result.status = 1;
+            result.message = data;
+            var resultString = JSON.stringify(result);
+            res.send(resultString);
+        }
         var checkSearchInfo = function(data)
         {
             if(/\s+Status=WAITING/m.test(data))
@@ -21,11 +35,23 @@ function rest(router, data)
             else if(/\s+Status=READY/m.test(data))
             {
                 console.log('Ready...');
+                //console.log('result found...');
+                blast.getResult(rid, sendResult);
 
             }
-            else
+            else if(/\s+Status=UNKNOWN/m.test(data))
             {
-                console.log('something wrong');
+                console.log('unknow...');
+                result.status = 0;
+                result.message = 'Error Occure';
+                sendResultError();
+            }
+            else if(/\s+Status=FAILED/m.test(data))
+            {
+                console.log('failed...');
+                result.status = 0;
+                result.message = 'Search Failed, please contact the administrator.';
+                sendResultError();
             }
         }
         var handleRes = function(data)

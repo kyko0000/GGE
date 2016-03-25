@@ -553,6 +553,18 @@ td
 {
     width: 100%
 }
+#result-container
+{
+    display:none;
+}
+#result
+{
+    display:none;
+}
+#btn-result
+{
+    float:right;
+}
 /*spinner icon*/
 .loader,
 .loader:before,

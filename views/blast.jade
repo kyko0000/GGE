@@ -9,6 +9,11 @@ include ./layout.jade
     #blast-seq-container
         textarea(rows='10' cols='50')#txt-seq
         btn.btn.btn-default#btnBlast BLAST
+.container#result-container
+    #result-string-container
+        span#result-string(style='font:12px;')
+        btn.btn.btn-success.btn-xs#btn-result Result
+    #result
     script(type='text/javascript', src='javascripts/blastSeq.js')
     script.
         $('#nav-home').attr('class','');
@@ -17,4 +22,8 @@ include ./layout.jade
         {
 
             blastTheSequence($('#txt-seq').val());
-        })
+        });
+        $('#btn-result').click(function(e)
+        {
+           $('#result').toggle(1000);
+        });
