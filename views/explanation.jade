@@ -29,6 +29,7 @@
             ul.dropdown-menu#sequences-menu(aria-labelledby='seq-dropdown')
                 li.menu
         svg.explanation-area#svg-container
+    #text-explanation
     .svg-btn
         .btn-container#exons-btn
         .btn-container#transcription-btn
@@ -50,7 +51,7 @@ script(type='text/javascript' src='javascripts/cds.js')
 script(type='text/javascript' src='javascripts/explanationEvent.js')
 script.
     console.log(selectedGeneCanonicalTranscript.canonicalTranscript);
-    var explanation = new explanationCreater('#{transcripts}', '#{exons}', '#{cds}','#{id}',selectedGeneCanonicalTranscript.canonicalTranscript, selectedGeneCanonicalTranscript.symbol);
+    var explanation = new explanationCreater('#{transcripts}', '#{exons}', '#{cds}','#{id}',selectedGene.canonicalTranscript, selectedGene.symbol);
     explanation.drawSVG();
     $(document).ready()
     {

@@ -332,14 +332,18 @@ Transcript.prototype.drawTranscript = function(withcds)
             //---- chromosome strand tooltip
 
             //---description
-            var descrtiption = makeTextSVG('text',
-                {
-                    id:'transcription-description',
-                    x:((drawAbleSvgWidth)/2)-(drawAbleSvgWidth *0.3),
-                    y:($(this.svgContainer)[0].getBoundingClientRect().height-20),
-                    opacity: '0'
-                },"Polymerase move though the Template Strand (Lower Strand) and transcript the RNA from right to left");
-            $(this.svgContainer).append(descrtiption);
+            //var descrtiption = makeTextSVG('text',
+            //    {
+            //        id:'transcription-description',
+            //        x:((drawAbleSvgWidth)/2)-(drawAbleSvgWidth *0.3),
+            //        y:($(this.svgContainer)[0].getBoundingClientRect().height-20),
+            //        opacity: '0'
+            //    },"Polymerase move though the Template Strand (Lower Strand) and transcript the RNA from right to left");
+            $('#text-explanation').empty();
+            $('#text-explanation').append("During transcription, RNA polymerase will read the DNA sequence of Template Strand." +
+            "Polymerase move though the Template Strand (Upper Strand) and transcript the RNA from left to right and add the complementary" +
+            " RNA nucleotides to Template Strand DNA. The RNA strand is identcal to Coding DNA strand (except U is substitutied for T Nucleotides)");
+            //$(this.svgContainer).append(descrtiption);
 
             //mark the template strand and coding strand
             var codingStrand = makeTextSVG('text',
@@ -409,14 +413,18 @@ Transcript.prototype.drawTranscript = function(withcds)
             $(this.lowerStrand).append(codingStrand);
 
             //description
-            var descrtiption = makeTextSVG('text',
-                {
-                    id:'transcription-description',
-                    x:((drawAbleSvgWidth)/2)-drawAbleSvgWidth*0.3,
-                    y:($(this.svgContainer)[0].getBoundingClientRect().height-20),
-                    opacity: '0'
-                },"Polymerase move though the Template Strand (Upper Strand) and transcript the RNA from left to right");
-            $(this.svgContainer).append(descrtiption);
+            //var descrtiption = makeTextSVG('text',
+            //    {
+            //        id:'transcription-description',
+            //        x:((drawAbleSvgWidth)/2)-drawAbleSvgWidth*0.3,
+            //        y:($(this.svgContainer)[0].getBoundingClientRect().height-20),
+            //        opacity: '0'
+            //    },"Polymerase move though the Template Strand (Upper Strand) and transcript the RNA from left to right");
+            $('#text-explanation').empty();
+            $('#text-explanation').append("During transcription, RNA polymerase will read the DNA sequence of Template Strand." +
+                "Polymerase move though the Template Strand (Upper Strand) and transcript the RNA from right to left and add the complementary" +
+                " RNA nucleotides to Template Strand DNA. The RNA strand is identcal to Coding DNA strand (except U is substitutied for T Nucleotides)")
+            //$(this.svgContainer).append(descrtiption);
 
             //mark the template strand and coding strand
             var templateStrandText = makeTextSVG('text',{
@@ -510,8 +518,9 @@ Transcript.prototype.drawTranscript = function(withcds)
             $(self.btnTranscription).prop('disabled', true);
             setTimeout(function() {
                 $(self.btnTranscription).prop('disabled', false);
-            }, 10000)
-            $("#transcription-description").attr('class', 'description-active');
+            }, 10000);
+            //$("#transcription-description").attr('class', 'description-active');
+            $('#text-explanation').toggle(500);
         }.bind(null,this, $("#btnPlay")));
         $(this.svgContainer).append(groupSVG);
         //End of draw Chromosome and rna-------------------------
@@ -745,6 +754,8 @@ Transcript.prototype.transcriptionBtn = function()
             }
             $(this.svgContainer).children().remove();
             this.drawTranscript(true);
+            $('#text-explanation').hide();
+            $(this.btnExons).prop('disabled', true);
 
         }
         else
@@ -757,6 +768,8 @@ Transcript.prototype.transcriptionBtn = function()
             }
             $(this.svgContainer).children().remove();
             this.drawTranscript(false);
+            $('#text-explanation').hide();
+            $(this.btnExons).prop('disabled', false);
         }
 
         //animation
@@ -814,7 +827,7 @@ Transcript.prototype.diseaseBtn = function()
     {
         var data={};
         data.type = 'disease';
-        data.symbol = selectedGeneCanonicalTranscript.symbol;
+        data.symbol = selectedGene.symbol;
         $.ajax({
             url:'./api/geneFromDisSym',
             data:data,
@@ -822,7 +835,6 @@ Transcript.prototype.diseaseBtn = function()
             contentType:'application/json',
             success: function(data)
             {
-                //alert(data);
                 var diseasesObj = JSON.parse(data);
                 var diseasesContainer = document.createElement('div');
                 $(diseasesContainer).attr('class', 'container related-disease');

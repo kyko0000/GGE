@@ -268,6 +268,17 @@ td
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
 }
+#text-explanation
+{
+    border-style: solid;
+    border-top:none;
+    border-width: 1px;
+    background-color: #f5f8fa;
+    display:none;
+    text-align: justify;
+    line-height: 1.3;
+    padding: 0.8%;
+}
 .title-text
 {
     color: white;
@@ -287,7 +298,7 @@ td
 }
 #svg-container .exon:hover
 {
-    opacity: 0.1
+    opacity: 0.8;
 }
 
 .exonDescription.hidden

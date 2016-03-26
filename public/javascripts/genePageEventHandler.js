@@ -6,6 +6,7 @@ var relativeEnd;
 var actualStart;
 var actualEnd;
 var selectedGeneCanonicalTranscript = {};
+var selectedGene = {};
 $(".selected-info").val("Chromosome " + $(".chromosome").attr("id") + " : ");
 $("[name='my-checkbox']").bootstrapSwitch();
 //$(".spinning-div").hide();
@@ -267,18 +268,20 @@ var showGeneInfo = function(jsonObj)
                             "<div class='transcript-td transcrpt-name transcript-title'>Name</div>"+
                             "<div class='transcript-td transcrpt-biotype transcript-title'>Biotype</div>"+
                         "</div>"+
-                        createTranscriptTable(transcripts, selectedGeneCanonicalTranscript)+
+                        createTranscriptTable(transcripts, selectedGene)+
                     "</div>"+
                 "</div>"+
                 "<div class='modal-footer'>"+
-                    "<button type='button' class='btn btn-success' data-dismiss='modal' data-canonical='"+selectedGeneCanonicalTranscript.canonicalTranscript+"' data-id='"+jsonObj.id+"' onclick='callExplaination(this)'> More Information </button>"+
+                    "<button type='button' class='btn btn-success' data-dismiss='modal' data-canonical='"+selectedGene.canonicalTranscript+"' data-id='"+jsonObj.id+"' onclick='callExplaination(this)'> More Information </button>"+
                     "<button type='button' class='btn btn-danger' data-dismiss='modal'>Close</button>"+
                 "</div>"+
             "</div>"+
         "</div>"+
     "</div>";
-    console.log(selectedGeneCanonicalTranscript.canonicalTranscript);
-    selectedGeneCanonicalTranscript.symbol = jsonObj.display_name;
+    //console.log(selectedGeneCanonicalTranscript.canonicalTranscript);
+    selectedGene.symbol = jsonObj.display_name;
+    selectedGene.start = jsonObj.start;
+    selectedGene.end = jsonObj.end;
     return html;
 }
 
