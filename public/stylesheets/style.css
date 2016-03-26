@@ -431,6 +431,7 @@ td
     z-index:998;
     color:white;
     display: none;
+    overflow: scroll;
 }
 
 /*Search Result Page*/

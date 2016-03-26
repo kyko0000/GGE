@@ -219,7 +219,41 @@ Transcript.prototype.drawTranscript = function(withcds)
     var drawAbleSvgWidth = svgEnd - svgStart;
     //draw exon or cds
     if(!withcds)
-    { //draw noral exon
+    {
+        //draw Transcript Position Indicator
+        var transGeneIndicator = makeSVG('g',{id:'transcriptGeneGroup'});
+        var gene = makeSVG('rect',
+            {
+                x: svgStart,
+                y: '10',
+                rx:'10',
+                ry:'10',
+                width: drawAbleSvgWidth,
+                height: '20',
+                style:'stroke:black;stroke-width:1px;fill:white'
+            });
+        var geneTitle = makeTextSVG('title',{},'Gene');
+        $(gene).append(geneTitle);
+        $(transGeneIndicator).append(gene);
+        var geneLength = selectedGene.end - selectedGene.start;
+        var transcriptStart = ((this.start - selectedGene.start)/geneLength) * drawAbleSvgWidth + svgStart;
+        var transcriptLength = this.end - this.start;
+        var transcriptWidth = (transcriptLength/geneLength)*drawAbleSvgWidth;
+        var transcript = makeSVG('rect',
+            {
+                x: transcriptStart,
+                y:'10',
+                rx:'10',
+                ry:'10',
+                width:transcriptWidth,
+                height:'20',
+                style:'fill:red; fill-opacity:0.7'
+            });
+        var transcriptTitle = makeTextSVG('title',{},'Transcript Position');
+        $(transcript).append(transcriptTitle);
+        $(transGeneIndicator).append(transcript);
+        $(this.svgContainer).append(transGeneIndicator);
+        //draw normal exon
         var groupSVG = makeSVG('g', { //group svg tag for the ruler
             stroke: 'black',
             'stroke-width': '1',
@@ -229,35 +263,35 @@ Transcript.prototype.drawTranscript = function(withcds)
         var rulerleftStraightLine = makeSVG('line',
             {
                 x1: svgStart,
-                y1: '50',
+                y1: '80',
                 x2: svgStart,
-                y2: '60'
+                y2: '90'
             });
         var rulerhorizontalLine = makeSVG('line',
             {
                 x1:svgStart,
-                y1: '55',
+                y1: '85',
                 x2: svgEnd,
-                y2: '55'
+                y2: '85'
             });
         var rulerRightStraightLine = makeSVG('line',
             {
                 x1: svgEnd,
-                y1: '50',
+                y1: '80',
                 x2: svgEnd,
-                y2: '60'
+                y2: '90'
             });
 
         var startTextSVG = makeTextSVG('text',
             {
                 x: '0',
-                y: '40'
+                y: '70'
             },
         this.start);
         var endTextSVG = makeTextSVG('text',
             {
                 x: parseInt(svgWidth*0.95),
-                y: '40'
+                y: '70'
             },this.end)
 
         $("#scale-ruler").append(rulerleftStraightLine);
@@ -440,13 +474,13 @@ Transcript.prototype.drawTranscript = function(withcds)
                 font:'12px'
             },"Coding Strand");
             $(this.svgContainer).append(templateStrandText);
-            $(this.svgContainer).append(codingStrand);
+            $(this.svgContainer).append(codingStrandText);
 
             this.rnaPolymerase= makeSVG('rect',
                 {
                     id:"rna-polymerase",
                     x:(svgEnd-10),
-                    y:'18',
+                    y:'38',
                     width:'10',
                     height:'10',
                     style:'fill:red;opacity:0.3'
