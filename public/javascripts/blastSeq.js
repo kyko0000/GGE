@@ -3,7 +3,7 @@
  */
 var blastTheSequence = function(query)
 {
-    $('.spinner-div').show();
+    showSpinner();
     var query = query;
     var query = query.toUpperCase();
     var data = {};
@@ -26,7 +26,7 @@ var blastTheSequence = function(query)
                 $('#result').append(result.message);
             }
             $('#result-container').show();
-            $('.spinner-div').hide();
+            $('.spinner-div').remove();
         },
         error: function(xtr, status, err)
         {

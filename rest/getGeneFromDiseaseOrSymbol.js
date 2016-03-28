@@ -97,7 +97,9 @@ function rest(router, data) {
                     diseaseObject.symbol.push(rows[0].GeneSymbol);
                     for (i = 1; i < rows.length; i++) {
                         if (rows[i].ConceptID == currentConceptID) {
-                            diseaseObject.symbol.push(rows[i].GeneSymbol);
+                            if(diseaseObject.symbol.indexOf(rows[i].GeneSymbol) == -1)
+                                diseaseObject.symbol.push(rows[i].GeneSymbol);
+
                         }
                         else {
                             console.log(rows[i].DiseaseName)

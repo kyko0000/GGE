@@ -1,6 +1,10 @@
 body{
     background-color: #f5f8fa;
 }
+h2
+{
+    font-family: Myriad Set Pro, Arial;
+}
 table{
     width: 100%;
 }
@@ -225,13 +229,13 @@ td
 
 .spinner-div
 {
-    position: absolute;
+    position: fixed;
     height: 100%;
     width: 100%;
     left: 0px;
     top: 0px;
-    z-index: 999;
-    background-color: rgba(176,176,176,0.8);
+    z-index: 1050;
+    background-color: rgba(176,176,176,0.7);
 }
 
 .spinner-inner {
@@ -307,7 +311,17 @@ td
 }
 .exonDescription.show
 {
-    opacity:0.2;
+    opacity:0;
+}
+.path
+{
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: lineDrawing 5s linear alternate;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
 }
 .exonDescription.show:hover
 {
@@ -488,11 +502,11 @@ td
 
 .Chr-Group > rect
 {
-    fill:#dddddd;
+    fill:#ccccff;
 }
 .Chr-Group:hover rect
 {
-    fill:#bbbbbb;
+    fill:#b3b3ff;
 }
 
 .Chr-Group > text
@@ -560,11 +574,16 @@ td
     border-radius: 15px;
     margin-right: 20px;
 }
-
+.hover-button
+{
+    margin-top: 1%;
+}
+/*seq Area*/
 #txt-seq
 {
     width: 100%
 }
+/*Blast*/
 #result-container
 {
     display:none;
@@ -637,6 +656,11 @@ td
     to {transform: translateX(-100%)}
 }
 
+@keyframes lineDrawing
+{
+    from{stroke-dashoffset: 1000;}
+    to{ stroke-dashoffset: 0; }
+}
 /* CSS ANIMATION FOR EXPLANATION */
 @keyframes blinker /* Exons Flacking*/
 {
@@ -679,4 +703,5 @@ td
         height: 5em;
     }
 }
+
 

@@ -81,7 +81,7 @@ function ChrNav(chromosomesData, chrNavSvg)
 
 
     this.createChromosomes();
-    $('.spinner-div').hide();
+    $('.spinner-div').remove();
 
     //chromosome navigator event handler
     //click the information button
@@ -119,11 +119,12 @@ function ChrNav(chromosomesData, chrNavSvg)
         $('.chrTypeA').animate({opacity:1}, {duration:500});
         $('.chromosome-name').animate({opacity:0}, {duration:100});
         $('.Autosomes').css('opacity','1');
-    })
+    });
+
     //double click --> go to chromosome and gene page
     $('.Chr-Group').dblclick(function(e)
     {
-        $('.spinner-div').show();
+        showSpinner();
         var query={};
         query.type='chromosome';
         query.chromosomeName='Chr'+$(this).data('chr');
@@ -136,7 +137,7 @@ function ChrNav(chromosomesData, chrNavSvg)
             {
                 $('.container').remove();
                 $('body').append(data);
-                $('.spinner-div').hide();
+                $('.spinner-div').remove();
             },
             error: function(xtr, status, err)
             {

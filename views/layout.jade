@@ -9,6 +9,7 @@ html
     script(type='text/javascript', src='/bower_components/jquery/dist/jquery.js')
     script(type='text/javascript', src='/bower_components/bootstrap-switch/dist/js/bootstrap-switch.js')
     script(type='text/javascript', src='/bootstrap/js/bootstrap.min.js')
+    script(type='text/javascript', src='javascripts/spinner.js')
     script(type='text/javascript', src='/javascripts/chromosome.js')
     script(type='text/javascript' src='/javascripts/searchResult.js')
     script(type='text/javascript', src='javascripts/makeSVG.js')
@@ -30,10 +31,4 @@ html
               .input-group-btn
                 button.btn.btn-default(type="submit") Search
     script(type='text/javascript', src='javascripts/search.js')
-    .spinner-div
-      .spinner-inner
-        //spinner icon
-        .loader
-    script.
-      $(".spinner-div").hide();
     block content

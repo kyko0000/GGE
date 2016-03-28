@@ -64,6 +64,7 @@ var geneEventHandler = function() {
         else {
             getGeneInfo(selectedGeneID);
             $('body').css('cursor', 'wait');
+            $(this).css('cursor','wait');
         }
     });
 
@@ -121,12 +122,13 @@ var relativeLength = function()
 //draw the indicator to indicate the section of user focusing.
 var drawPosition = function(start, end)
 {
+    console.log('draw position...' + start + ' ' + end)
     var c = document.getElementById('indicator');
     var ctx = c.getContext('2d');
     ctx.clearRect(0, 0, c.width, c.height);
     ctx.strokeStyle = "rgba(255, 0, 0, 1)";
     ctx.strokeRect(start, 0, end - start, 10);
-    ctx.fillStyle = "rgba(0,255,0, 1)";
+    ctx.fillStyle = "rgba(255,0,0, 0.4)";
     ctx.fillRect(start, 0, end-start, 10);
 
 }
@@ -171,7 +173,7 @@ var getGenes = function()
             hideAndShowGene("overlap");
             hideAndShowGene("short");
             geneEventHandler();
-            $(".spinner-div").hide();
+            $(".spinner-div").remove();
         },
         error: function(xhr, status, error)
         {
@@ -289,7 +291,7 @@ var callExplaination = function(btn)
 {
     var query={};
     query.id = $(btn).data('id');
-    $(".spinner-div").show();
+    showSpinner();
     $.ajax(
         {
             url: './explanation',
@@ -303,7 +305,7 @@ var callExplaination = function(btn)
                 //
                 //selectedGeneCanonicalTranscript = $(btn).data('canonical');
                 $('body').append(data);
-                $(".spinner-div").hide();
+                $(".spinner-div").remove();
             },
             error: function()
             {
@@ -360,7 +362,7 @@ var drawGene = function(jsonObj, length, start, end)
         else {
             html += "<tr class='gene overlap' id='" + jsonObj[i].gene_id + "' data-start='" + jsonObj[i].start + "' data-end='" + jsonObj[i].end + "' data-isComplete='" + isComplete + "'>";
         }
-        html += "<td class='title gene-name'>" + jsonObj[i].external_name +  "</td><td class='data'>";
+        html += "<td class='title gene-name' title='Click for zoom in this gene'>" + jsonObj[i].external_name +  "</td><td class='data'>";
         if(isComplete) {
             var geneLength = (jsonObj[i].end - jsonObj[i].start) / length;
             html += "<div class='gene-padding' style='width:" + ((jsonObj[i].start - start) / length) * 100 + "%'></div>";

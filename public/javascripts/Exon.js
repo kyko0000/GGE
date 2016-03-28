@@ -22,6 +22,7 @@ function Exon(start, end, id, parent, rank) {
     //ani
     this.transcriptionAni;
     this.transcriptionOpacityAni;
+    this.animatedRuler;
     this.getExonSequence = function(type)
     {
         //conosle.log('clicked');
@@ -367,24 +368,49 @@ Exon.prototype.updateSVG = function(svg)
 
 Exon.prototype.drawExonDescription = function(length, svgContainer)
 {
-    var exonDescriptionSVG = makeTextSVG('text',
+    //var exonDescriptionSVG = makeTextSVG('text',
+    //    {
+    //        id: "d-"+this.id,
+    //        class: 'exonDescription hidden',
+    //        x: this.svgStartPointX,
+    //        y: 195,
+    //        'font-size': 12,
+    //    }, "Exon " + this.rank + " / " + length);
+
+    //$(svgContainer).append(exonDescriptionSVG);
+
+    var svgEndPoint = this.svgStartPointX + this.svgWidth;
+    this.animatedRuler = makeSVG('g',{class: 'exonDescription show'});
+    var exonRuler = makeSVG('path', {
+
+        d:'M '+ this.svgStartPointX + ' 180 V 190 V 185 H '+ svgEndPoint + ' V 190 V 180',
+        style:'fill:none; stroke:black; stroke-width:0.5px'
+    });
+    $(this.animatedRuler).append(exonRuler);
+    var exonLenghtText = makeTextSVG('text',
         {
-            id: "d-"+this.id,
-            class: 'exonDescription hidden',
             x: this.svgStartPointX,
-            y: 195,
-            'font-size': 12,
-        }, "Exon " + this.rank + " / " + length);
-    $(svgContainer).append(exonDescriptionSVG);
+            y: 205,
+            'font-size':'12'
+        }, 'EXON ' + this.rank + ': ' + parseInt(this.end - this.start) + 'bp' );
+    $(this.animatedRuler).append(exonLenghtText);
+
+    $(svgContainer).append(this.animatedRuler);
 
     //exon hover
     $(this.exonSVG).hover(function(e)
     {
-        $('#d-'+ this.id+".show").css('opacity', '1');
+        $(this.animatedRuler).css('opacity', '1');
+        var path = $(this.animatedRuler).children()[0];
+        //path animation
+        $(path).attr('class', 'path');
+
     }.bind(this),
     function(e)
     {
-        $('#d-'+this.id+'.show').css('opacity',0.2);
+        $(this.animatedRuler).css('opacity','0');
+        var path = $(this.animatedRuler).children()[0];
+        $(path).attr('class', '');
     }.bind(this));
 }
 

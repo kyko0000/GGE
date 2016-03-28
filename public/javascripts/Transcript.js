@@ -101,16 +101,16 @@ function Transcript(start, end, id, strand, name, svgContainer) {
                 center: 1,
                 onZoom: function(zoomScale)
                 {
-                    if(zoomScale > 1.5 && !exonDescriptionShowned)
-                    {
-                        $(".exonDescription").attr("class", "exonDescription show");
-                        exonDescriptionShowned = true;
-                    }
-                    else if(zoomScale < 1.5)
-                    {
-                        $(".exonDescription").attr("class", "exonDescription hidden");
-                        exonDescriptionShowned = false;
-                    }
+                    //if(zoomScale > 1.5 && !exonDescriptionShowned)
+                    //{
+                    //    $(".exonDescription").attr("class", "exonDescription show");
+                    //    exonDescriptionShowned = true;
+                    //}
+                    //else if(zoomScale < 1.5)
+                    //{
+                    //    $(".exonDescription").attr("class", "exonDescription hidden");
+                    //    exonDescriptionShowned = false;
+                    //}
 
                     //console.log(zoomScale);
                 }
@@ -242,12 +242,12 @@ Transcript.prototype.drawTranscript = function(withcds)
         var transcript = makeSVG('rect',
             {
                 x: transcriptStart,
-                y:'10',
+                y:'11',
                 rx:'10',
                 ry:'10',
                 width:transcriptWidth,
-                height:'20',
-                style:'fill:red; fill-opacity:0.7'
+                height:'18',
+                style:'fill:#ffb3b3;'
             });
         var transcriptTitle = makeTextSVG('title',{},'Transcript Position');
         $(transcript).append(transcriptTitle);
@@ -870,16 +870,17 @@ Transcript.prototype.diseaseBtn = function()
             success: function(data)
             {
                 var diseasesObj = JSON.parse(data);
+                $('.related-disease').remove();
                 var diseasesContainer = document.createElement('div');
                 $(diseasesContainer).attr('class', 'container related-disease');
                 //Display related disease(s)
                 if(diseasesObj.count == 0)
                 {
-                    var noResult = "<div><h3>Disease Not Found: </h3><h6>There are still haven't any disease related to "+selectedGeneCanonicalTranscript.symbol+"</h6></div>";
+                    var noResult = "<div><h2>Disease Not Found: </h2><h5>There are still haven't any disease related to "+selectedGeneCanonicalTranscript.symbol+"</h5></div>";
                     $(diseasesContainer).append(noResult);
                 }
                 else {
-                    var title = "<div><h3>Disease Related: </h3></div>";
+                    var title = "<div><h2>Disease Related: </h2></div>";
                     $(diseasesContainer).append(title);
                     for(index=0;index<diseasesObj.length; index++)
                     {
@@ -887,14 +888,17 @@ Transcript.prototype.diseaseBtn = function()
                         var diseaseContainer = document.createElement('div');
                         $(diseaseContainer).attr('class', 'disease-info');
                         //console.log(currentDieaseObj);
-                        var diseaseNameDiv = "<div><h4>"+currentDieaseObj.diseaseName+"</h4></div>";
-                        var diseaseDefDiv = "<div><h6>Definition: "+currentDieaseObj.diseaseDef+"</h6></div>";
+                        var diseaseNameDiv = "<div><h3>"+currentDieaseObj.diseaseName+"</h3></div>";
+                        var diseaseDefDiv = "<div><span style='font-size:10px;'>Definition: "+currentDieaseObj.diseaseDef+"</span></div>";
                         var relatedSymbol = currentDieaseObj.symbol;
                         var symbolDiv = document.createElement('div');
-                        $(symbolDiv).append("<h6>Related Genes: </h6>")
+                        $(symbolDiv).append("<h5>Related Genes: </h5>")
                         for(x=0;x<relatedSymbol.length;x++)
                         {
-                            var symbolElement = "<h6 style='display:inline-block'>"+relatedSymbol[x]+"&nbsp;</h6>";
+                            if(x < relatedSymbol.length-1)
+                                var symbolElement = "<span style='display:inline-block'>"+relatedSymbol[x]+", </span>";
+                            else
+                                var symbolElement = "<span style='display:inline-block'>"+relatedSymbol[x]+"</span>";
                             $(symbolDiv).append(symbolElement);
                         }
                         $(diseaseContainer).append(diseaseNameDiv);

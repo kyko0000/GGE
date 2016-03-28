@@ -3,7 +3,7 @@
  */
 var search = function()
 {
-    $(".spinner-div").show();
+    showSpinner();
     var searchString = $("#query-string").val();
     var query={};
     // query chromosome or with region
@@ -78,7 +78,7 @@ var textQueryAjax = function(query)
             success: function(data){
                 var result = new SearchResult(data);
                 result.showResult(query.queryString);
-                $('.spinner-div').hide();
+                $('.spinner-div').remove();
             },
             error: function(err, status, xhr)
             {
