@@ -404,6 +404,14 @@ Exon.prototype.drawExonDescription = function(length, svgContainer)
         var path = $(this.animatedRuler).children()[0];
         //path animation
         $(path).attr('class', 'path');
+        if(factMode) {
+            var exonString = '<h2>Exon</h2>' +
+                '<p>An exon is any part of a gene that will become a part of the final mature RNA produced by that ' +
+                'gene after introns have been removed by RNA splicing. In RNA splicing, introns are removed and exons are covalently joined to one another as part' +
+                ' of generating the mature messenger RNA. Since the non-coding exons are known in human gene, Exon is not only refer the coding sequence for the final protein</p>';
+            $('#text-explanation').empty();
+            $('#text-explanation').append(exonString);
+        }
 
     }.bind(this),
     function(e)

@@ -274,6 +274,7 @@ td
 }
 #text-explanation
 {
+    border-radius:5px;
     border-style: solid;
     border-top:none;
     border-width: 1px;

@@ -75,7 +75,7 @@ SearchResult.prototype.showResult = function(query)
         data.symbol = $(this).data('symbol');
         //alert($(this).data('symbol'));
         getGeneAjax(data);
-        $('.spinner-div').show();
+        showSpinner();
     })
 
     $('.region').click(function(self,e)
@@ -86,7 +86,7 @@ SearchResult.prototype.showResult = function(query)
         data.regionStart = $(this).data('start');
         data.regionEnd = $(this).data('end');
         getGeneAjax(data);
-        $('.spinner-div').show();
+        showSpinner();
     });
 
 

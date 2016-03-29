@@ -205,7 +205,9 @@ var getGeneInfo = function(id)
                 });
             });
             $("#dia-"+id).modal('toggle');
+            //recover the pointer
             $('body').css('cursor','default');
+            $('.gene-position').css('cursor', 'pointer');
         },
         error: function(xhr, status, error)
         {

@@ -15,6 +15,11 @@ html
     script(type='text/javascript', src='javascripts/makeSVG.js')
     script(type='text/javascript' src='bower_components/svg-pan-zoom/dist/svg-pan-zoom.js')
     script(type='text/javascript' src='javascripts/ChrNav.js')
+    script(type='text/javascript' src='javascripts/Transcript.js')
+    script(type='text/javascript' src='javascripts/Exon.js')
+    script(type='text/javascript' src='javascripts/cds.js')
+    script(type='text/javascript' src='javascripts/explanationEvent.js')
+
   body
     nav.navbar.navbar-default
       .container-fluid
@@ -31,4 +36,6 @@ html
               .input-group-btn
                 button.btn.btn-default(type="submit") Search
     script(type='text/javascript', src='javascripts/search.js')
+    script.
+      var factMode = false;
     block content

@@ -36,6 +36,8 @@
         .btn-container#exons-btn
         .btn-container#transcription-btn
         .btn-container#Disease-btn
+        .btn-container#fact-btn
+            button.btn.btn-info.btn-lg#btnFacts Facts
 .container#sequence-region
     .sequence-area-title#sequence-title
         h4#sequence-title-text Sequence
@@ -45,12 +47,6 @@
             span(style="background-color:#33ff33") highlighted and in Uppercase character.
         #sequence-instruction-Intron(style='font:1.5em') Intron: In lowercase character
 
-
-
-script(type='text/javascript' src='javascripts/Transcript.js')
-script(type='text/javascript' src='javascripts/Exon.js')
-script(type='text/javascript' src='javascripts/cds.js')
-script(type='text/javascript' src='javascripts/explanationEvent.js')
 script.
     console.log(selectedGeneCanonicalTranscript.canonicalTranscript);
     var explanation = new explanationCreater('#{transcripts}', '#{exons}', '#{cds}','#{id}',selectedGene.canonicalTranscript, selectedGene.symbol);
@@ -67,4 +63,33 @@ script.
         {
            $('#transcript-instruction').toggle(1000);
         });
+
+        //Fact mode
+        $('#btnFacts').click(function(e)
+        {
+            if(!factMode) {
+                $(this).addClass('active');
+                factMode = true;
+                $('.svg-container').css('cursor', 'help');
+                $('#exons-intro').prop('disabled', true);
+                $('#transcription-intro').prop('disabled', true);
+                $('#text-explanation').empty();
+                $('#text-explanation').append('<h3>Hover different element to get the basic information of genetic</h3>');
+                if($('#text-explanation').css('display') == 'none') {
+                    $('#text-explanation').toggle(250);
+                }
+            }
+            else
+            {
+                $(this).removeClass('active');
+                factMode = false;
+                $('.svg-container').css('cursor','default');
+                $('#exons-intro').prop('disabled', false);
+                $('#transcription-intro').prop('disabled', false);
+                $('#text-explanation').toggle(250);
+                $('#text-explanation').empty();
+
+            }
+        });
+
     }

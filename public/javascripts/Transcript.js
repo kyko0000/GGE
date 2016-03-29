@@ -224,6 +224,7 @@ Transcript.prototype.drawTranscript = function(withcds)
         var transGeneIndicator = makeSVG('g',{id:'transcriptGeneGroup'});
         var gene = makeSVG('rect',
             {
+                class:'gene',
                 x: svgStart,
                 y: '10',
                 rx:'10',
@@ -241,6 +242,7 @@ Transcript.prototype.drawTranscript = function(withcds)
         var transcriptWidth = (transcriptLength/geneLength)*drawAbleSvgWidth;
         var transcript = makeSVG('rect',
             {
+                class:'transcript',
                 x: transcriptStart,
                 y:'11',
                 rx:'10',
@@ -260,6 +262,15 @@ Transcript.prototype.drawTranscript = function(withcds)
             id: 'scale-ruler'
         });
         $(this.svgContainer).append(groupSVG);
+        $('.transcript').hover(function (e) {
+            if(factMode) {
+                var transcriptString = '<h2>Transcript</h2><p>Transcripts is a sequence RNA produced by transcription of a gene. Transcript of Gene are idenitcal' +
+                    'to the coding strand of Gene. One gene will have more than one transcripts and they will have different function.</p>';
+                $('#text-explanation').empty();
+                $('#text-explanation').append(transcriptString);
+            }
+        });
+        //ruler
         var rulerleftStraightLine = makeSVG('line',
             {
                 x1: svgStart,
@@ -552,9 +563,11 @@ Transcript.prototype.drawTranscript = function(withcds)
             $(self.btnTranscription).prop('disabled', true);
             setTimeout(function() {
                 $(self.btnTranscription).prop('disabled', false);
+                $('#btnFacts').prop('disabled', false);
             }, 10000);
-            //$("#transcription-description").attr('class', 'description-active');
-            $('#text-explanation').toggle(500);
+            if($('#text-explanation').css('display') == 'none') {
+                $('#text-explanation').toggle(500);
+            }
         }.bind(null,this, $("#btnPlay")));
         $(this.svgContainer).append(groupSVG);
         //End of draw Chromosome and rna-------------------------
@@ -634,6 +647,7 @@ Transcript.prototype.drawIntron = function()
         var xRadius = (endX - startX) * 4;
         var intronSVG = makeSVG('path',
             {
+                class:'intron',
                 d: 'M ' + startX + ' 150 A ' + xRadius + " " + xRadius + " 0 0 1 " + endX + " 150",
                 stroke: '#e0e0e0',
                 'stroke-width': '2',
@@ -644,6 +658,14 @@ Transcript.prototype.drawIntron = function()
         $('#svg-container').append(intronSVG);
 
     }
+    $('.intron').hover(function (e) {
+        if(factMode) {
+            var intronString = '<h2>Intron</h2>' +
+                '<p>Intron is any nucleotide sequence within a gene that is removed by RNA splicing during maturation of the final RNA product. While introns do not encode protein products, they are integral to gene expression regulation.</p>';
+            $('#text-explanation').empty();
+            $('#text-explanation').append(intronString);
+        }
+    });
 
 };
 
@@ -790,6 +812,8 @@ Transcript.prototype.transcriptionBtn = function()
             this.drawTranscript(true);
             $('#text-explanation').hide();
             $(this.btnExons).prop('disabled', true);
+            $(this.btnTranscription).prop('disabled', true);
+            $('#btnFacts').prop('disabled',true);
 
         }
         else
