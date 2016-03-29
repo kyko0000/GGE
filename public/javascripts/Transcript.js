@@ -603,6 +603,54 @@ Transcript.prototype.drawTranscript = function(withcds)
         infoMsg += " Reverse Strand";
     $("#focusing-transcript-info").val(infoMsg);
 
+    //fact Mode
+    $(this.rnaPolymerase).hover(function(e)
+    {
+       if(factMode)
+       {
+           var rnaPolymeraseString = "<h3>RNA Polymerase(RNAP/RNApol)</h3><p> also known as DNA-dependent RNA polymerase, is an enzyme that produces primary transcript RNA. " +
+               "In cells, RNAP is necessary for constructing RNA chains using DNA genes as templates, a process called transcription. " +
+               "RNA polymerase enzymes are essential to life and are found in all organisms and many viruses.</p>";
+           $('#text-explanation').empty();
+           $('#text-explanation').append(rnaPolymeraseString);
+       }
+    });
+
+    var templateStrandString = "<h3>Template Strand / Non-Coding Strand</h3><p> Non-coding strand contains anti-codons. " +
+        "During transcription, RNA Pol II binds the non-coding strand, reads the anti-codons, and transcribes their sequence to synthesize an RNA transcript with complementary bases.</p>";
+    var codingStrandString = "<h3>Coding Strand</h3><p>When referring to DNA transcription, the coding strand is the DNA strand which has the same base sequence as the RNA transcript produced (although with thymine replaced by uracil).</p>"
+
+    $(this.upperStrand).hover(function(e)
+    {
+       if(factMode)
+       {
+           $('#text-explanation').empty();
+           if(this.strand == 1) //forward strand
+           {
+               $('#text-explanation').append(codingStrandString);
+           }
+           else //reverse strand
+           {
+               $('#text-explanation').append(templateStrandString);
+           }
+       }
+    });
+
+    $(this.lowerStrand).hover(function(e)
+    {
+        if(factMode)
+        {
+            $('#text-explanation').empty();
+            if(this.strand == 1) //forward Strand
+            {
+                $('#text-explanation').append(templateStrandString);
+            }
+            else //reverse strand
+            {
+                $('#text-explanation').append(codingStrandString);
+            }
+        }
+    })
 };
 
 Transcript.prototype.testingMessage = function() //for testing only

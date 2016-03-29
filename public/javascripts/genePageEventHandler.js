@@ -301,6 +301,7 @@ var callExplaination = function(btn)
             type: 'GET',
             success: function(data)
             {
+                factMode = false;
                 $(".explanation-container").remove();
                 $("#sequence-region").remove();
                 $(".related-disease").remove();

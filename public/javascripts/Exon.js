@@ -174,11 +174,13 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer, strand)
     var cdsMatched = false;
     var thisLastAnimateID ='';
     this.utrCdsList = [];
+    console.log(this.id);
+    console.log(this.start +" -  " + this.end + " : " + cds.start + " - " + cds.end);
     //var exonGroup = makeSVG('g',
     //    {
     //        id:'g-'+this.id
     //    });
-    if(cds == '' || cds.start > this.end) //No cds or this exon not consist any cds
+    if(cds == '' || cds.start > this.end || this.start > cds.end) //No cds or this exon not consist any cds, forward --> cds start > exon start / reverse --> exon start > cds end
     {
         this.utrSVG = makeSVG('rect',
         {
@@ -190,7 +192,7 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer, strand)
             height: '50',
             'stroke-width': '0.1',
             stroke: 'black',
-            style:'fill:none;opacity:0'
+            style:'fill:white;opacity:0'
         })
         thisLastAnimateID = 'utr'+this.id;
         //var utrAnimation = this.createAnimate(periousAnimate, 'width', 0, this.svgWidth, thisLastAnimateID);
@@ -235,7 +237,7 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer, strand)
                 height: '50',
                 'stroke-width': '0.1',
                 stroke: 'black',
-                style:'fill:none;opacity:0'
+                style:'fill:white;opacity:0'
             })
         this.cdsSVG = makeSVG('rect',
             {
@@ -294,7 +296,7 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer, strand)
                 height: '50',
                 stroke: 'black',
                 'stroke-width': '0.1',
-                style: 'fill:none;opacity:0'
+                style: 'fill:white;opacity:0'
 
             });
         thisLastAnimateID = 'utr'+this.id
@@ -317,6 +319,31 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer, strand)
         cdsMatched = true;
         console.log('inserted tail cds');
     }
+
+    $(this.cdsSVG).hover(function(e)
+    {
+        if(factMode)
+        {
+            var cdsString = "<h3>Coding Region (CDS)</h3><p>Cds is a portion of a gene's DNA or RNA, composed of exons, that codes of protein.</p>";
+            $('#text-explanation').empty();
+            $('#text-explanation').append(cdsString);
+        }
+    });
+
+    $(this.utrSVG).hover(function(e)
+    {
+        if(factMode)
+        {
+            var utrString = "<h3>Untransated Region(UTR)</h3><p>Untranslated region (or UTR) refers to either of two sections." +
+                "If it is found on the 5' side, it is called the 5' UTR (or leader sequence), or if it is found on the 3' side, it is called the 3' UTR (or trailer sequence)." +
+                "The importance of these untranslated regions of mRNA is just beginning to be understood. Various medical studies are being conducted that have found connections" +
+                " between mutations in untranslated regions and increased risk for developing a particular disease, such as cancer. " +
+                "</p>";
+            $('#text-explanation').empty();
+            $('#text-explanation').append(utrString);
+        }
+    });
+
     return cdsMatched
 }
 
