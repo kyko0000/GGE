@@ -88,38 +88,59 @@ function ChrNav(chromosomesData, chrNavSvg)
     $('#btn-chromosome-type').click(function(e)
     {
         //alert("HI");
-        $('.chromosome-type').toggle(500);
+        $('.function-menu').toggle(250);
         $('.Chr-Group').addClass('info-showing');
+        $('.chromosome-name').css('opacity', '1');
         $('html, body').animate({
-            scrollTop: $("#chromosomes-navigator-container").offset().top
-        }, 500);
+            scrollTop: $(".function-menu").offset().top + $('chromosomes-navigator-container').height()
+        }, 250);
         $(this).hide();
     });
 
     //special effect on Allosome and Autosome
-    $('.Autosomes').hover(function(e)
-    {
-        $('.chrTypeS').animate({opacity:0}, {duration:500});
-        $('.chromosome-name').animate({opacity:1}, {duration:100});
-        $('.Allosomes').css('opacity', '0.3');
-    },function(e)
-    {
-        $('.chrTypeS').animate({opacity:1}, {duration:500});
-        $('.chromosome-name').animate({opacity:0}, {duration:100});
-        $('.Allosomes').css('opacity','1');
+    var btnAutosomeClicked = false
+    $('.Autosomes').click(function(e) {
+        if (!btnAutosomeClicked) {
+            btnAutosomeClicked = true;
+            $('.chrTypeA').animate({opacity: 0}, {duration: 250});
+            //$('.chromosome-name').animate({opacity: 1}, {duration: 100});
+            $('.Autosomes').css('opacity', '0.3');
+        }
+        else {
+            btnAutosomeClicked = false;
+            $('.chrTypeA').animate({opacity: 1}, {duration: 250});
+            //$('.chromosome-name').animate({opacity: 0}, {duration: 100});
+            $('.Autosomes').css('opacity', '1');
+        }
+    });
+    var btnAllosomesClicked = false;
+    $('.Allosomes').click(function(e) {
+        if (!btnAllosomesClicked) {
+            btnAllosomesClicked = true;
+            $('.chrTypeS').animate({opacity: 0}, {duration: 250});
+            //$('.chromosome-name').animate({opacity: 1}, {duration: 100});
+            $('.Allosomes').css('opacity', '0.3');
+        }
+        else {
+            btnAllosomesClicked = false;
+            $('.chrTypeS').animate({opacity: 1}, {duration: 250});
+            //$('.chromosome-name').animate({opacity: 0}, {duration: 100});
+            $('.Allosomes').css('opacity', '1');
+        }
     });
 
-    $('.Allosomes').hover(function(e)
+    //Male And Female switch
+    $('input[name="sex-checkbox"]').on('switchChange.bootstrapSwitch', function(event, state)
     {
-        $('.chrTypeA').animate({opacity:0}, {duration:500});
-        $('.chromosome-name').animate({opacity:1}, {duration:100});
-        $('.Autosomes').css('opacity', '0.3');
-    },function(e)
-    {
-        $('.chrTypeA').animate({opacity:1}, {duration:500});
-        $('.chromosome-name').animate({opacity:0}, {duration:100});
-        $('.Autosomes').css('opacity','1');
-    });
+        if(state == false)
+        {
+            $('#gY').animate({opacity: 0}, {duration: 250});
+        }
+        else
+        {
+            $('#gY').animate({opacity: 1}, {duration: 250});
+        }
+    })
 
     //double click --> go to chromosome and gene page
     $('.Chr-Group').dblclick(function(e)

@@ -255,11 +255,13 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer, strand)
         //this.utrSVG.append(utrSVGAnimate);
         //this.cdsSVG.append(cdsSVGAnimate);
         if(strand == 1) {
+            console.log('forward strand Head');
             this.utrCdsList.push(this.utrSVG);
             this.utrCdsList.push(this.cdsSVG);
         }
         else if(strand == -1)
         {
+            console.log('reverse Strand Tail')
             this.utrCdsList.push(this.cdsSVG);
             this.utrCdsList.push(this.utrSVG);
         }
@@ -304,11 +306,13 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer, strand)
        //var cdsSVGAnimate = this.createAnimate(periousAnimate, 'width', 0, this.cdsWidth,'cds'+this.id);
         //var utrSVGAnimate = this.createAnimate('cds'+this.id, 'width', 0, this.utrsWidth, thisLastAnimateID);
         if(strand == 1) {
+            console.log('forward strand tail');
             this.utrCdsList.push(this.cdsSVG);
             this.utrCdsList.push(this.utrSVG);
         }
         else if(strand == -1)
         {
+            console.log('reverse strand head');
             this.utrCdsList.push(this.utrSVG);
             this.utrCdsList.push(this.cdsSVG)
         }

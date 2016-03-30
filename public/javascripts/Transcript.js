@@ -634,7 +634,7 @@ Transcript.prototype.drawTranscript = function(withcds)
                $('#text-explanation').append(templateStrandString);
            }
        }
-    });
+    }.bind(this));
 
     $(this.lowerStrand).hover(function(e)
     {
@@ -650,7 +650,7 @@ Transcript.prototype.drawTranscript = function(withcds)
                 $('#text-explanation').append(codingStrandString);
             }
         }
-    })
+    }.bind(this));
 };
 
 Transcript.prototype.testingMessage = function() //for testing only
