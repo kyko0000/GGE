@@ -272,17 +272,20 @@ td
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
 }
-#text-explanation
+#explanation-div
 {
+    width:100%;
+    position:fixed;
+    bottom:0;
+    z-index: 1050;
+    opacity: 0.8;
     border-radius:5px;
     border-style: solid;
-    border-top:none;
     border-width: 1px;
     background-color: #f5f8fa;
     display:none;
     text-align: justify;
-    line-height: 1.3;
-    padding: 0.8%;
+    line-height: 1.25;
 }
 .title-text
 {

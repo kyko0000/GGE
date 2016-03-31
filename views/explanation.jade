@@ -31,7 +31,6 @@
             ul.dropdown-menu#sequences-menu(aria-labelledby='seq-dropdown')
                 li.menu
         svg.explanation-area#svg-container
-    #text-explanation
     .svg-btn
         .btn-container#exons-btn
         .btn-container#transcription-btn
@@ -75,8 +74,8 @@ script.
                 $('#transcription-intro').prop('disabled', true);
                 $('#text-explanation').empty();
                 $('#text-explanation').append('<h3>Hover different element to get the basic information of genetic</h3>');
-                if($('#text-explanation').css('display') == 'none') {
-                    $('#text-explanation').toggle(250);
+                if($('#explanation-div').css('display') == 'none') {
+                    $('#explanation-div').toggle(250);
                 }
             }
             else
@@ -86,7 +85,9 @@ script.
                 $('.svg-container').css('cursor','default');
                 $('#exons-intro').prop('disabled', false);
                 $('#transcription-intro').prop('disabled', false);
-                $('#text-explanation').toggle(250);
+                if($('#explanation-div').css('display') != 'none') {
+                    $('#explanation-div').toggle(250);
+                }
                 $('#text-explanation').empty();
 
             }

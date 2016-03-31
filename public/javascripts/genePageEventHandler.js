@@ -6,7 +6,6 @@ var relativeEnd;
 var actualStart;
 var actualEnd;
 var selectedGeneCanonicalTranscript = {};
-var selectedGene = {};
 $(".selected-info").val("Chromosome " + $(".chromosome").attr("id") + " : ");
 $("[name='my-checkbox']").bootstrapSwitch();
 //$(".spinning-div").hide();
@@ -276,16 +275,16 @@ var showGeneInfo = function(jsonObj)
                     "</div>"+
                 "</div>"+
                 "<div class='modal-footer'>"+
-                    "<button type='button' class='btn btn-success' data-dismiss='modal' data-canonical='"+selectedGene.canonicalTranscript+"' data-id='"+jsonObj.id+"' onclick='callExplaination(this)'> More Information </button>"+
+                    "<button type='button' class='btn btn-success' data-dismiss='modal' data-canonical='"+selectedGene.canonicalTranscript+"' data-id='"+jsonObj.id+"' data-start='"+jsonObj.start+"' data-end='"+jsonObj.end+"' data-symbol='"+jsonObj.display_name+"' onclick='callExplaination(this)'> More Information </button>"+
                     "<button type='button' class='btn btn-danger' data-dismiss='modal'>Close</button>"+
                 "</div>"+
             "</div>"+
         "</div>"+
     "</div>";
     //console.log(selectedGeneCanonicalTranscript.canonicalTranscript);
-    selectedGene.symbol = jsonObj.display_name;
-    selectedGene.start = jsonObj.start;
-    selectedGene.end = jsonObj.end;
+    //selectedGene.symbol = jsonObj.display_name;
+    //selectedGene.start = jsonObj.start;
+    //selectedGene.end = jsonObj.end;
     return html;
 }
 
@@ -293,6 +292,11 @@ var callExplaination = function(btn)
 {
     var query={};
     query.id = $(btn).data('id');
+    console.log($(btn).data('start'));
+    selectedGene.start = $(btn).data('start');
+    selectedGene.end = $(btn).data('end');
+    selectedGene.symbol = $(btn).data('symbol');
+    selectedGene.canonicalTranscript = $(btn).data('canonical');
     showSpinner();
     $.ajax(
         {
@@ -317,7 +321,7 @@ var callExplaination = function(btn)
         })
 }
 
-var createTranscriptTable = function(transcripts, canonical_Transcript_ID)
+var createTranscriptTable = function(transcripts, selectedGene)
 {
     var html = "";
     for(i=0; i<transcripts.length;i++) {
@@ -325,7 +329,7 @@ var createTranscriptTable = function(transcripts, canonical_Transcript_ID)
         if(transcripts[i].is_canonical == 1)
         {
             html += "<div class='transcript-tr canonical'>";
-            canonical_Transcript_ID.canonicalTranscript = transcripts[i].id;
+            selectedGene.canonicalTranscript = transcripts[i].id;
             console.log('have');
         }
         else

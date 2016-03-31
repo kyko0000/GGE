@@ -104,6 +104,50 @@ block content
                                 }
                             });
                 });
+
+                //close the explanation-div
+                $('#btn-explanation-close').click(function (e) {
+                if ($('#explanation-div').css('display') == 'block') {
+                    console.log('down');
+                    $('#explanation-div').toggle(250);
+                }
+                if (factMode) {
+                    $('#btnFacts').removeClass('active');
+                    factMode = false;
+                    $('.svg-container').css('cursor', 'default');
+                    $('#exons-intro').prop('disabled', false);
+                    $('#transcription-intro').prop('disabled', false);
+                    $('#text-explanation').empty();
+                }
+            });
+
+            // turn on/off fact mode
+            $('#btnFacts').click(function (e) {
+                if (!factMode) {
+                    $(this).addClass('active');
+                    factMode = true;
+                    $('.svg-container').css('cursor', 'help');
+                    $('#exons-intro').prop('disabled', true);
+                    $('#transcription-intro').prop('disabled', true);
+                    $('#text-explanation').empty();
+                    $('#text-explanation').append('<h3>Hover different element to get the basic information of genetic</h3>');
+                    if ($('#explanation-div').css('display') == 'none') {
+                        $('#explanation-div').toggle(250);
+                    }
+                }
+                else {
+                    $(this).removeClass('active');
+                    factMode = false;
+                    $('.svg-container').css('cursor', 'default');
+                    $('#exons-intro').prop('disabled', false);
+                    $('#transcription-intro').prop('disabled', false);
+                    if ($('#explanation-div').css('display') != 'none') {
+                        $('#explanation-div').toggle(250);
+                    }
+                    $('#text-explanation').empty();
+
+                }
+            });
             }
 
 

@@ -120,11 +120,12 @@ function Transcript(start, end, id, strand, name, svgContainer) {
     {
         var periousAnimate = '';
         var svgWidth = $(this.svgContainer)[0].getBoundingClientRect().width;
+        var transcriptWidth = svgWidth - svgWidth * 0.1;
         for(x=0; x<this.exons.length; x++)
         {
-            periousAnimate = this.exons[x].createTranscriptionAnimate(periousAnimate, this.strand, svgWidth, 10);
+            periousAnimate = this.exons[x].createTranscriptionAnimate(periousAnimate, this.strand, transcriptWidth, 10);
             if(x < this.exons.length - 1)
-                periousAnimate = this.drawIntronWithAnimate(periousAnimate, x, svgWidth, 10);
+                periousAnimate = this.drawIntronWithAnimate(periousAnimate, x, transcriptWidth, 10);
         }
     };
 }
@@ -565,8 +566,8 @@ Transcript.prototype.drawTranscript = function(withcds)
                 $(self.btnTranscription).prop('disabled', false);
                 $('#btnFacts').prop('disabled', false);
             }, 10000);
-            if($('#text-explanation').css('display') == 'none') {
-                $('#text-explanation').toggle(500);
+            if($('#explanation-div').css('display') == 'none') {
+                $('#explanation-div').toggle(250);
             }
         }.bind(null,this, $("#btnPlay")));
         $(this.svgContainer).append(groupSVG);
@@ -858,7 +859,9 @@ Transcript.prototype.transcriptionBtn = function()
             }
             $(this.svgContainer).children().remove();
             this.drawTranscript(true);
-            $('#text-explanation').hide();
+            if($('#explanation-div').css('display') != 'none') {
+                $('#explanation-div').toggle('250');
+            }
             $(this.btnExons).prop('disabled', true);
             $(this.btnTranscription).prop('disabled', true);
             $('#btnFacts').prop('disabled',true);
@@ -874,7 +877,9 @@ Transcript.prototype.transcriptionBtn = function()
             }
             $(this.svgContainer).children().remove();
             this.drawTranscript(false);
-            $('#text-explanation').hide();
+            if($('#explanation-div').css('display') != 'none') {
+                $('#explanation-div').toggle('250');
+            }
             $(this.btnExons).prop('disabled', false);
         }
 

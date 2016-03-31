@@ -35,7 +35,13 @@ html
               input.form-control#query-string(type="text" placeholder="Gene/Disease/Region" name="srch-term" onClick="this.select();")
               .input-group-btn
                 button.btn.btn-default(type="submit") Search
+    #explanation-div
+      button#btn-explanation-close
+        i.glyphicon.glyphicon-chevron-down
+      #text-explanation
+
     script(type='text/javascript', src='javascripts/search.js')
     script.
       var factMode = false;
+      var selectedGene = {};
     block content
