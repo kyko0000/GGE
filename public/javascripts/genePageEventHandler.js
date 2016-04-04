@@ -138,7 +138,7 @@ var drawTable = function(start, end)
     var length = end - start;
     var partition = parseInt(length / 4);
     $(".selected-info").val("Chromosome " + $(".chromosome").attr("id") + " : " + start + " - " + end);
-    $('.selected-length').val(length + "bp.");
+    $('.selected-length').val("Length: " + length + "bp.");
     var x = start;
     for(i = 1; i <= 4; i++)
     {
@@ -263,8 +263,14 @@ var showGeneInfo = function(jsonObj)
                     "<p><b>Gene Name:&emsp;</b>" + jsonObj.display_name + "</p>"+
                     "<p><b>Description:&emsp;</b>"+ jsonObj.description +"</p>" +
                     "<p><b>Start:&emsp;</b>" + jsonObj.start + "</p>"+
-                    "<p><b>End:&emsp;</b>" + jsonObj.end + "</p>"+
-                    "<p><b>Transcript:</b></p>"+
+                    "<p><b>End:&emsp;</b>" + jsonObj.end + "</p>";
+    if(jsonObj.strand == 1) {
+        html += "<p><b>Strand:&emsp;</b>Forward</p>";
+    }
+    else {
+        html += "<p><b>Strand:&emsp;</b>Reverse</p>";
+    }
+                    html+="<p><b>Transcript:</b></p>"+
                      "<div class='modal-transcript-table'>"+
                         "<div class='transcript-tr'>"+
                             "<div class='transcript-td transcript-id transcript-title'>Transcript ID</div>"+
@@ -273,10 +279,10 @@ var showGeneInfo = function(jsonObj)
                         "</div>"+
                         createTranscriptTable(transcripts, selectedGene)+
                     "</div>"+
-                "</div>"+
+                "<span style='background-color:lightyellow'>Canonical Transcript</span></div>"+
                 "<div class='modal-footer'>"+
-                    "<button type='button' class='btn btn-success' data-dismiss='modal' data-canonical='"+selectedGene.canonicalTranscript+"' data-id='"+jsonObj.id+"' data-start='"+jsonObj.start+"' data-end='"+jsonObj.end+"' data-symbol='"+jsonObj.display_name+"' onclick='callExplaination(this)'> More Information </button>"+
                     "<button type='button' class='btn btn-danger' data-dismiss='modal'>Close</button>"+
+                    "<button type='button' class='btn btn-success' data-dismiss='modal' data-canonical='"+selectedGene.canonicalTranscript+"' data-id='"+jsonObj.id+"' data-start='"+jsonObj.start+"' data-end='"+jsonObj.end+"' data-symbol='"+jsonObj.display_name+"' onclick='callExplaination(this)'> More Information </button>"+
                 "</div>"+
             "</div>"+
         "</div>"+
@@ -373,20 +379,20 @@ var drawGene = function(jsonObj, length, start, end)
         if(isComplete) {
             var geneLength = (jsonObj[i].end - jsonObj[i].start) / length;
             html += "<div class='gene-padding' style='width:" + ((jsonObj[i].start - start) / length) * 100 + "%'></div>";
-            html += "<SVG class='gene-position' id='svg-" + jsonObj[i].gene_id + "' style='width:" + ((jsonObj[i].end - jsonObj[i].start) / length) * 100 + "%' preserveAspctRaio='none' data-start='" + jsonObj[i].start + "' data-end='" + jsonObj[i].end + "' data-strand='" + jsonObj[i].strand + "'></SVG>";
+            html += "<SVG class='gene-position' id='svg-" + jsonObj[i].gene_id + "' style='width:" + ((jsonObj[i].end - jsonObj[i].start) / length) * 100 + "%' preserveAspctRaio='none' data-start='" + jsonObj[i].start + "' data-end='" + jsonObj[i].end + "' data-strand='" + jsonObj[i].strand + "' title='Click for more information'></SVG>";
                 //"<polygon points='0,60 75,60 75,50 100,70 75,90 75,80 0,80 0,60' style='fill:red;stroke:purple;stroke-width:1' />" + "</SVG>";
            // html += "<div class='gene-padding' style='width:" + ((end - jsonObj[i].end) / length) * 100 + "%'></div>";
         }
         else if(start > jsonObj[i].start && jsonObj[i].end <= end) //overlap from the begining only
         {
             //html += "<div class='gene-position left' style='width:" + ((jsonObj[i].end - start) / length) * 100 + "% data-start='" + jsonObj[i].start + "' data-end='" + jsonObj[i].end +"'></div>";
-            html += "<SVG class='gene-position left' id='svg-" + jsonObj[i].gene_id + "' style='width:" + ((jsonObj[i].end - start) / length) * 100 + "%' preserveAspctRaio='none' data-start='" + jsonObj[i].start + "' data-end='" + jsonObj[i].end + "' data-strand='" + jsonObj[i].strand + "'></SVG>";
+            html += "<SVG class='gene-position left' id='svg-" + jsonObj[i].gene_id + "' style='width:" + ((jsonObj[i].end - start) / length) * 100 + "%' preserveAspctRaio='none' data-start='" + jsonObj[i].start + "' data-end='" + jsonObj[i].end + "' data-strand='" + jsonObj[i].strand + "' title='Click for more information'></SVG>";
             //html += "<div class='gene-padding' style='width:" + ((end - jsonObj[i].end) / length) * 100 + "%'></div>";
         }
         else if(end < jsonObj[i].end && start <= jsonObj[i].start) //overlap at the end only
         {
             html += "<div class='gene-padding right' style='width:" + ((jsonObj[i].start - start) / length) * 100 + "%' data-start='" + jsonObj[i].start + "' data-end='" + jsonObj[i].end +"></div>";
-            html += "<SVG class='gene-position' id='svg-" + jsonObj[i].gene_id + "' style='width:100%' preserveAspctRaio='none' data-start='" + jsonObj[i].start + "' data-end='" + jsonObj[i].end + "' data-strand='" + jsonObj[i].strand + "'></SVG>";
+            html += "<SVG class='gene-position' id='svg-" + jsonObj[i].gene_id + "' style='width:100%' preserveAspctRaio='none' data-start='" + jsonObj[i].start + "' data-end='" + jsonObj[i].end + "' data-strand='" + jsonObj[i].strand + "' title='Click for more information'></SVG>";
             //html += "<div class='gene-position' style='width:" + ((end - jsonObj[i].start) / length) * 100 + "%'></div>";
         }
         else

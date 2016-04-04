@@ -1,5 +1,5 @@
 body{
-    background-color: #f5f8fa;
+    background-color: #f5f5fd;
 }
 h2
 {
@@ -64,6 +64,10 @@ td
 .selected-info
 {
     width: 50%;
+}
+.selected-length
+{
+    width:50%;
 }
 #region-display
 {
@@ -282,10 +286,17 @@ td
     border-radius:5px;
     border-style: solid;
     border-width: 1px;
-    background-color: #f5f8fa;
+    background-color: #f5f5fd;
     display:none;
     text-align: justify;
     line-height: 1.25;
+    padding-left: 1.2%;
+    padding-right: 1.2%;
+}
+#btn-explanation-close
+{
+    border:none;
+    background-color: #f5f5fd;
 }
 .title-text
 {
@@ -542,7 +553,7 @@ td
 }
 #btn-chromosome-type:hover
 {
-    background-color:#f5f8fa;
+    background-color:#f5f5fd;
 }
 .function-menu
 {
