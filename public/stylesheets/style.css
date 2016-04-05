@@ -621,6 +621,10 @@ td
 {
     float:right;
 }
+.intron.invisable
+{
+    stroke-opacity: 0;
+}
 /*spinner icon*/
 .loader,
 .loader:before,

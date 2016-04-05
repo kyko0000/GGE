@@ -120,12 +120,46 @@ function Transcript(start, end, id, strand, name, svgContainer) {
     {
         var periousAnimate = '';
         var svgWidth = $(this.svgContainer)[0].getBoundingClientRect().width;
-        var transcriptWidth = svgWidth - svgWidth * 0.1;
+        var transcriptWidth = svgWidth - svgWidth * 0.1;;
+        var periousEnd = 0;
+        var periousEndList =[];
+        if(this.strand == -1) //reverse strand
+        {
+            var temp = 0;
+            periousEndList.push(temp);
+            for(z=this.exons.length - 2; z>-1; z--)
+            {
+                if(z == (this.exons.length-2))
+                {
+                    temp = this.exons[z+1].svgEndPointX;
+                    periousEndList.push(temp);
+                }
+                else {
+                    temp += this.exons[z + 1].svgWidth;
+                    periousEndList.push(temp);
+                }
+            }
+        }
+        console.log(this.exons.length);
+        console.log(periousEndList.length);
         for(x=0; x<this.exons.length; x++)
         {
-            periousAnimate = this.exons[x].createTranscriptionAnimate(periousAnimate, this.strand, transcriptWidth, 10);
+            if(this.strand == 1) { //forward strand
+                if (x == 1) {
+                    periousEnd = this.exons[x - 1].svgEndPointX;
+                }
+                if (x > 1) {
+                    periousEnd += this.exons[x - 1].svgWidth;
+                }
+            }
+            else { //reverse strand
+                periousEnd = periousEndList[(this.exons.length - 1) - x];
+                console.log(periousEnd);
+                console.log(periousEndList[x]);
+            }
+            periousAnimate = this.exons[x].createTranscriptionAnimate(periousAnimate, this.strand, transcriptWidth, 10, periousEnd);
             if(x < this.exons.length - 1)
-                periousAnimate = this.drawIntronWithAnimate(periousAnimate, x, transcriptWidth, 10);
+                periousAnimate = this.drawIntronWithAnimate(periousAnimate, x, transcriptWidth, 10, periousEnd);
         }
     };
 }
@@ -458,14 +492,6 @@ Transcript.prototype.drawTranscript = function(withcds)
             $(this.upperStrand).append(templateStrand);
             $(this.lowerStrand).append(codingStrand);
 
-            //description
-            //var descrtiption = makeTextSVG('text',
-            //    {
-            //        id:'transcription-description',
-            //        x:((drawAbleSvgWidth)/2)-drawAbleSvgWidth*0.3,
-            //        y:($(this.svgContainer)[0].getBoundingClientRect().height-20),
-            //        opacity: '0'
-            //    },"Polymerase move though the Template Strand (Upper Strand) and transcript the RNA from left to right");
             $('#text-explanation').empty();
             $('#text-explanation').append("During transcription, RNA polymerase will read the DNA sequence of Template Strand." +
                 "Polymerase move though the Template Strand (Upper Strand) and transcript the RNA from right to left and add the complementary" +
@@ -565,6 +591,10 @@ Transcript.prototype.drawTranscript = function(withcds)
             setTimeout(function() {
                 $(self.btnTranscription).prop('disabled', false);
                 $('#btnFacts').prop('disabled', false);
+                $('.intron').addClass('invisable');
+                $('#text-explanation').empty();
+                $('#text-explanation').append("<h5>RNA splicing</h5> " +
+                    "<p>The pre-messenger RNA thus formed contains introns which are not required for protein synthesis. The pre-messenger RNA is chopped up to remove the introns and create messenger RNA (mRNA) in a process called RNA splicing</p>");
             }, 10000);
             if($('#explanation-div').css('display') == 'none') {
                 $('#explanation-div').toggle(250);
@@ -735,6 +765,7 @@ Transcript.prototype.drawIntronWithAnimate = function(periousAnimate, index, svg
     var intronSVG = makeSVG('path',
         {
             d: 'M ' + startX + ' 150 A ' + xRadius + " " + xRadius + " 0 0 1 " + endX + " 150",
+            class:'intron',
             stroke: '#e0e0e0',
             'stroke-width': '2',
             fill: 'none',

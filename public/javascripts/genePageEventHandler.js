@@ -391,14 +391,14 @@ var drawGene = function(jsonObj, length, start, end)
         }
         else if(end < jsonObj[i].end && start <= jsonObj[i].start) //overlap at the end only
         {
-            html += "<div class='gene-padding right' style='width:" + ((jsonObj[i].start - start) / length) * 100 + "%' data-start='" + jsonObj[i].start + "' data-end='" + jsonObj[i].end +"></div>";
+            //html += "<div class='gene-padding right' style='width:" + ((jsonObj[i].start - start) / length) * 100 + "%' data-start='" + jsonObj[i].start + "' data-end='" + jsonObj[i].end +"></div>";
             html += "<SVG class='gene-position' id='svg-" + jsonObj[i].gene_id + "' style='width:100%' preserveAspctRaio='none' data-start='" + jsonObj[i].start + "' data-end='" + jsonObj[i].end + "' data-strand='" + jsonObj[i].strand + "' title='Click for more information'></SVG>";
             //html += "<div class='gene-position' style='width:" + ((end - jsonObj[i].start) / length) * 100 + "%'></div>";
         }
         else
         {
             //html+="<div class='gene-position' style='width:100%'></div>";
-            html += "<SVG class='gene-position' id='svg-" + jsonObj[i].gene_id + "' style='width:" + ((jsonObj[i].end - jsonObj[i].start) / length) * 100 + "%' viewBox='0 0 100 100' preserveAspctRaio='none' data-start='" + jsonObj[i].start + "' data-end='" + jsonObj[i].end + "' data-strand='" + jsonObj[i].strand + "'>";
+            html += "<SVG class='gene-position' id='svg-" + jsonObj[i].gene_id + "' style='width:100%' viewBox='0 0 100 100' preserveAspctRaio='none' data-start='" + jsonObj[i].start + "' data-end='" + jsonObj[i].end + "' data-strand='" + jsonObj[i].strand + "'>";
         }
         html += "</td></tr>";
     }

@@ -351,14 +351,39 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer, strand)
     return cdsMatched
 }
 
-Exon.prototype.createTranscriptionAnimate = function(periousAnimate, strand, svgWidth, time)
+Exon.prototype.createTranscriptionAnimate = function(periousAnimate, strand, svgWidth, time, periousEnd)
 {
     for(k=0; k<this.utrCdsList.length; k++)
     {
+        if(strand == -1 && this.utrCdsList.length > 1 && k==0)
+        {
+            periousEnd += parseFloat($(this.utrCdsList[k+1]).attr('width'));
+        }
         var id = 'ani'+this.id+k;
         var animates = this.createAnimate(periousAnimate, 'width', '0', $(this.utrCdsList[k]).attr('width'), id, svgWidth, time, strand, $(this.utrCdsList[k]).attr('x'));
-        for(animateIndex=0; animateIndex<animates.length;animateIndex++)
+        for(animateIndex=0; animateIndex<animates.length;animateIndex++) {
             $(this.utrCdsList[k]).append(animates[animateIndex]);
+        }
+        var translationAnimate = makeSVG('animate',
+            {
+                id: 'transclation' + this.id,
+                dur: '5s',
+                attributeName:'x',
+                from: $(this.utrCdsList[k]).attr('x'),
+                to: periousEnd,
+                fill:'freeze',
+                begin:'rnaPolymerase.end'
+            });
+        if(periousEnd != 0) {
+                $(this.utrCdsList[k]).append(translationAnimate);
+            if(strand == 1)
+            {
+                periousEnd += parseFloat($(this.utrCdsList[k]).attr('width'));
+            }
+            else {
+                periousEnd = parseFloat(periousEnd - $(this.utrCdsList[k+1]).attr('width'));
+            }
+        }
         periousAnimate = id
     }
     return id;
@@ -524,6 +549,8 @@ Exon.prototype.hideShowcdsAndutrs = function(hide)
     else
         $(this.cdsSVG).css('opacity', '1');
 }
+
+
 
 
 
