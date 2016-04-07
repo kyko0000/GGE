@@ -10,13 +10,14 @@ function Exon(start, end, id, parent, rank) {
     this.exonSVG;
     this.svgStartPointX;
     this.svgStartPointY = 125;
-    this.svgWidth;
+    this.svgWidth; //relative length of this exon in SVG container
     this.svgEndPointX;
     this.utrsWidth;
     this.cdsWidth;
     this.rank = rank;
     //svg for utr and cds
     this.utrSVG;
+    this.utrSVG2;
     this.cdsSVG;
     this.utrCdsList = []; //order of utr and cds
     //ani
@@ -302,9 +303,6 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer, strand)
 
             });
         thisLastAnimateID = 'utr'+this.id
-
-       //var cdsSVGAnimate = this.createAnimate(periousAnimate, 'width', 0, this.cdsWidth,'cds'+this.id);
-        //var utrSVGAnimate = this.createAnimate('cds'+this.id, 'width', 0, this.utrsWidth, thisLastAnimateID);
         if(strand == 1) {
             console.log('forward strand tail');
             this.utrCdsList.push(this.cdsSVG);
@@ -322,6 +320,71 @@ Exon.prototype.drawExonAndShowUTRs = function(cds, svgContainer, strand)
         //$(svgContainer).append(exonGroup);
         cdsMatched = true;
         console.log('inserted tail cds');
+    }
+    else if(cds.start > this.start && this.end > cds.end) //cds in the middle of exon
+    {
+        console.log('add cds in middle');
+        var leftUtrWidth = ((cds.start - this.start) / (this.end - this.start)) * this.svgWidth;
+        var cdsStartPointX = this.svgStartPointX + leftUtrWidth;
+        var cdsWidth = ((cds.end-cds.start)/(this.end-this.start)) * this.svgWidth;
+        var rightUtrStartPointX = this.svgStartPointX + leftUtrWidth + cdsWidth;
+        var rightUtrWidth = ((this.end - cds.end) / (this.end - this.start)) * this.svgWidth;
+        this.utrSVG = makeSVG('rect',
+        {
+            id:'lft-utr-'+this.id,
+            class:'utr',
+            x: this.svgStartPointX,
+            y: this.svgStartPointY,
+            width: leftUtrWidth,
+            height: '50',
+            stroke: 'black',
+            'stroke-width': '0.1',
+            style: 'fill:white;opacity:0'
+        });
+        this.cdsSVG = makeSVG('rect',
+            {
+                id:'cds-'+this.id,
+                class:'cds',
+                x: cdsStartPointX,
+                y: this.svgStartPointY,
+                width: cdsWidth,
+                height: '50',
+                style:'fill:blue;opacity:0'
+            });
+        this.utrSVG2 = makeSVG('rect',
+            {
+                d:'right-utr-'+this.id,
+                class:'utr',
+                x: rightUtrStartPointX,
+                y: this.svgStartPointY,
+                width: rightUtrWidth,
+                height: '50',
+                stroke: 'black',
+                'stroke-width': '0.1',
+                style: 'fill:white;opacity:0'
+            });
+
+        if(strand == 1) {
+            //console.log('forward strand tail');
+            this.utrCdsList.push(this.utrSVG)
+            this.utrCdsList.push(this.cdsSVG);
+            this.utrCdsList.push(this.utrSVG2);
+        }
+        else if(strand == -1)
+        {
+            console.log('reverse strand head');
+            this.utrCdsList.push(this.utrSVG2);
+            this.utrCdsList.push(this.cdsSVG);
+            this.utrCdsList.push(this.utrSVG);
+        }
+
+        $(svgContainer).append(this.utrSVG);
+        $(svgContainer).append(this.cdsSVG);
+        $(svgContainer).append(this.utrSVG2);
+    }
+    else
+    {
+        console.log('none');
     }
 
     $(this.cdsSVG).hover(function(e)
@@ -355,9 +418,12 @@ Exon.prototype.createTranscriptionAnimate = function(periousAnimate, strand, svg
 {
     for(k=0; k<this.utrCdsList.length; k++)
     {
-        if(strand == -1 && this.utrCdsList.length > 1 && k==0)
+        console.log(this.utrCdsList[k]);
+        if(strand == -1 && periousEnd != 0 && this.utrCdsList.length > 1 && k < 1)
         {
-            periousEnd += parseFloat($(this.utrCdsList[k+1]).attr('width'));
+            for(c=k+1;c<this.utrCdsList;c++) {
+                periousEnd += parseFloat($(this.utrCdsList[c]).attr('width'));
+            }
         }
         var id = 'ani'+this.id+k;
         var animates = this.createAnimate(periousAnimate, 'width', '0', $(this.utrCdsList[k]).attr('width'), id, svgWidth, time, strand, $(this.utrCdsList[k]).attr('x'));
@@ -366,7 +432,7 @@ Exon.prototype.createTranscriptionAnimate = function(periousAnimate, strand, svg
         }
         var translationAnimate = makeSVG('animate',
             {
-                id: 'transclation' + this.id,
+                id: 'combine' + this.id,
                 dur: '5s',
                 attributeName:'x',
                 from: $(this.utrCdsList[k]).attr('x'),
